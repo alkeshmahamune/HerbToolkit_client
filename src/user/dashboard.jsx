@@ -8,18 +8,20 @@ import {
   ChevronDown,
   PanelLeft,
   PanelLeftClose,
-  Home,
+  HomeIcon,
 } from "lucide-react";
 import HerbToolkit from '../assets/HerbToolkit.png'
 
+// pages imports
+import Home from "./userPages/Home";
+
 /* Dummy Pages */
-const Dashboard = () => <div className="text-lg font-medium">Home Page</div>;
 const Recipes = () => <div className="text-lg font-medium">All Recipes Page</div>;
 const AddRecipe = () => <div className="text-lg font-medium">Add Recipe Page</div>;
 
 export default function RecipeDashboard() {
   const menus = [
-    { name: "Dashboard", icon: Home, component: Dashboard },
+    { name: "Home", icon: HomeIcon, component: Home },
     { name: "Recipes", icon: BookOpen, component: Recipes },
     { name: "Add Recipe", icon: PlusSquare, component: AddRecipe },
   ];
@@ -137,7 +139,7 @@ export default function RecipeDashboard() {
 
         {/* Main Content */}
         <main className="flex-1 p-8 overflow-auto">
-          <div className="bg-white rounded-xl shadow-sm p-6 min-h-[400px]">
+          <div className="bg-white rounded-xl shadow-sm p-6 min-h-100">
             <ActiveComponent />
           </div>
         </main>

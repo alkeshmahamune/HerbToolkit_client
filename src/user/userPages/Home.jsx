@@ -1,7 +1,25 @@
-import React from "react";
-import { data,recipes } from "../data.js";
-import indian from "../../assets/indian.jpg";
+import React, { useState } from "react";
+import { data, recipes } from "../data.js";
+import { ArrowLeft } from "lucide-react";
+
 const Home = () => {
+  const [selectedRecipe,setSelectedRecipe]=useState(null)
+  const handleClickRecipe=(recipe)=>{
+    setSelectedRecipe(recipe)
+  }
+  const goback=()=>{
+    setSelectedRecipe(null)
+  }
+  if(selectedRecipe){
+    return(
+      <>
+        <div className="w-full flex justify-start">
+          <ArrowLeft onClick={goback} size={25} className="border rounded-full cursor-pointer"/>
+        </div>
+        <div className="w-full h-80 my-8 rounded-lg bg-red-500"></div>
+      </>
+    )
+  }
   return (
     <div className="w-full mx-auto flex flex-col gap-5">
       {/* category section */}
@@ -9,20 +27,21 @@ const Home = () => {
       <div className="w-full flex flex-wrap gap-10">
         {data.map((ele, idx) => (
           <div
-  key={idx + ele.id}
-  className="w-1/5 h-40 relative cursor-pointer rounded-xl overflow-hidden group"
->
-  <img
-    src={ele.cover}
-    alt={ele.heading}
-    loading="lazy"
-    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-  />
+            key={idx + ele.id}
+            className="w-1/5 h-40 relative cursor-pointer rounded-xl overflow-hidden group"
+          >
+            <img
+              src={ele.cover}
+              alt={ele.heading}
+              loading="lazy"
+              onClick={()=>handleClickRecipe(ele)}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
 
-  <div className="absolute bottom-2 right-3 text-white font-semibold text-sm bg-black/40 px-2 py-1 rounded">
-    {ele.heading}
-  </div>
-</div>
+            <div className="absolute bottom-2 right-3 text-white font-semibold text-sm bg-black/40 px-2 py-1 rounded">
+              {ele.heading}
+            </div>
+          </div>
         ))}
       </div>
 

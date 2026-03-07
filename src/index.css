@@ -138,3 +138,31 @@
 :checked{
     accent-color: blue;
 }
+
+/* claude css */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #fafaf8;
+}
+
+.fd { font-family: 'Playfair Display', serif; }
+
+/* Scrollbar */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #e2d9cc; border-radius: 99px; }
+
+/* Animations */
+@keyframes fadeUp  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-10px);} to { opacity: 1; transform: translateX(0); } }
+@keyframes pulse2  { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+@keyframes growW   { from { width: 0%; } to { width: var(--tw); } }
+
+.afu  { animation: fadeUp  .35s ease both; }
+.asi  { animation: slideIn .22s ease both; }
+.apu  { animation: pulse2  2s   infinite; }
+.gbr  { animation: growW   .9s  cubic-bezier(.4,0,.2,1) forwards; }

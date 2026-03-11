@@ -138,3 +138,10 @@
 :checked{
     accent-color: blue;
 }
+
+/* influencer table style */
+td{
+  padding: 1%;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}

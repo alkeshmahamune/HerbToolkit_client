@@ -11,16 +11,15 @@ import {
 } from "lucide-react";
 import HerbToolkit from '../assets/HerbToolkit.png'
 import Dashboard from "./pages/ControlPanel";
-
-/* Dummy Pages */
-const Recipes = () => <div className="text-lg font-medium">All Recipes Page</div>;
-const AddRecipe = () => <div className="text-lg font-medium">Add Recipe Page</div>;
+import AddRecipe from "./pages/AddRecipe";
+import RecipeCards from "./components/RecipeCards";
+import { recipesUploaded } from "./recipeData";
 
 const InfluencerDashboard = () => {
   const menus = [
     { name: "Dashboard", icon: LayoutDashboard, component: Dashboard },
-    { name: "Recipes", icon: BookOpen, component: Recipes },
-    { name: "Add Recipe", icon: PlusSquare, component: AddRecipe },
+    { name: "Recipes", icon: BookOpen, component:RecipeCards },
+    { name: "Post Recipe", icon: PlusSquare, component: AddRecipe },
   ];
 
   const [collapsed, setCollapsed] = useState(false);
@@ -137,7 +136,7 @@ const InfluencerDashboard = () => {
         {/* Main Content */}
         <main className="flex-1 p-8 overflow-auto">
           <div className="bg-white rounded-xl shadow-sm p-6 min-h-100">
-            <ActiveComponent />
+            <ActiveComponent recipesUploaded={recipesUploaded}/>
           </div>
         </main>
       </div>

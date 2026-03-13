@@ -8,18 +8,21 @@ import {
   PanelLeftClose,
   HomeIcon,
   LayoutDashboard,
+  Bot,
 } from "lucide-react";
 import HerbToolkit from '../assets/HerbToolkit.png'
 import Dashboard from "./pages/ControlPanel";
 import AddRecipe from "./pages/AddRecipe";
-import RecipeCards from "./components/RecipeCards";
+import RecipeCards from "./pages/RecipeCards";
 import { recipesUploaded } from "./recipeData";
+import AIRecipe from "./pages/AIRecipe";
 
 const InfluencerDashboard = () => {
   const menus = [
     { name: "Dashboard", icon: LayoutDashboard, component: Dashboard },
-    { name: "Recipes", icon: BookOpen, component:RecipeCards },
+    { name: "Recipes", icon: BookOpen, component: RecipeCards },
     { name: "Post Recipe", icon: PlusSquare, component: AddRecipe },
+    { name: "AI Recipe", icon: Bot, component: AIRecipe },
   ];
 
   const [collapsed, setCollapsed] = useState(false);

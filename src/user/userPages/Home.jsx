@@ -1,98 +1,204 @@
-import React, { useState, useEffect } from "react";
-import { data, recipes } from "../data.js";
+import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import { catData, data, indianDishes, recipes } from "../../data/userData";
+import { DishCard } from "../../components/DishCard";
+import { CuisineCard } from "../../components/CuisineCard";
+import { CuisineView } from "../../components/CuisineView";
+import { VideoView } from "../../components/VideoView";
 
-/* ── Skeleton loader ── */
-const Skeleton = ({ className = "" }) => (
-  <div className={`animate-pulse bg-linear-to-r from-stone-200 via-stone-100 to-stone-200 bg-size-[600px_100%] rounded-xl ${className}`} />
+/* ── keyframes injected once ── */
+const Keyframes = () => (
+  <style>{`
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  `}</style>
 );
 
 /* ── Category card ── */
-const CatCard = ({ ele, index, onClick }) => (
+const CatCard = ({ cat, index, onClick }) => (
   <div
-    onClick={() => onClick(ele)}
+    onClick={() => onClick(cat)}
     className="relative rounded-2xl overflow-hidden cursor-pointer aspect-4/3 bg-stone-200 group"
-    style={{ animation: `fadeUp 0.5s ${index * 0.07}s ease both` }}
+    style={{
+      animation: `fadeUp 0.5s ${index * 0.07}s ease both`,
+      opacity: 0,
+      animationFillMode: "both",
+    }}
   >
     <img
-      src={ele.cover} alt={ele.heading} loading="lazy"
+      src={cat.cover}
+      alt={cat.heading}
+      loading="lazy"
       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
     />
-    <div className="absolute inset-x-0 bottom-0 pt-7 pb-2 px-3 bg-linear-to-t from-black/70 to-transparent text-white text-sm font-medium tracking-wide">
-      {ele.heading}
+    <div className="absolute inset-x-0 bottom-0 pt-7 pb-2 px-3 bg-linear-to-t from-black/70 to-transparent text-white text-sm font-medium">
+      {cat.heading}
     </div>
   </div>
 );
 
-/* ── Recipe card ── */
-const RecipeCard = ({ recipe, index }) => (
-  <div
-    className="bg-white rounded-[18px] overflow-hidden border border-stone-100 cursor-pointer group transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
-    style={{ animation: `fadeUp 0.5s ${0.15 + index * 0.08}s ease both` }}
-  >
-    <div className="overflow-hidden h-44">
-      <img
-        src={recipe.image} alt={recipe.name} loading="lazy"
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
-    </div>
-    <div className="p-4">
-      <h3 className="font-serif text-base font-semibold text-gray-800 truncate mb-1">{recipe.name}</h3>
-      <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">{recipe.category}</p>
-      <button className="w-full py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-sm rounded-xl transition-all duration-200">
-        View Recipe
-      </button>
-    </div>
-  </div>
-);
-
-/* ── Detail view ── */
-const DetailView = ({ recipe, onBack }) => {
-  const [imgLoaded, setImgLoaded] = useState(false);
+/* ── Category detail (meal type → Indian dishes) ── */
+const CategoryView = ({ cat, onSelectDish, onBack }) => {
+  const dishes = indianDishes[cat.id] || [];
   return (
-    <div className="animate-[fadeUp_0.4s_ease_both]">
+    <div>
       <button
         onClick={onBack}
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 rounded-full px-3 py-1.5 mb-6 hover:bg-stone-100 transition"
+        className="inline-flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 rounded-full px-3 py-1.5 mb-5 hover:bg-stone-100 transition"
       >
         <ArrowLeft size={14} /> Back
       </button>
 
-      {!imgLoaded && <Skeleton className="w-full h-80 mb-6" />}
       <img
-        src={recipe.cover} alt={recipe.heading}
-        onLoad={() => setImgLoaded(true)}
-        className={`w-full h-80 object-cover rounded-2xl mb-6 transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0 h-0"}`}
+        src={cat.cover}
+        alt={cat.heading}
+        className="w-full h-52 object-cover rounded-2xl mb-5 animate-[fadeUp_0.5s_ease_both]"
       />
 
-      <h2 className="font-serif text-3xl font-semibold text-gray-900 mb-1">{recipe.heading}</h2>
-      <p className="text-sm text-gray-400">Explore our curated collection of {recipe.heading.toLowerCase()} recipes</p>
-      <span className="inline-block mt-3 bg-orange-50 text-orange-600 text-xs font-medium px-3 py-1 rounded-lg">
-        {recipe.heading}
-      </span>
+      <div
+        className="mb-6"
+        style={{
+          animation: "fadeUp 0.5s 0.1s ease both",
+          opacity: 0,
+          animationFillMode: "both",
+        }}
+      >
+        <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-1">
+          {cat.heading}
+        </h2>
+        <p className="text-sm text-gray-400 mb-2">
+          Authentic Indian {cat.heading.toLowerCase()} recipes
+        </p>
+        <span className="inline-block bg-orange-50 text-orange-600 text-xs font-medium px-3 py-1 rounded-lg">
+          {dishes.length} Recipes
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {dishes.map((d, i) => (
+          <DishCard key={i} dish={d} index={i} onView={onSelectDish} />
+        ))}
+      </div>
     </div>
   );
 };
 
-/* ── Home ── */
+/* ── Home page ── */
 const Home = () => {
-  const [selected, setSelected] = useState(null);
+  // "home" | "category" | "cuisine" | "video"
+  const [view, setView] = useState("home");
+  const [selCat, setSelCat] = useState(null);
+  const [selCuisine, setSelCuisine] = useState(null);
+  const [selDish, setSelDish] = useState(null);
 
-  if (selected) return <DetailView recipe={selected} onBack={() => setSelected(null)} />;
+  const openDish = (dish) => {
+    setSelDish(dish);
+    setView("video");
+  };
+  const goBack = () => {
+    if (view === "video") {
+      setSelDish(null);
+      setView(selCat ? "category" : selCuisine ? "cuisine" : "home");
+    }
+    if (view === "category") {
+      setSelCat(null);
+      setView("home");
+    }
+    if (view === "cuisine") {
+      setSelCuisine(null);
+      setView("home");
+    }
+  };
 
+  /* ── Video view ── */
+  if (view === "video")
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-6">
+        <Keyframes />
+        <VideoView dish={selDish} onBack={goBack} />
+      </div>
+    );
+
+  /* ── Category detail ── */
+  if (view === "category")
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <Keyframes />
+        <CategoryView cat={selCat} onSelectDish={openDish} onBack={goBack} />
+      </div>
+    );
+
+  /* ── Cuisine detail ── */
+  if (view === "cuisine")
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <Keyframes />
+        <CuisineView
+          cuisine={selCuisine}
+          onSelectDish={openDish}
+          onBack={goBack}
+        />
+      </div>
+    );
+
+  /* ── Home ── */
   return (
-    <div className="max-w-6xl mx-auto">
-      {/* inject keyframe once */}
-      <style>{`@keyframes fadeUp { from { opacity:0; transform:translateY(18px) } to { opacity:1; transform:translateY(0) } }`}</style>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <Keyframes />
 
-      <h2 className="font-serif text-2xl font-semibold text-gray-800 mb-5">Categories</h2>
+      {/* ── 1. Categories (meal type) ── */}
+      <h2 className="font-serif text-2xl font-semibold text-gray-800 mb-5">
+        Categories
+      </h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
-        {data.map((ele, i) => <CatCard key={ele.id} ele={ele} index={i} onClick={setSelected} />)}
+        {catData.map((c, i) => (
+          <CatCard
+            key={c.id}
+            cat={c}
+            index={i}
+            onClick={(cat) => {
+              setSelCat(cat);
+              setView("category");
+            }}
+          />
+        ))}
       </div>
 
-      <h2 className="font-serif text-2xl font-semibold text-gray-800 mb-5">Recently Viewed Recipes</h2>
+      {/* ── 2. Cuisines ── */}
+      <h2 className="font-serif text-2xl font-semibold text-gray-800 mb-5">
+        Explore by Cuisine
+      </h2>
+
+      {/* Scrollable row on mobile, grid on desktop */}
+      <div className="flex gap-3 overflow-x-auto pb-3 sm:grid sm:grid-cols-4 sm:overflow-visible lg:grid-cols-8 mb-10 scrollbar-hide">
+        {data.map((c, i) => (
+          <CuisineCard
+            key={c.id}
+            cuisine={c}
+            index={i}
+            onClick={(cuisine) => {
+              setSelCuisine(cuisine);
+              setView("cuisine");
+            }}
+          />
+        ))}
+      </div>
+
+      {/* ── 3. Recently Viewed ── */}
+      <h2 className="font-serif text-2xl font-semibold text-gray-800 mb-5">
+        Recently Viewed Recipes
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {recipes.map((r, i) => <RecipeCard key={i} recipe={r} index={i} />)}
+        {recipes.map((r, i) => (
+          <DishCard
+            key={i}
+            index={i}
+            dish={{ name: r.name, cat: r.category, img: r.image, ...r }}
+            onView={openDish}
+          />
+        ))}
       </div>
     </div>
   );

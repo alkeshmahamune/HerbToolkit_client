@@ -29,7 +29,6 @@ export const data = [
   { id:6, cover:japanese,     heading:"Japanese"     },
   { id:7, cover:korean,       heading:"Korean"       },
   { id:8, cover:mexican,      heading:"Mexican"      },
-  { id:9, cover:mexican,      heading:"Mexican"      },
 ];
 
 // ── Dishes per cuisine ────────────────────────────────────────────────────────
@@ -91,7 +90,7 @@ export const cuisineDishes = {
     { name:"Kimchi Jjigae",     cat:"Korean", img:"https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&q=80", channel:"Korean Bapsang",    subs:"1.3M", views:"3.3M",  likes:72100,  video:"https://www.w3schools.com/html/mov_bbb.mp4" },
   ],
   8: [ // Mexican
-    { name:"Tacos al Pastor",   cat:"Mexican", img:mexican, channel:"Rick Bayless",    subs:"780K", views:"4.2M",  likes:91800,  video:"https://www.w3schools.com/html/mov_bbb.mp4" },
+    { name:"Tacos al Pastor",   cat:"Mexican", img:mexican,                                                                                             channel:"Rick Bayless",    subs:"780K", views:"4.2M",  likes:91800,  video:"https://www.w3schools.com/html/mov_bbb.mp4" },
     { name:"Guacamole",         cat:"Mexican", img:"https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=400&q=80", channel:"Muy Bueno Cooking",subs:"620K",views:"2.8M", likes:60400,  video:"https://www.w3schools.com/html/mov_bbb.mp4" },
     { name:"Enchiladas",        cat:"Mexican", img:"https://images.unsplash.com/photo-1534352956036-cd81e27dd615?w=400&q=80", channel:"Rick Bayless",    subs:"780K", views:"3.1M",  likes:67200,  video:"https://www.w3schools.com/html/mov_bbb.mp4" },
     { name:"Chiles Rellenos",   cat:"Mexican", img:"https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?w=400&q=80", channel:"Muy Bueno Cooking",subs:"620K",views:"1.6M", likes:34800,  video:"https://www.w3schools.com/html/mov_bbb.mp4" },

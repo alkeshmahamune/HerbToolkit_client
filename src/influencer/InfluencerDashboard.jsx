@@ -9,6 +9,7 @@ import {
   HomeIcon,
   LayoutDashboard,
   Bot,
+  Stethoscope,
 } from "lucide-react";
 import HerbToolkit from '../assets/HerbToolkit.png'
 import Dashboard from "./pages/ControlPanel";
@@ -16,6 +17,7 @@ import AddRecipe from "./pages/AddRecipe";
 import RecipeCards from "./pages/RecipeCards";
 import { recipesUploaded } from "./recipeData";
 import AIRecipe from "./pages/AIRecipe";
+import HomeMade from "./pages/HomeMade";
 
 const InfluencerDashboard = () => {
   const menus = [
@@ -23,6 +25,7 @@ const InfluencerDashboard = () => {
     { name: "Recipes", icon: BookOpen, component: RecipeCards },
     { name: "Post Recipe", icon: PlusSquare, component: AddRecipe },
     { name: "AI Recipe", icon: Bot, component: AIRecipe },
+    {name:"Herbal Remedies", icon:Stethoscope, component:HomeMade}
   ];
 
   const [collapsed, setCollapsed] = useState(false);

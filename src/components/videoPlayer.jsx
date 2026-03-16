@@ -39,7 +39,7 @@ export const VideoPlayer = ({ src }) => {
 
       {/* Controls bar */}
       <div
-        className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-10 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        className="absolute bottom-0 left-0 right-0 px-3 pb-3 pt-10 bg-linear-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"
         onClick={e => e.stopPropagation()}
       >
         {/* Progress bar */}

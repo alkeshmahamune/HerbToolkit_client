@@ -52,7 +52,7 @@ export const VideoView = ({ dish, onBack }) => {
       {/* Channel row */}
       <div className="flex items-center justify-between py-3 border-y border-stone-100 mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm flex-shrink-0">
+          <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm shrink-0">
             {initials(dish.channel)}
           </div>
           <div>
@@ -94,7 +94,7 @@ export const VideoView = ({ dish, onBack }) => {
 
       {/* Comment input */}
       <div className="flex gap-3 mb-6 items-start">
-        <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold flex-shrink-0">YO</div>
+        <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold shrink-0">YO</div>
         <div className="flex-1">
           <textarea
             value={commentText}
@@ -118,7 +118,7 @@ export const VideoView = ({ dish, onBack }) => {
       <div className="flex flex-col gap-4 pb-10">
         {allComments.map((c, i) => (
           <div key={i} className="flex gap-3" style={{ animation: `fadeUp 0.4s ${i * 0.04}s ease both`, opacity: 0, animationFillMode: "both" }}>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
                  style={{ background: c.bg, color: c.tc }}>
               {c.init}
             </div>

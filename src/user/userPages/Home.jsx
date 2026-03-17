@@ -149,7 +149,7 @@ const Home = () => {
       <Keyframes />
 
       {/* ── 1. Categories (meal type) ── */}
-      <h2 className="font-serif text-2xl font-semibold text-gray-800 mb-5">
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">
         Categories
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
@@ -167,7 +167,7 @@ const Home = () => {
       </div>
 
       {/* ── 2. Cuisines ── */}
-      <h2 className="font-serif text-2xl font-semibold text-gray-800 mb-5">
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">
         Explore by Cuisine
       </h2>
 
@@ -187,7 +187,7 @@ const Home = () => {
       </div>
 
       {/* ── 3. Recently Viewed ── */}
-      <h2 className="font-serif text-2xl font-semibold text-gray-800 mb-5">
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">
         Recently Viewed Recipes
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

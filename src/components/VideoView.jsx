@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ArrowLeft, ThumbsUp, ThumbsDown, Share2, Bookmark } from "lucide-react";
-import { VideoPlayer } from "../components/videoPlayer";
+import { VideoPlayer } from "./VideoPlayer";
 import { seedComments } from "../data/userData";
 
 const fmt = (n) => {
@@ -33,7 +33,7 @@ export const VideoView = ({ dish, onBack }) => {
   const toggleCLike = (i) => setCLikes(prev => ({ ...prev, [i]: !prev[i] }));
 
   return (
-    <div className="animate-[fadeUp_0.4s_ease_both]">
+    <div className="w-full animate-[fadeUp_0.4s_ease_both]">
       <button
         onClick={onBack}
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 rounded-full px-3 py-1.5 mb-5 hover:bg-stone-100 transition"
@@ -44,7 +44,7 @@ export const VideoView = ({ dish, onBack }) => {
       <VideoPlayer src={dish.video} />
 
       {/* Title & meta */}
-      <h1 className="font-serif text-2xl font-semibold text-gray-900 mt-4 mb-1 leading-snug">
+      <h1 className="roboto text-2xl font-semibold text-gray-900 mt-4 mb-1 leading-snug">
         {dish.name} — Authentic Recipe
       </h1>
       <p className="text-sm text-gray-400 mb-4">{fmt(dish.views)} views &nbsp;·&nbsp; 3 days ago</p>

@@ -4,8 +4,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import RecipeDashboard from './User/Dashboard'
-import List from './user/List'
+import RecipeDashboard from './user/dashboard'
+// import List from './user/List'
 import InfluencerDashboard from './influencer/InfluencerDashboard'
 
 const App = () => {
@@ -22,7 +22,7 @@ const App = () => {
 
         {/* user routes */}
         <Route path='/user-home' element={<RecipeDashboard/>} />
-        <Route path='/recipe-list' element={<List/>} />
+        {/* <Route path='/recipe-list' element={<List/>} /> */}
         {/* user routes end */}
 
         {/* influencer path start */}

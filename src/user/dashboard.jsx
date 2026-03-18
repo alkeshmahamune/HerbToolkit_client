@@ -12,15 +12,15 @@ import HerbToolkit from '../assets/HerbToolkit.png'
 
 // pages imports
 import Home from "./userPages/Home";
+import Recipies from "./userPages/Recipies";
 
 /* Dummy Pages */
-const Recipes = () => <div className="text-lg font-medium">All Recipes Page</div>;
 const AddRecipe = () => <div className="text-lg font-medium">Add Recipe Page</div>;
 
 export default function RecipeDashboard() {
   const menus = [
     { name: "Home", icon: HomeIcon, component: Home },
-    { name: "Recipes", icon: BookOpen, component: Recipes },
+    { name: "Recipes", icon: BookOpen, component: Recipies },
     { name: "Add Recipe", icon: PlusSquare, component: AddRecipe },
   ];
 

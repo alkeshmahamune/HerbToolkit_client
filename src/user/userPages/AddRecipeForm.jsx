@@ -491,7 +491,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
     {/* Tags */}
     <Field label="Tags" hint="Press Enter or comma to add a tag">
       <div
-        className="flex flex-wrap gap-1.5 p-2.5 rounded-xl border border-stone-200 min-h-[44px] cursor-text
+        className="flex flex-wrap gap-1.5 p-2.5 rounded-xl border border-stone-200 min-h-44 cursor-text
                    focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-50 transition-all"
       >
         {tags.map((tag, i) => (
@@ -507,7 +507,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
           onChange={e => setTagInput(e.target.value)}
           onKeyDown={handleTagKey}
           placeholder={tags.length ? "" : "e.g. Spicy, Vegan…"}
-          className="flex-1 min-w-[100px] text-[13px] text-stone-800 outline-none bg-transparent"
+          className="flex-1 min-w-25 text-[13px] text-stone-800 outline-none bg-transparent"
         />
       </div>
     </Field>
@@ -607,7 +607,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
               type="button"
               onClick={() => removeIngredient(index)}
               disabled={ingredientFields.length === 1}
-              className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all flex-shrink-0
+              className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all shrink-0
                 ${ingredientFields.length === 1
                   ? "border-stone-100 text-stone-300 cursor-not-allowed"
                   : "border-stone-200 text-stone-400 hover:bg-red-50 hover:border-red-200 hover:text-red-400"}`}

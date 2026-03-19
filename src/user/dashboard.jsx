@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import {
   BookOpen,
   PlusSquare,
@@ -12,12 +12,12 @@ import {
 } from "lucide-react";
 import HerbToolkit from '../assets/HerbToolkit.png'
 
-// pages imports
-import Home from "./userPages/Home";
-import Recipies from "./userPages/Recipies";
-import { AddRecipeForm } from "./userPages/AddRecipeForm";
-import AIRecipe from "./userPages/AIRecipe";
-import InventoryManager from "../components/GroceryAndInventory";
+// pages imports - lazy loaded
+const Home = lazy(() => import("./userPages/Home"));
+const Recipies = lazy(() => import("./userPages/Recipies"));
+const AddRecipeForm = lazy(() => import("./userPages/AddRecipeForm").then(module => ({ default: module.AddRecipeForm })));
+const AIRecipe = lazy(() => import("./userPages/AIRecipe"));
+const Inventory = lazy(() => import("./userPages/Inventory"));
 
 export default function RecipeDashboard() {
   const menus = [
@@ -25,7 +25,7 @@ export default function RecipeDashboard() {
     { name: "Recipes", icon: BookOpen, component: Recipies },
     { name: "Add Recipe", icon: PlusSquare, component: AddRecipeForm },
     { name: "AI Recipe Suggestion", icon: Bot, component: AIRecipe },
-    { name: "Inventory Management", icon: Barcode, component: InventoryManager },
+    { name: "Inventory Management", icon: Barcode, component: Inventory },
   ];
 
   const [collapsed, setCollapsed] = useState(false);
@@ -142,7 +142,9 @@ export default function RecipeDashboard() {
         {/* Main Content */}
         <main className="flex-1 p-8 overflow-auto">
           <div className="bg-white rounded-xl shadow-sm p-6 min-h-100">
-            <ActiveComponent />
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-gray-500">Loading...</div></div>}>
+              <ActiveComponent />
+            </Suspense>
           </div>
         </main>
       </div>

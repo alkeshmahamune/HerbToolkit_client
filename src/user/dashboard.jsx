@@ -7,6 +7,8 @@ import {
   PanelLeft,
   PanelLeftClose,
   HomeIcon,
+  Bot,
+  Barcode,
 } from "lucide-react";
 import HerbToolkit from '../assets/HerbToolkit.png'
 
@@ -14,12 +16,16 @@ import HerbToolkit from '../assets/HerbToolkit.png'
 import Home from "./userPages/Home";
 import Recipies from "./userPages/Recipies";
 import { AddRecipeForm } from "./userPages/AddRecipeForm";
+import AIRecipe from "./userPages/AIRecipe";
+import InventoryManager from "../components/GroceryAndInventory";
 
 export default function RecipeDashboard() {
   const menus = [
     { name: "Home", icon: HomeIcon, component: Home },
     { name: "Recipes", icon: BookOpen, component: Recipies },
     { name: "Add Recipe", icon: PlusSquare, component: AddRecipeForm },
+    { name: "AI Recipe Suggestion", icon: Bot, component: AIRecipe },
+    { name: "Inventory Management", icon: Barcode, component: InventoryManager },
   ];
 
   const [collapsed, setCollapsed] = useState(false);

@@ -20,13 +20,13 @@ const SUGGESTIONS = [
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 const AiAvatar = () => (
-  <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
+  <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center shrink-0">
     <ChefHat size={15} className="text-white" />
   </div>
 );
 
 const UserAvatar = () => (
-  <div className="w-8 h-8 bg-stone-800 rounded-full flex items-center justify-center flex-shrink-0 text-white text-[12px] font-semibold">
+  <div className="w-8 h-8 bg-stone-800 rounded-full flex items-center justify-center shrink-0 text-white text-[12px] font-semibold">
     A
   </div>
 );
@@ -320,7 +320,7 @@ const AIRecipeComponent = () => {
           )}
 
           {/* ── Input area ── */}
-          <div className="px-4 pb-4 flex-shrink-0">
+          <div className="px-4 pb-4 shrink-0">
             <div className="flex items-end gap-2">
 
               {/* Ingredient toggle */}
@@ -330,7 +330,7 @@ const AIRecipeComponent = () => {
                   if (!showIngPanel) setTimeout(() => ingInputRef.current?.focus(), 100);
                 }}
                 title="Add ingredients"
-                className={`w-10 h-10 rounded-xl border flex items-center justify-center flex-shrink-0
+                className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0
                             transition-all duration-150
                             ${showIngPanel
                               ? "bg-orange-50 border-orange-300 text-orange-600"
@@ -351,13 +351,13 @@ const AIRecipeComponent = () => {
                   onInput={handleTextareaInput}
                   onKeyDown={handleKeyDown}
                   className="flex-1 resize-none text-[13px] text-stone-800 outline-none bg-transparent
-                             leading-relaxed max-h-[120px] overflow-y-auto placeholder:text-stone-400"
+                             leading-relaxed max-h-30 overflow-y-auto placeholder:text-stone-400"
                 />
                 {/* Send button inside box */}
                 <button
                   onClick={() => sendMessage()}
                   disabled={!input.trim() || isTyping}
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all
                               ${input.trim() && !isTyping
                                 ? "bg-orange-600 hover:bg-orange-700 active:scale-95"
                                 : "bg-stone-100 cursor-not-allowed"}`}

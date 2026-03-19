@@ -6,32 +6,17 @@ import { CuisineCard } from "../../components/CuisineCard";
 import { CuisineView } from "../../components/CuisineView";
 import { VideoView } from "../../components/VideoView";
 
-/* ── keyframes injected once ── */
-const Keyframes = () => (
-  <style>{`
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-  `}</style>
-);
-
 /* ── Category card ── */
-const CatCard = ({ cat, index, onClick }) => (
+const CatCard = ({ cat, onClick }) => (
   <div
     onClick={() => onClick(cat)}
     className="relative rounded-2xl overflow-hidden cursor-pointer aspect-4/3 bg-stone-200 group"
-    style={{
-      animation: `fadeUp 0.5s ${index * 0.07}s ease both`,
-      opacity: 0,
-      animationFillMode: "both",
-    }}
   >
     <img
       src={cat.cover}
       alt={cat.heading}
       loading="lazy"
-      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+      className="w-full h-full object-cover"
     />
     <div className="absolute inset-x-0 bottom-0 pt-7 pb-2 px-3 bg-linear-to-t from-black/70 to-transparent text-white text-sm font-medium">
       {cat.heading}
@@ -54,17 +39,10 @@ const CategoryView = ({ cat, onSelectDish, onBack }) => {
       <img
         src={cat.cover}
         alt={cat.heading}
-        className="w-full h-52 object-cover rounded-2xl mb-5 animate-[fadeUp_0.5s_ease_both]"
+        className="w-full h-52 object-cover rounded-2xl mb-5"
       />
 
-      <div
-        className="mb-6"
-        style={{
-          animation: "fadeUp 0.5s 0.1s ease both",
-          opacity: 0,
-          animationFillMode: "both",
-        }}
-      >
+      <div className="mb-6">
         <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-1">
           {cat.heading}
         </h2>
@@ -116,8 +94,13 @@ const Home = () => {
   if (view === "video")
     return (
       <div className="max-w-3xl mx-auto px-4 py-6">
-        <Keyframes />
-        <VideoView dish={selDish} onBack={goBack} />
+        {/* <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        > */}
+          <VideoView dish={selDish} onBack={goBack} />
+        {/* </motion.div> */}
       </div>
     );
 
@@ -125,8 +108,13 @@ const Home = () => {
   if (view === "category")
     return (
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <Keyframes />
+        {/* <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        > */}
         <CategoryView cat={selCat} onSelectDish={openDish} onBack={goBack} />
+        {/* </motion.div> */}
       </div>
     );
 
@@ -134,30 +122,37 @@ const Home = () => {
   if (view === "cuisine")
     return (
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <Keyframes />
+        {/* <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        > */}
         <CuisineView
           cuisine={selCuisine}
           onSelectDish={openDish}
           onBack={goBack}
         />
+          {/* </motion.div> */}
       </div>
     );
 
   /* ── Home ── */
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <Keyframes />
+      {/* <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        > */}
+          
 
       {/* ── 1. Categories (meal type) ── */}
-      <h2 className="text-xl font-semibold text-gray-800 mb-6">
-        Categories
-      </h2>
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">Categories</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
-        {catData.map((c, i) => (
+        {catData.map((c) => (
           <CatCard
             key={c.id}
             cat={c}
-            index={i}
             onClick={(cat) => {
               setSelCat(cat);
               setView("category");
@@ -200,6 +195,7 @@ const Home = () => {
           />
         ))}
       </div>
+      {/* </motion.div> */}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { DishCard } from "../../components/DishCard";
 import { CuisineCard } from "../../components/CuisineCard";
 import { CuisineView } from "../../components/CuisineView";
 import { VideoView } from "../../components/VideoView";
+import { motion } from "framer-motion";
 
 /* ── Category card ── */
 const CatCard = ({ cat, onClick }) => (
@@ -94,13 +95,13 @@ const Home = () => {
   if (view === "video")
     return (
       <div className="max-w-3xl mx-auto px-4 py-6">
-        {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-        > */}
+        >
           <VideoView dish={selDish} onBack={goBack} />
-        {/* </motion.div> */}
+        </motion.div>
       </div>
     );
 
@@ -108,13 +109,13 @@ const Home = () => {
   if (view === "category")
     return (
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-        > */}
+        >
         <CategoryView cat={selCat} onSelectDish={openDish} onBack={goBack} />
-        {/* </motion.div> */}
+        </motion.div>
       </div>
     );
 
@@ -122,28 +123,28 @@ const Home = () => {
   if (view === "cuisine")
     return (
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-        > */}
+        >
         <CuisineView
           cuisine={selCuisine}
           onSelectDish={openDish}
           onBack={goBack}
         />
-          {/* </motion.div> */}
+          </motion.div>
       </div>
     );
 
   /* ── Home ── */
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* <motion.div
+      <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-        > */}
+        >
           
 
       {/* ── 1. Categories (meal type) ── */}
@@ -195,7 +196,7 @@ const Home = () => {
           />
         ))}
       </div>
-      {/* </motion.div> */}
+      </motion.div>
     </div>
   );
 };

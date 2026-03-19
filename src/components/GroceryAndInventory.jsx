@@ -788,7 +788,7 @@ const InventoryManager = () => {
         .font-serif { font-family: Georgia, 'Times New Roman', serif; }
       `}</style>
 
-      <div className="max-w-5xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 py-8 bg-stone-50 min-h-screen">
 
         {/* ── Page header ── */}
         <div className="mb-6" style={{ animation:"fadeUp .35s ease both" }}>

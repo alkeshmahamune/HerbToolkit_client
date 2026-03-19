@@ -4,7 +4,7 @@ export const CuisineCard = ({ cuisine, index, onClick }) => (
   <div
     onClick={() => onClick(cuisine)}
     className="relative rounded-2xl overflow-hidden cursor-pointer aspect-3/4 bg-stone-200 group shrink-0 w-36 sm:w-auto"
-    style={{ animation: `fadeUp 0.5s ${index * 0.06}s ease both`, opacity: 0, animationFillMode: "both" }}
+    // style={{ animation: `fadeUp 0.5s ${index * 0.06}s ease both`, opacity: 0, animationFillMode: "both" }}
   >
     <img
       src={cuisine.cover} alt={cuisine.heading} loading="lazy"

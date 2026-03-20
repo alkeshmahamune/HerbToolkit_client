@@ -11,25 +11,28 @@ import {
   Barcode,
   Warehouse,
   Bookmark,
+  LogOut
 } from "lucide-react";
-import HerbToolkit from '../assets/HerbToolkit.png'
+import HerbToolkit from "../assets/HerbToolkit.png";
 import HerbalRecipe from "../components/HerbalRecipe";
-import { Icon } from 'lucide-react';
-import { mortarPestle } from '@lucide/lab';
+import { Icon } from "lucide-react";
+import { mortarPestle } from "@lucide/lab";
 import SavedRecipes from "../components/SavedRecipes";
 
 // pages imports - lazy loaded
 const Home = lazy(() => import("./userPages/Home"));
 const Recipies = lazy(() => import("./userPages/Recipies"));
-const AddRecipeForm = lazy(() => import("./userPages/AddRecipeForm").then(module => ({ default: module.AddRecipeForm })));
+const AddRecipeForm = lazy(() =>
+  import("./userPages/AddRecipeForm").then((module) => ({
+    default: module.AddRecipeForm,
+  })),
+);
 const AIRecipe = lazy(() => import("./userPages/AIRecipe"));
 const Inventory = lazy(() => import("./userPages/Inventory"));
 
-const Khalbatta=()=>{
-  return(
-    <Icon iconNode={mortarPestle}/>
-  )
-}
+const Khalbatta = () => {
+  return <Icon iconNode={mortarPestle} />;
+};
 
 export default function RecipeDashboard() {
   const menus = [
@@ -47,9 +50,16 @@ export default function RecipeDashboard() {
 
   const ActiveComponent = menus[active].component;
 
+  const handleLogout = () => {
+  // clear auth data
+  localStorage.removeItem("token");
+
+  // redirect to login
+  navigate("/login");
+};
+
   return (
     <div className="flex h-screen bg-gray-50 font-[Poppins]">
-
       {/* Sidebar */}
       <aside
         className={`bg-white  shadow-md flex flex-col transition-all duration-300
@@ -57,43 +67,43 @@ export default function RecipeDashboard() {
       >
         {/* Logo */}
         {/* Logo Section */}
-<div className="h-20 flex items-center justify-center border-b border-gray-200">
-  <div className={`flex items-center gap-3 transition-all duration-300 ${collapsed ? "justify-center" : "px-4"}`}>
-    
-    {/* Logo */}
-    <div className="bg-green-100 p-2 rounded-xl shadow-sm">
-      <img
-        src={HerbToolkit}
-        alt="HerbToolkit Logo"
-        className="w-8 h-8 object-contain"
-      />
-    </div>
+        <div className="h-20 flex items-center justify-center border-b border-gray-200">
+          <div
+            className={`flex items-center gap-3 transition-all duration-300 ${collapsed ? "justify-center" : "px-4"}`}
+          >
+            {/* Logo */}
+            <div className="bg-green-100 p-2 rounded-xl shadow-sm">
+              <img
+                src={HerbToolkit}
+                alt="HerbToolkit Logo"
+                className="w-8 h-8 object-contain"
+              />
+            </div>
 
-    {/* App Name */}
-    {!collapsed && (
-      <h1 className="text-lg font-semibold text-gray-800 tracking-wide">
-        HerbToolkit
-      </h1>
-    )}
-  </div>
-</div>
+            {/* App Name */}
+            {!collapsed && (
+              <h1 className="text-lg font-semibold text-gray-800 tracking-wide">
+                HerbToolkit
+              </h1>
+            )}
+          </div>
+        </div>
 
-
-{/* Toggle Button */}
-<div className="flex items-center border-b border-gray-200">
-  <button
-    onClick={() => setCollapsed(!collapsed)}
-    className={`w-full flex items-center transition-all duration-300 
+        {/* Toggle Button */}
+        <div className="flex items-center border-b border-gray-200">
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className={`w-full flex items-center transition-all duration-300 
     ${collapsed ? "justify-center" : "justify-end pr-4"} 
     py-3 hover:bg-gray-100`}
-  >
-    {collapsed ? (
-      <PanelLeft size={20} className="text-gray-600" />
-    ) : (
-      <PanelLeftClose size={20} className="text-gray-600" />
-    )}
-  </button>
-</div>
+          >
+            {collapsed ? (
+              <PanelLeft size={20} className="text-gray-600" />
+            ) : (
+              <PanelLeftClose size={20} className="text-gray-600" />
+            )}
+          </button>
+        </div>
 
         {/* Menu Items */}
         <nav className="flex-1 px-2 space-y-2 mt-2">
@@ -104,7 +114,7 @@ export default function RecipeDashboard() {
               <div
                 key={index}
                 onClick={() => setActive(index)}
-                className={`flex items-center ${collapsed?"justify-center":"justify-start"} gap-3 px-3 py-3 rounded-lg cursor-pointer transition
+                className={`flex items-center ${collapsed ? "justify-center" : "justify-start"} gap-3 px-3 py-3 rounded-lg cursor-pointer transition
                 ${
                   active === index
                     ? "bg-orange-500 text-white"
@@ -117,18 +127,24 @@ export default function RecipeDashboard() {
             );
           })}
         </nav>
+        <div className="p-3 border-t border-gray-200">
+  <button
+    onClick={handleLogout}
+    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition
+    text-red-500 hover:bg-red-50 ${collapsed ? "justify-center" : ""}`}
+  >
+    <LogOut size={20} />
+    {!collapsed && <span className="text-sm font-medium">Logout</span>}
+  </button>
+</div>
       </aside>
 
       {/* Right Section */}
       <div className="flex flex-col flex-1">
-
         {/* Header */}
         <header className="sticky shadow-md top-0 h-16 bg-white flex items-center justify-between px-6">
-
           {/* Logo */}
-          <div className="text-lg font-semibold text-gray-700">
-            Hello User!
-          </div>
+          <div className="text-lg font-semibold text-gray-700">Hello User!</div>
 
           {/* Search */}
           <div className="relative w-72">
@@ -156,7 +172,13 @@ export default function RecipeDashboard() {
         {/* Main Content */}
         <main className="flex-1 p-8 overflow-auto">
           <div className="bg-white rounded-xl shadow-sm p-6 min-h-100">
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-gray-500">Loading...</div></div>}>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-gray-500">Loading...</div>
+                </div>
+              }
+            >
               <ActiveComponent />
             </Suspense>
           </div>

@@ -256,7 +256,7 @@ export const textRecipes = [
 ];
 
 // herbal recipe data 
-const RECIPES = [
+export const RECIPES = [
   // HAIR
   {
     id:1, cat:"hair", type:"text",
@@ -418,7 +418,7 @@ const RECIPES = [
 ];
 // ─── Seed data ────────────────────────────────────────────────────────────────
 
-const SEED_SAVED = [
+export const SEED_SAVED = [
   // ── AI suggested ──
   {
     id:"a1", source:"ai", type:"text", cat:"Hair",

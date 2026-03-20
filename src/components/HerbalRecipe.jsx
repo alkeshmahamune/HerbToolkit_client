@@ -506,24 +506,19 @@ const HerbalRecipes = () => {
         .cat-scroll::-webkit-scrollbar { display:none; }
       `}</style>
 
-      <div className="max-w-5xl mx-auto px-4 py-10 bg-[#f3f0e8] min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 py-10  min-h-screen">
 
         {/* ── Hero ── */}
         <div
-          className="text-center mb-10"
+          className="text-start mb-10"
           style={{ animation: "fadeUp .5s ease both" }}
         >
           <p className="text-[11px] font-semibold tracking-[2px] uppercase text-[#7a8c5e] mb-2">
             🌿 Nature's Pharmacy
           </p>
-          <h1 className="font-serif text-[34px] sm:text-[40px] font-bold text-[#2c3320] leading-tight mb-3">
-            Herbal{" "}
-            <em className="not-italic text-[#5a7a3a]" style={{ fontStyle: "italic" }}>Remedies</em>
-            {" "}&amp; Recipes
-          </h1>
-          <p className="text-[14px] text-[#6b7a54] max-w-md mx-auto leading-relaxed">
-            Discover time-tested herbal recipes for hair, skin, health and wellbeing — in video and text guides.
-          </p>
+          <h2 className="text-xl font-semibold text-gray-800 mb-6">
+        Herbal Kitchen
+      </h2>
         </div>
 
         {/* ── Category Strip ── */}

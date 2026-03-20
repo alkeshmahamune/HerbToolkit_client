@@ -9,8 +9,12 @@ import {
   HomeIcon,
   Bot,
   Barcode,
+  Warehouse,
 } from "lucide-react";
 import HerbToolkit from '../assets/HerbToolkit.png'
+import HerbalRecipe from "../components/HerbalRecipe";
+import { Icon } from 'lucide-react';
+import { mortarPestle } from '@lucide/lab';
 
 // pages imports - lazy loaded
 const Home = lazy(() => import("./userPages/Home"));
@@ -19,13 +23,20 @@ const AddRecipeForm = lazy(() => import("./userPages/AddRecipeForm").then(module
 const AIRecipe = lazy(() => import("./userPages/AIRecipe"));
 const Inventory = lazy(() => import("./userPages/Inventory"));
 
+const Khalbatta=()=>{
+  return(
+    <Icon iconNode={mortarPestle}/>
+  )
+}
+
 export default function RecipeDashboard() {
   const menus = [
     { name: "Home", icon: HomeIcon, component: Home },
     { name: "Recipes", icon: BookOpen, component: Recipies },
     { name: "Add Recipe", icon: PlusSquare, component: AddRecipeForm },
+    { name: "Herbal Kitchen", icon: Khalbatta, component: HerbalRecipe },
     { name: "AI Recipe Suggestion", icon: Bot, component: AIRecipe },
-    { name: "Inventory Management", icon: Barcode, component: Inventory },
+    { name: "Inventory Management", icon: Warehouse, component: Inventory },
   ];
 
   const [collapsed, setCollapsed] = useState(false);

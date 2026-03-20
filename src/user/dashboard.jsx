@@ -15,8 +15,7 @@ import {
 } from "lucide-react";
 import HerbToolkit from "../assets/HerbToolkit.png";
 import HerbalRecipe from "../components/HerbalRecipe";
-import { Icon } from "lucide-react";
-import { mortarPestle } from "@lucide/lab";
+import { Khalbatta } from "../CustomIcons";
 import SavedRecipes from "../components/SavedRecipes";
 
 // pages imports - lazy loaded
@@ -30,9 +29,6 @@ const AddRecipeForm = lazy(() =>
 const AIRecipe = lazy(() => import("./userPages/AIRecipe"));
 const Inventory = lazy(() => import("./userPages/Inventory"));
 
-const Khalbatta = () => {
-  return <Icon iconNode={mortarPestle} />;
-};
 
 export default function RecipeDashboard() {
   const menus = [

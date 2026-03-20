@@ -9,7 +9,9 @@ import {
   HomeIcon,
   LayoutDashboard,
   Bot,
-  Stethoscope,
+  LogOut,
+  Warehouse,
+  Bookmark,
 } from "lucide-react";
 import HerbToolkit from "../assets/HerbToolkit.png";
 import Dashboard from "./pages/ControlPanel";
@@ -19,6 +21,8 @@ import { recipesUploaded } from "./recipeData";
 import AIRecipe from "./pages/AIRecipe";
 import HomeMade from "./pages/HomeMade";
 import { Khalbatta } from "../CustomIcons";
+import InventoryManagement from "./pages/InventoryManagement";
+
 const InfluencerDashboard = () => {
   const menus = [
     { name: "Dashboard", icon: LayoutDashboard, component: Dashboard },
@@ -26,13 +30,21 @@ const InfluencerDashboard = () => {
     { name: "Post Recipe", icon: PlusSquare, component: AddRecipe },
     { name: "AI Recipe", icon: Bot, component: AIRecipe },
     { name: "Herbal Kitchen", icon: Khalbatta, component: HomeMade },
+    { name: "Inventory Management", icon: Warehouse, component: InventoryManagement },
+    { name: "Saved Recipes", icon: Bookmark, component: InventoryManagement },
   ];
 
   const [collapsed, setCollapsed] = useState(false);
   const [active, setActive] = useState(0);
 
   const ActiveComponent = menus[active].component;
+  const handleLogout = () => {
+  // clear auth data
+  localStorage.removeItem("token");
 
+  // redirect to login
+  navigate("/login");
+};
   return (
     <div className="flex h-screen bg-gray-50 font-[Poppins]">
       {/* Sidebar */}
@@ -102,6 +114,18 @@ const InfluencerDashboard = () => {
             );
           })}
         </nav>
+
+        {/* logout section */}
+        <div className="p-3 border-t border-gray-200">
+  <button
+    onClick={handleLogout}
+    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition
+    text-red-500 hover:bg-red-50 ${collapsed ? "justify-center" : ""}`}
+  >
+    <LogOut size={20} />
+    {!collapsed && <span className="text-sm font-medium">Logout</span>}
+  </button>
+</div>
       </aside>
 
       {/* Right Section */}

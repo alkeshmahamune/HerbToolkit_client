@@ -33,7 +33,7 @@ const Inventory = lazy(() => import("./userPages/Inventory"));
 export default function RecipeDashboard() {
   const menus = [
     { name: "Home", icon: HomeIcon, component: Home },
-    { name: "Recipes", icon: BookOpen, component: Recipies },
+    { name: "Personalized Recipes", icon: BookOpen, component: Recipies },
     { name: "Add Recipe", icon: PlusSquare, component: AddRecipeForm },
     { name: "Herbal Kitchen", icon: Khalbatta, component: HerbalRecipe },
     { name: "AI Recipe Suggestion", icon: Bot, component: AIRecipe },

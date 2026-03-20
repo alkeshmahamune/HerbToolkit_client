@@ -246,8 +246,8 @@ const CategoryButton = ({ cat, active, count, onClick }) => (
   <button
     onClick={onClick}
     style={{ animationFillMode: "both" }}
-    className={`flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl border-[1.5px]
-                min-w-[76px] cursor-pointer transition-all duration-200
+    className={`shrink-0 flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl border-[1.5px]
+                min-w-19 cursor-pointer transition-all duration-200
                 ${active
                   ? "bg-[#2c3320] border-[#2c3320] shadow-md"
                   : "bg-white border-[#e4dfc8] hover:border-[#7a8c5e] hover:bg-[#f7f5ee]"}`}
@@ -428,7 +428,7 @@ const RecipeModal = ({ recipe, onClose }) => {
           <div className="flex flex-col gap-3 mb-5">
             {recipe.steps.map((step, i) => (
               <div key={i} className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-[#eef0e6] flex items-center justify-center text-[10px] font-bold text-[#4a5535] flex-shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-full bg-[#eef0e6] flex items-center justify-center text-[10px] font-bold text-[#4a5535] shrink-0 mt-0.5">
                   {i + 1}
                 </div>
                 <p className="text-[13px] text-[#2c3320] leading-relaxed">{step}</p>
@@ -542,9 +542,9 @@ const HerbalRecipes = () => {
         {/* ── Filter Bar ── */}
         <div className="flex flex-wrap gap-2.5 items-center mb-6">
           {/* Search */}
-          <div className="flex-1 min-w-[200px] flex items-center gap-2 bg-white border-[1.5px] border-[#e4dfc8]
+          <div className="flex-1 min-w-50 flex items-center gap-2 bg-white border-[1.5px] border-[#e4dfc8]
                           rounded-xl px-3.5 py-2.5 focus-within:border-[#7a8c5e] transition-all">
-            <Search size={14} className="text-[#9aaa7a] flex-shrink-0" />
+            <Search size={14} className="text-[#9aaa7a] shrink-0" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}

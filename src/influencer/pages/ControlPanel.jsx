@@ -1,95 +1,357 @@
-import { Apple, ArrowLeft, Heart, UsersRound } from "lucide-react";
 import React, { useState } from "react";
+import { Users, Play, Heart, MessageCircle, ArrowLeft, ThumbsUp, ThumbsDown } from "lucide-react";
 import { recipesUploaded } from "../recipeData";
 
-const Dashboard = () => {
-  const [showRecipe,setShowRecipe]=useState(null)
-  console.log(showRecipe)
-  return (
-    <>
-      <div className={`${showRecipe!==null?"hidden":"flex flex-col"}`}>
-        <h2 className="text-xl font-semibold text-gray-800 mb-6">Dashboard</h2>
-        <div className="w-full flex flex-wrap gap-15">
-          <div className="w-1/6 h-30 flex flex-col justify-between rounded-xl shadow-xl border-2 cursor-pointer transform-3d transition-all hover:scale-90 border-gray-300 p-2">
-            <div className="flex gap-1 items-center">
-              <UsersRound />
-              <h6 className=" poppins uppercase text-xs p-3 font-semibold">
-                {" "}
-                Followers
-              </h6>
-            </div>
-            <div className="w-full h-80  flex justify-center items-center">
-              <h2 className="roboto text-4xl">16K</h2>
-            </div>
-          </div>
-          <div className="w-1/6 h-30 flex flex-col justify-between rounded-xl shadow-xl border-2 cursor-pointer transform-3d transition-all hover:scale-90 border-gray-300 p-2">
-            <div className="flex gap-1 items-center">
-              <Apple />
-              <h6 className=" poppins uppercase text-xs p-3 font-semibold">
-                {" "}
-                Recipies Posted
-              </h6>
-            </div>
-            <div className="w-full h-80  flex justify-center items-center">
-              <h2 className="roboto text-4xl">12</h2>
-            </div>
-          </div>
-          <div className="w-1/6 h-30 flex flex-col justify-between rounded-xl shadow-xl border-2 cursor-pointer transform-3d transition-all hover:scale-90 border-gray-300 p-2">
-            <div className="flex gap-1 items-center">
-              <Heart />
-              <h6 className=" poppins uppercase text-xs p-3 font-semibold">
-                {" "}
-                Likes
-              </h6>
-            </div>
-            <div className="w-full h-80  flex justify-center items-center">
-              <h2 className="roboto text-4xl">12K</h2>
-            </div>
+// ─── helpers ──────────────────────────────────────────────────────────────────
+
+const fmt = (n) => (n >= 1000 ? (n / 1000).toFixed(1) + "K" : n);
+
+// ─── sub-components ───────────────────────────────────────────────────────────
+
+const StatCard = ({ icon: Icon, iconColor, iconBg, label, value, delay }) => (
+  <div
+    className="flex-1 min-w-[130px] bg-white border border-stone-200 rounded-2xl
+               p-4 flex items-center gap-3"
+    style={{ animation:`fadeUp .4s ${delay}s ease both`, opacity:0, animationFillMode:"both" }}
+  >
+    <div
+      className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+      style={{ background: iconBg }}
+    >
+      <Icon size={16} color={iconColor} />
+    </div>
+    <div>
+      <p className="text-syne text-[20px] font-bold text-stone-900 leading-none">{value}</p>
+      <p className="text-[10px] text-stone-400 font-semibold uppercase tracking-wider mt-1">{label}</p>
+    </div>
+  </div>
+);
+
+// ─── Recipe card (grid) ───────────────────────────────────────────────────────
+
+const RecipeCard = ({ recipe, onClick, index }) => (
+  <article
+    onClick={onClick}
+    className="group bg-white border border-stone-200 rounded-2xl overflow-hidden
+               cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:border-orange-400
+               transition-all duration-200"
+    style={{ animation:`fadeUp .38s ${.25 + index * .06}s ease both`, opacity:0, animationFillMode:"both" }}
+  >
+    {/* Thumbnail */}
+    <div className="relative h-44 bg-stone-100 overflow-hidden">
+      <img
+        src={recipe.image} alt={recipe.name} loading="lazy"
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+      />
+      {/* Badges */}
+      <div className="absolute top-2.5 left-2.5 right-2.5 flex justify-between">
+        <span className="text-[10px] font-semibold bg-white/90 text-stone-800 px-2 py-1 rounded-full">
+          {recipe.type === "video" ? "▶ Video" : "📄 Text"}
+        </span>
+        <span className="text-[10px] font-semibold bg-orange-500 text-white px-2 py-1 rounded-full">
+          {recipe.category}
+        </span>
+      </div>
+      {/* Play overlay */}
+      {recipe.type === "video" && (
+        <div className="absolute inset-0 flex items-center justify-center opacity-0
+                        group-hover:opacity-100 transition-opacity bg-black/10">
+          <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-md">
+            <Play size={13} fill="#18181a" className="ml-0.5" />
           </div>
         </div>
-        <h2 className="text-xl font-semibold text-gray-800 mb-6 mt-8">
-          Uploaded Recipies
-        </h2>
-        <div className="w-full flex flex-wrap gap-10">
-          {recipesUploaded.map((ele, index) => (
-            <div className="w-1/4" key={index+1} onClick={()=>setShowRecipe(index)}>
-              <div
-                className="w-full h-40 flex cursor-pointer items-end bg-red-50 rounded-tr-xl rounded-tl-xl border overflow-hidden p-3"
-                style={{
-                  backgroundImage: `url(${ele.image})`,
-                  backgroundPosition: "center",
-                  backgroundSize: "cover",
-                }}
-              >
-                <div className="w-full flex  justify-between text-white text-sm">
-                  <div className="flex gap-1 p-1 items-center rounded-xl bg-black/40">
-                    <Heart size={15} />
-                    {ele.likes}
+      )}
+    </div>
+
+    {/* Body */}
+    <div className="p-3.5">
+      <h3 className="text-syne text-[14px] font-bold text-stone-900 mb-1.5
+                     whitespace-nowrap overflow-hidden text-ellipsis">
+        {recipe.name}
+      </h3>
+      <div className="flex items-center gap-3 text-[11px] text-stone-400 font-medium mb-2.5">
+        <span>⏱ {recipe.time}</span>
+        <span>💬 {recipe.comments?.length ?? 0}</span>
+      </div>
+      <div className="flex items-center gap-3">
+        <span className="flex items-center gap-1 text-[11px] font-bold text-stone-500">
+          <Heart size={11} fill="#e8420a" className="text-orange-500" />
+          {fmt(recipe.likes)}
+        </span>
+        <span className="flex items-center gap-1 text-[11px] font-bold text-stone-400">
+          <ThumbsDown size={11} />
+          {fmt(recipe.dislikes)}
+        </span>
+      </div>
+    </div>
+  </article>
+);
+
+// ─── Detail / Recipe view ─────────────────────────────────────────────────────
+
+const RecipeDetail = ({ recipe, onBack }) => {
+  const [liked,     setLiked]     = useState(false);
+  const [disliked,  setDisliked]  = useState(false);
+  const [comments,  setComments]  = useState(recipe.comments ?? []);
+  const [input,     setInput]     = useState("");
+
+  const toggleLike = () => {
+    setLiked(l => !l);
+    if (!liked) setDisliked(false);
+  };
+
+  const toggleDislike = () => {
+    setDisliked(d => !d);
+    if (!disliked) setLiked(false);
+  };
+
+  const postComment = () => {
+    if (!input.trim()) return;
+    setComments(prev => [
+      ...prev,
+      { u:"You", i:"YO", t:input.trim(), d:"just now" },
+    ]);
+    setInput("");
+  };
+
+  return (
+    <div style={{ animation:"fadeUp .35s ease both" }}>
+      {/* Back */}
+      <button
+        onClick={onBack}
+        className="inline-flex items-center gap-1.5 border border-stone-200 rounded-full
+                   px-4 py-2 text-[12px] font-semibold text-stone-500 bg-white
+                   hover:border-orange-400 hover:text-orange-500 transition-all mb-6"
+      >
+        <ArrowLeft size={14} /> Back
+      </button>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-5 items-start">
+
+        {/* Left — media */}
+        {recipe.type === "video" && recipe.video ? (
+          <div className="w-full bg-black rounded-2xl overflow-hidden" style={{ aspectRatio:"16/9" }}>
+            <video
+              src={recipe.video}
+              controls
+              playsInline
+              autoPlay={false}
+              preload="metadata"
+              className="w-full h-full object-contain block"
+            />
+          </div>
+        ) : (
+          <div className="rounded-2xl overflow-hidden" style={{ aspectRatio:"16/9" }}>
+            <img src={recipe.image} alt={recipe.name} className="w-full h-full object-cover block" />
+          </div>
+        )}
+
+        {/* Right — info + likes + comments */}
+        <div className="bg-white border border-stone-200 rounded-2xl p-5 flex flex-col gap-4">
+
+          {/* Title */}
+          <div>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-orange-500 mb-1.5">
+              {recipe.category}
+            </p>
+            <h2 className="text-syne text-[20px] font-bold text-stone-900 leading-tight mb-2">
+              {recipe.name}
+            </h2>
+            <p className="text-[12px] text-stone-400 leading-relaxed">{recipe.desc}</p>
+          </div>
+
+          {/* Meta pills */}
+          <div className="flex flex-wrap gap-2">
+            <span className="text-[11px] font-semibold bg-stone-100 text-stone-600 px-3 py-1.5 rounded-lg">
+              ⏱ {recipe.time}
+            </span>
+            <span className="text-[11px] font-semibold bg-stone-100 text-stone-600 px-3 py-1.5 rounded-lg">
+              {recipe.type === "video" ? "▶ Video" : "📄 Text"}
+            </span>
+          </div>
+
+          {/* Like / Dislike */}
+          <div className="flex gap-2">
+            <button
+              onClick={toggleLike}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl
+                          border-[1.5px] text-[13px] font-bold transition-all
+                ${liked
+                  ? "bg-orange-50 border-orange-400 text-orange-600"
+                  : "bg-white border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500"}`}
+            >
+              <Heart size={15} fill={liked ? "#e8420a" : "none"} stroke={liked ? "#e8420a" : "currentColor"} />
+              {fmt((recipe.likes ?? 0) + (liked ? 1 : 0))}
+            </button>
+
+            <button
+              onClick={toggleDislike}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl
+                          border-[1.5px] text-[13px] font-bold transition-all
+                ${disliked
+                  ? "bg-blue-50 border-blue-400 text-blue-600"
+                  : "bg-white border-stone-200 text-stone-500 hover:border-blue-400 hover:text-blue-500"}`}
+            >
+              <ThumbsDown size={15} fill={disliked ? "#3a3aaa" : "none"} stroke={disliked ? "#3a3aaa" : "currentColor"} />
+              {fmt((recipe.dislikes ?? 0) + (disliked ? 1 : 0))}
+            </button>
+          </div>
+
+          <div className="h-px bg-stone-100" />
+
+          {/* Comments */}
+          <div>
+            <p className="text-[13px] font-bold text-stone-900 mb-3">
+              Comments ({comments.length})
+            </p>
+
+            <div className="flex flex-col gap-3 max-h-48 overflow-y-auto pr-1 mb-3">
+              {comments.map((c, i) => (
+                <div key={i} className="flex gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center
+                                  text-[10px] font-bold text-stone-500 flex-shrink-0">
+                    {c.i || c.u.split(" ").map(w => w[0]).join("").slice(0, 2)}
                   </div>
-                  <p className="p-2 bg-black/60 rounded-xl text-xs">
-                    {ele.time}
-                  </p>
+                  <div>
+                    <p className="text-[11px] font-bold text-stone-800">{c.u}</p>
+                    <p className="text-[11px] text-stone-500 leading-relaxed">{c.t}</p>
+                    <p className="text-[10px] text-stone-300 mt-0.5">{c.d}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="w-full leading-8 border border-t-0 rounded-bl-xl rounded-br-xl  text-sm p-3">
-                <h1 className="font-semibold">{ele.name}</h1>
-                <p className="w-1/3 py-1 text-center text-sm rounded-md bg-orange-300">
-                  {ele.category}
-                </p>
-                <p>{ele.desc}</p>
-              </div>
+              ))}
             </div>
-          ))}
+
+            {/* Comment input */}
+            <div className="flex gap-2 pt-3 border-t border-stone-100">
+              <input
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && postComment()}
+                placeholder="Add a comment…"
+                className="flex-1 border border-stone-200 rounded-xl px-3 py-2 text-[12px]
+                           text-stone-800 outline-none focus:border-orange-400 transition-all
+                           placeholder:text-stone-400"
+              />
+              <button
+                onClick={postComment}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-[12px]
+                           font-bold rounded-xl transition-all active:scale-[.97]"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
-      {
-        showRecipe!==null && (
-          <div className="w-full h-screen flex-col relative">
-            <ArrowLeft className="cursor-pointer absolute left-5 top-5" onClick={()=>setShowRecipe(null)}/>
-              <div className="w-full h-150 bg-red-300 rounded-md"></div>
-          </div>
-        )
-      }
+    </div>
+  );
+};
+
+// ─── Main Dashboard ───────────────────────────────────────────────────────────
+
+const Dashboard = () => {
+  const [selected, setSelected] = useState(null);
+  const [filter,   setFilter]   = useState("all");
+
+  const filtered = filter === "all"
+    ? recipesUploaded
+    : recipesUploaded.filter(r => r.type === filter);
+
+  const totalLikes    = recipesUploaded.reduce((s, r) => s + (r.likes ?? 0), 0);
+  const totalComments = recipesUploaded.reduce((s, r) => s + (r.comments?.length ?? 0), 0);
+
+  return (
+    <>
+      <style>{`
+        @keyframes fadeUp { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:translateY(0) } }
+        .text-syne { font-family: 'Syne', 'DM Sans', sans-serif; }
+        .line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+      `}</style>
+
+      <div className="max-w-6xl mx-auto px-4 py-8 min-h-screen">
+
+        {selected !== null ? (
+          <RecipeDetail
+            recipe={recipesUploaded[selected]}
+            onBack={() => setSelected(null)}
+          />
+        ) : (
+          <>
+            {/* ── Top bar ── */}
+            <div
+              className="flex items-center justify-between mb-7 flex-wrap gap-3"
+              style={{ animation:"fadeUp .4s ease both" }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-orange-500 flex items-center justify-center
+                                text-syne text-[17px] font-bold text-white flex-shrink-0">
+                  AK
+                </div>
+                <div>
+                  <p className="text-syne text-[19px] font-bold text-stone-900 leading-tight">
+                    Ananya Kapoor
+                  </p>
+                  <p className="text-[12px] text-stone-400">@ananya.cooks · Recipe Creator</p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold
+                               bg-green-50 border border-green-200 text-green-600 px-3 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Active
+              </span>
+            </div>
+
+            {/* ── Stats ── */}
+            <div className="flex flex-wrap gap-2.5 mb-7">
+              {[
+                { icon:Users,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Followers",   value:"16.4K", delay:.05 },
+                { icon:Play,          iconColor:"#3a8aaa", iconBg:"#eff5fd", label:"Recipes",     value:recipesUploaded.length, delay:.10 },
+                { icon:Heart,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Total Likes", value:fmt(totalLikes),    delay:.15 },
+                { icon:MessageCircle, iconColor:"#4a9a6a", iconBg:"#edfae8", label:"Comments",    value:totalComments,       delay:.20 },
+              ].map(s => <StatCard key={s.label} {...s} />)}
+            </div>
+
+            {/* ── Section header ── */}
+            <div
+              className="flex items-center justify-between mb-4 flex-wrap gap-2"
+              style={{ animation:"fadeUp .4s .22s ease both", opacity:0, animationFillMode:"both" }}
+            >
+              <h2 className="text-syne text-[17px] font-bold text-stone-900">Your Recipes</h2>
+              <div className="flex gap-1.5">
+                {[
+                  { key:"all",   label:"All"   },
+                  { key:"video", label:"Video" },
+                  { key:"text",  label:"Text"  },
+                ].map(f => (
+                  <button
+                    key={f.key}
+                    onClick={() => setFilter(f.key)}
+                    className={`px-3.5 py-1.5 rounded-full border text-[11px] font-semibold transition-all
+                      ${filter === f.key
+                        ? "bg-orange-500 border-orange-500 text-white"
+                        : "bg-white border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500"}`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Grid ── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {filtered.map((recipe, i) => (
+                <RecipeCard
+                  key={recipe.id ?? i}
+                  recipe={recipe}
+                  index={i}
+                  onClick={() => setSelected(recipesUploaded.indexOf(recipe))}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+      </div>
     </>
   );
 };

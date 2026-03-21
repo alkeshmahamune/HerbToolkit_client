@@ -16,7 +16,7 @@ import {
 import HerbToolkit from "../assets/HerbToolkit.png";
 import Dashboard from "./pages/ControlPanel";
 import AddRecipe from "./pages/AddRecipe";
-import RecipeCards from "./pages/RecipeCards";
+import RecipesView from "./pages/RecipeCards";
 import { recipesUploaded } from "./recipeData";
 import AIRecipe from "./pages/AIRecipe";
 import HomeMade from "./pages/HomeMade";
@@ -26,7 +26,7 @@ import InventoryManagement from "./pages/InventoryManagement";
 const InfluencerDashboard = () => {
   const menus = [
     { name: "Dashboard", icon: LayoutDashboard, component: Dashboard },
-    { name: "Recipes", icon: BookOpen, component: RecipeCards },
+    { name: "Recipes", icon: BookOpen, component: RecipesView },
     { name: "Post Recipe", icon: PlusSquare, component: AddRecipe },
     { name: "AI Recipe", icon: Bot, component: AIRecipe },
     { name: "Herbal Kitchen", icon: Khalbatta, component: HomeMade },

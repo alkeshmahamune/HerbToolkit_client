@@ -160,7 +160,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
       tags: [],
       steps: [{ value: "" }],
       ingredients: [{ name: "", amount: "", unit: "" }],
-      steps: [{ value: "" }],
+      // steps: [{ value: "" }],
       author: "",
       authorInit: "",
       authorBg: "#fef3e2",

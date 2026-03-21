@@ -227,7 +227,7 @@ const DoctorAddRecipe = ({ onSubmit: onSubmitProp }) => {
                           : "border-stone-200 bg-white hover:border-stone-300"}`}
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${opt.iconBg} flex-shrink-0`}>
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${opt.iconBg} shrink-0`}>
                           {opt.icon}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -241,7 +241,7 @@ const DoctorAddRecipe = ({ onSubmit: onSubmitProp }) => {
                           )}
                         </div>
                         {recipeKind === opt.key && (
-                          <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center flex-shrink-0">
+                          <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center shrink-0">
                             <Check size={10} className="text-white" />
                           </div>
                         )}
@@ -295,7 +295,7 @@ const DoctorAddRecipe = ({ onSubmit: onSubmitProp }) => {
               {/* Info banner for general */}
               {recipeKind === "general" && (
                 <div className="flex items-start gap-3 bg-stone-50 border border-stone-200 rounded-xl p-3.5">
-                  <Lock size={14} className="text-stone-400 flex-shrink-0 mt-0.5" />
+                  <Lock size={14} className="text-stone-400 shrink-0 mt-0.5" />
                   <p className="text-[12px] text-stone-500 leading-relaxed">
                     General recipes are always <span className="font-semibold text-stone-700">private</span>.
                     Only herbal recipes can be shared publicly with patients.
@@ -367,7 +367,7 @@ const DoctorAddRecipe = ({ onSubmit: onSubmitProp }) => {
               <Field label="Description" required error={errors.description}>
                 <textarea
                   {...register("description", { required:"Add a short description" })}
-                  className={`${inputCls(errors.description)} resize-none min-h-[88px]`}
+                  className={`${inputCls(errors.description)} resize-none min-h-22`}
                   placeholder={recipeKind === "herbal"
                     ? "What is this remedy for? Who should use it?"
                     : "Describe this recipe briefly…"}
@@ -394,7 +394,7 @@ const DoctorAddRecipe = ({ onSubmit: onSubmitProp }) => {
                   <Field label="Warnings / Contraindications" hint="Optional but recommended">
                     <textarea
                       {...register("warnings")}
-                      className={`${inputCls(false)} resize-none min-h-[72px]`}
+                      className={`${inputCls(false)} resize-none min-h-18`}
                       placeholder="e.g. Not suitable for pregnant women. Consult before use."
                     />
                   </Field>
@@ -488,7 +488,7 @@ const DoctorAddRecipe = ({ onSubmit: onSubmitProp }) => {
               <Field label="Steps" required error={errors.steps}>
                 <textarea
                   {...register("steps", { required:"Add at least one step" })}
-                  className={`${inputCls(errors.steps)} resize-none min-h-[140px]`}
+                  className={`${inputCls(errors.steps)} resize-none min-h-35`}
                   placeholder={recipeKind === "herbal"
                     ? "Step 1: Boil 2 cups water…\nStep 2: Add herbs and steep for 10 min…"
                     : "Step 1: Chop onions finely…\nStep 2: Heat oil in pan…"}
@@ -566,8 +566,8 @@ const DoctorAddRecipe = ({ onSubmit: onSubmitProp }) => {
                   ? "bg-teal-50 border-teal-100"
                   : "bg-stone-50 border-stone-200"}`}>
                 {resolvedAccess === "public"
-                  ? <Globe size={14} className="text-teal-600 flex-shrink-0 mt-0.5" />
-                  : <Lock  size={14} className="text-stone-400 flex-shrink-0 mt-0.5" />}
+                  ? <Globe size={14} className="text-teal-600 shrink-0 mt-0.5" />
+                  : <Lock  size={14} className="text-stone-400 shrink-0 mt-0.5" />}
                 <p className={`text-[12px] leading-relaxed ${resolvedAccess === "public" ? "text-teal-700" : "text-stone-500"}`}>
                   This recipe will be saved as{" "}
                   <span className="font-bold">{resolvedAccess}</span>.

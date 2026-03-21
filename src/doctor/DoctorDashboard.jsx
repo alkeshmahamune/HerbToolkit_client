@@ -14,9 +14,7 @@ import {
   LogOut
 } from "lucide-react";
 import HerbToolkit from "../assets/HerbToolkit.png";
-// import HerbalRecipe from "../components/HerbalRecipe";
 import { Khalbatta } from "../CustomIcons";
-// import SavedRecipes from "../components/SavedRecipes";
 
 // pages imports - lazy loaded
 const Home = lazy(() => import("./pages/Home"));
@@ -24,19 +22,20 @@ const PersonalizedRecipe = lazy(() => import("./pages/PersonalizedRecipe"));
 const DoctorAddRecipe = lazy(() =>
   import("./pages/DoctorAddRecipe")
 );
-// const AIRecipe = lazy(() => import("./userPages/AIRecipe"));
-// const Inventory = lazy(() => import("./userPages/Inventory"));
-
+const AIRecipegenerator = lazy(() => import("./pages/AIRecipegenerator"));
+const InventoryManagerDr = lazy(() => import("./pages/InventoryManager"));
+const HerbalRecipeDr=lazy(()=>import('./pages/HerbalRecipeDr'))
+const SavedRecipeDr=lazy(()=>import('./pages/SavedRecipeDr'))
 
 export default function RecipeDashboard() {
   const menus = [
     { name: "Home", icon: HomeIcon, component: Home },
     { name: "Personalized Recipes", icon: BookOpen, component: PersonalizedRecipe },
     { name: "Add Recipe", icon: PlusSquare, component: DoctorAddRecipe },
-    // { name: "Herbal Kitchen", icon: Khalbatta, component: HerbalRecipe },
-    // { name: "AI Recipe Suggestion", icon: Bot, component: AIRecipe },
-    // { name: "Inventory Management", icon: Warehouse, component: Inventory },
-    // { name: "Saved Recipies", icon: Bookmark, component: SavedRecipes },
+    { name: "Herbal Kitchen", icon: Khalbatta, component: HerbalRecipeDr },
+    { name: "AI Recipe Suggestion", icon: Bot, component: AIRecipegenerator },
+    { name: "Inventory Management", icon: Warehouse, component: InventoryManagerDr },
+    { name: "Saved Recipies", icon: Bookmark, component: SavedRecipeDr },
   ];
 
   const [collapsed, setCollapsed] = useState(false);

@@ -261,7 +261,7 @@ const RecipeDetail = ({ recipe, onBack, onDelete }) => {
                 {comments.map((c, i) => (
                   <div key={i} className="flex gap-2.5">
                     <div className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center
-                                    text-[10px] font-bold text-stone-500 flex-shrink-0">
+                                    text-[10px] font-bold text-stone-500 shrink-0">
                       {c.i || c.u.split(" ").map(w => w[0]).join("").slice(0, 2)}
                     </div>
                     <div>
@@ -345,7 +345,7 @@ const Dashboard = () => {
             >
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-2xl bg-orange-500 flex items-center justify-center
-                                text-syne text-[17px] font-bold text-white flex-shrink-0">
+                                text-syne text-[17px] font-bold text-white shrink-0">
                   AK
                 </div>
                 <div>

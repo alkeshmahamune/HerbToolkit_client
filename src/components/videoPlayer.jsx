@@ -31,7 +31,7 @@ export const VideoPlayer = ({ src }) => {
       {/* Big play overlay */}
       {!playing && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity">
-          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl text-orange-600">
+          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-xl text-teal-600">
             <PlayIcon />
           </div>
         </div>
@@ -47,15 +47,15 @@ export const VideoPlayer = ({ src }) => {
           className="w-full h-1 bg-white/30 rounded-full cursor-pointer mb-2 hover:h-1.5 transition-all"
           onClick={e => seek(e)}
         >
-          <div className="h-full bg-orange-500 rounded-full" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-teal-600 rounded-full" style={{ width: `${progress}%` }} />
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button className="text-white hover:text-orange-400 transition-colors" onClick={togglePlay}>
+            <button className="text-white hover:text-teal-400 transition-colors" onClick={togglePlay}>
               {playing ? <PauseIcon /> : <PlayIcon />}
             </button>
-            <button className="text-white hover:text-orange-400 transition-colors" onClick={toggleMute}>
+            <button className="text-white hover:text-teal-400 transition-colors" onClick={toggleMute}>
               {muted ? <MuteIcon /> : <VolumeIcon />}
             </button>
             {/* Volume slider */}
@@ -67,7 +67,7 @@ export const VideoPlayer = ({ src }) => {
             </div>
             <span className="text-white text-xs">{fmtTime(current)} / {fmtTime(duration)}</span>
           </div>
-          <button className="text-white hover:text-orange-400 transition-colors" onClick={fullscreen}>
+          <button className="text-white hover:text-teal-400 transition-colors" onClick={fullscreen}>
             <FullscreenIcon />
           </button>
         </div>

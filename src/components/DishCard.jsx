@@ -16,7 +16,7 @@ export const DishCard = ({ dish, index, onView }) => (
       <p className="text-xs text-gray-400 uppercase tracking-widest mb-3">{dish.cat}</p>
       <button
         onClick={() => onView(dish)}
-        className="w-full py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-sm rounded-xl transition-all duration-200"
+        className="w-full py-2 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white text-sm rounded-xl transition-all duration-200"
       >
         View Recipe
       </button>

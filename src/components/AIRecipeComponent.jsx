@@ -20,7 +20,7 @@ const SUGGESTIONS = [
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 const AiAvatar = () => (
-  <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center shrink-0">
+  <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center shrink-0">
     <ChefHat size={15} className="text-white" />
   </div>
 );
@@ -65,7 +65,7 @@ const SuggestionPills = ({ items, onSelect }) => (
         key={s}
         onClick={() => onSelect(s)}
         className="text-[11px] px-3 py-1 border border-stone-200 rounded-full bg-white
-                   text-stone-600 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50
+                   text-stone-600 hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50
                    transition-all duration-150 whitespace-nowrap"
       >
         {s}
@@ -99,10 +99,10 @@ const UserBubble = ({ msg }) => (
     style={{ animationFillMode: "both" }}
   >
     <div className="flex flex-col items-end max-w-[72%]">
-      <div className="bg-orange-600 rounded-[18px_18px_4px_18px] px-4 py-2.5">
+      <div className="bg-teal-600 rounded-[18px_18px_4px_18px] px-4 py-2.5">
         <p className="text-[13px] text-white leading-relaxed">{msg.text}</p>
         {msg.ingredients?.length > 0 && (
-          <p className="text-[11px] text-orange-200 mt-1">
+          <p className="text-[11px] text-teal-200 mt-1">
             🧄 With: {msg.ingredients.join(", ")}
           </p>
         )}
@@ -250,7 +250,7 @@ const AIRecipeComponent = () => {
 
         {/* ── Section heading ── */}
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 bg-orange-600 rounded-xl flex items-center justify-center">
+          <div className="w-8 h-8 bg-teal-600 rounded-xl flex items-center justify-center">
             <ChefHat size={16} className="text-white" />
           </div>
           <div>
@@ -313,7 +313,7 @@ const AIRecipeComponent = () => {
                 onKeyDown={handleIngKeyDown}
                 placeholder="e.g. Chicken, Tomatoes, Garlic…"
                 className="w-full text-[13px] text-stone-800 bg-white border border-stone-200 rounded-xl
-                           px-3 py-2 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-50
+                           px-3 py-2 outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-50
                            transition-all"
               />
             </div>
@@ -333,8 +333,8 @@ const AIRecipeComponent = () => {
                 className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0
                             transition-all duration-150
                             ${showIngPanel
-                              ? "bg-orange-50 border-orange-300 text-orange-600"
-                              : "border-stone-200 text-stone-500 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50"}`}
+                              ? "bg-teal-50 border-teal-300 text-teal-600"
+                              : "border-stone-200 text-stone-500 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50"}`}
               >
                 <ClipboardList size={16} />
               </button>
@@ -342,7 +342,7 @@ const AIRecipeComponent = () => {
               {/* Textarea */}
               <div
                 className={`flex-1 flex items-end gap-2 border rounded-xl px-3 py-2 bg-white transition-all
-                            ${input.trim() ? "border-orange-400 ring-2 ring-orange-50" : "border-stone-200"}`}
+                            ${input.trim() ? "border-teal-400 ring-2 ring-teal-50" : "border-stone-200"}`}
               >
                 <textarea
                   ref={textareaRef}
@@ -359,7 +359,7 @@ const AIRecipeComponent = () => {
                   disabled={!input.trim() || isTyping}
                   className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all
                               ${input.trim() && !isTyping
-                                ? "bg-orange-600 hover:bg-orange-700 active:scale-95"
+                                ? "bg-teal-600 hover:bg-teal-700 active:scale-95"
                                 : "bg-stone-100 cursor-not-allowed"}`}
                 >
                   <Send
@@ -378,7 +378,7 @@ const AIRecipeComponent = () => {
                 <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Shift+Enter</kbd> for new line
               </p>
               {ingredients.length > 0 && (
-                <span className="text-[10px] text-orange-600 bg-orange-50 border border-orange-100 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] text-teal-600 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded-full">
                   {ingredients.length} ingredient{ingredients.length > 1 ? "s" : ""} added
                 </span>
               )}
@@ -394,7 +394,7 @@ const AIRecipeComponent = () => {
               key={s}
               onClick={() => { setInput(s); sendMessage(s); }}
               className="text-[12px] px-3 py-1.5 border border-stone-200 rounded-full text-stone-600
-                         hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50 bg-white
+                         hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50 bg-white
                          transition-all duration-150"
             >
               {s}

@@ -52,7 +52,7 @@ export const VideoView = ({ dish, onBack }) => {
       {/* Channel row */}
       <div className="flex items-center justify-between py-3 border-y border-stone-100 mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm shrink-0">
+          <div className="w-11 h-11 rounded-full bg-teal-100 flex items-center justify-center text-teal-600 font-semibold text-sm shrink-0">
             {initials(dish.channel)}
           </div>
           <div>
@@ -62,7 +62,7 @@ export const VideoView = ({ dish, onBack }) => {
         </div>
         <button
           onClick={() => setSubscribed(s => !s)}
-          className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${subscribed ? "bg-stone-200 text-stone-600" : "bg-orange-600 hover:bg-orange-700 text-white"}`}
+          className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${subscribed ? "bg-stone-200 text-stone-600" : "bg-teal-600 hover:bg-teal-700 text-white"}`}
         >
           {subscribed ? "✓ Subscribed" : "Subscribe"}
         </button>
@@ -80,7 +80,7 @@ export const VideoView = ({ dish, onBack }) => {
             key={label}
             onClick={action}
             className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border text-sm transition-all
-              ${active ? "bg-orange-50 border-orange-300 text-orange-600" : "bg-stone-50 border-stone-200 text-gray-700 hover:bg-stone-100"}`}
+              ${active ? "bg-teal-50 border-teal-300 text-teal-600" : "bg-stone-50 border-stone-200 text-gray-700 hover:bg-stone-100"}`}
           >
             {icon} {label}
           </button>
@@ -101,12 +101,12 @@ export const VideoView = ({ dish, onBack }) => {
             onChange={e => setCommentText(e.target.value)}
             placeholder="Add a comment..."
             rows={2}
-            className="w-full border border-stone-200 focus:border-orange-400 rounded-xl px-3 py-2 text-sm text-gray-800 resize-none outline-none transition bg-white"
+            className="w-full border border-stone-200 focus:border-teal-400 rounded-xl px-3 py-2 text-sm text-gray-800 resize-none outline-none transition bg-white"
           />
           <div className="flex justify-end mt-1.5">
             <button
               onClick={postComment}
-              className="px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-sm rounded-full transition"
+              className="px-4 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-sm rounded-full transition"
             >
               Post
             </button>
@@ -129,7 +129,7 @@ export const VideoView = ({ dish, onBack }) => {
               <p className="text-sm text-gray-600 leading-relaxed mt-0.5">{c.text}</p>
               <button
                 onClick={() => toggleCLike(i)}
-                className={`mt-1.5 inline-flex items-center gap-1 text-xs transition-colors ${cLikes[i] ? "text-orange-500" : "text-gray-400 hover:text-orange-400"}`}
+                className={`mt-1.5 inline-flex items-center gap-1 text-xs transition-colors ${cLikes[i] ? "text-teal-600" : "text-gray-400 hover:text-teal-400"}`}
               >
                 <ThumbsUp size={11} fill={cLikes[i] ? "currentColor" : "none"} />
                 {(c.likes || 0) + (cLikes[i] ? 1 : 0)}

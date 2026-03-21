@@ -33,7 +33,7 @@ const RecipeCard = ({ recipe, onClick, index }) => (
   <article
     onClick={onClick}
     className="group bg-white border border-stone-200 rounded-2xl overflow-hidden
-               cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:border-orange-400
+               cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:border-teal-400
                transition-all duration-200"
     style={{ animation:`fadeUp .38s ${.25 + index * .06}s ease both`, opacity:0, animationFillMode:"both" }}
   >
@@ -48,7 +48,7 @@ const RecipeCard = ({ recipe, onClick, index }) => (
         <span className="text-[10px] font-semibold bg-white/90 text-stone-800 px-2 py-1 rounded-full">
           {recipe.type === "video" ? "▶ Video" : "📄 Text"}
         </span>
-        <span className="text-[10px] font-semibold bg-orange-500 text-white px-2 py-1 rounded-full">
+        <span className="text-[10px] font-semibold bg-teal-600 text-white px-2 py-1 rounded-full">
           {recipe.category}
         </span>
       </div>
@@ -75,7 +75,7 @@ const RecipeCard = ({ recipe, onClick, index }) => (
       </div>
       <div className="flex items-center gap-3">
         <span className="flex items-center gap-1 text-[11px] font-bold text-stone-500">
-          <Heart size={11} fill="#e8420a" className="text-orange-500" />
+          <Heart size={11} fill="#e8420a" className="text-teal-600" />
           {fmt(recipe.likes)}
         </span>
         <span className="flex items-center gap-1 text-[11px] font-bold text-stone-400">
@@ -124,7 +124,7 @@ const RecipeDetail = ({ recipe, onBack, onDelete }) => {
           onClick={onBack}
           className="inline-flex items-center gap-1.5 border border-stone-200 rounded-full
                      px-4 py-2 text-[12px] font-semibold text-stone-500 bg-white
-                     hover:border-orange-400 hover:text-orange-500 transition-all"
+                     hover:border-teal-400 hover:text-teal-600 transition-all"
         >
           <ArrowLeft size={14} /> Back
         </button>
@@ -189,7 +189,7 @@ const RecipeDetail = ({ recipe, onBack, onDelete }) => {
 
           {/* Title */}
           <div>
-            <p className="text-[10px] uppercase tracking-widest font-bold text-orange-500 mb-1.5">
+            <p className="text-[10px] uppercase tracking-widest font-bold text-teal-600 mb-1.5">
               {recipe.category}
             </p>
             <h2 className="text-syne text-[20px] font-bold text-stone-900 leading-tight mb-2">
@@ -215,8 +215,8 @@ const RecipeDetail = ({ recipe, onBack, onDelete }) => {
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl
                           border-[1.5px] text-[13px] font-bold transition-all
                 ${liked
-                  ? "bg-orange-50 border-orange-400 text-orange-600"
-                  : "bg-white border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500"}`}
+                  ? "bg-teal-50 border-teal-400 text-teal-600"
+                  : "bg-white border-stone-200 text-stone-500 hover:border-teal-400 hover:text-teal-600"}`}
             >
               <Heart
                 size={15}
@@ -282,12 +282,12 @@ const RecipeDetail = ({ recipe, onBack, onDelete }) => {
                 onKeyDown={e => e.key === "Enter" && postComment()}
                 placeholder="Add a comment…"
                 className="flex-1 border border-stone-200 rounded-xl px-3 py-2 text-[12px]
-                           text-stone-800 outline-none focus:border-orange-400 transition-all
+                           text-stone-800 outline-none focus:border-teal-400 transition-all
                            placeholder:text-stone-400"
               />
               <button
                 onClick={postComment}
-                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-[12px]
+                className="px-4 py-2 bg-teal-600 hover:bg-teal-600 text-white text-[12px]
                            font-bold rounded-xl transition-all active:scale-[.97]"
               >
                 Post
@@ -344,7 +344,7 @@ const Dashboard = () => {
               style={{ animation:"fadeUp .4s ease both" }}
             >
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-orange-500 flex items-center justify-center
+                <div className="w-11 h-11 rounded-2xl bg-teal-600 flex items-center justify-center
                                 text-syne text-[17px] font-bold text-white shrink-0">
                   AK
                 </div>
@@ -390,8 +390,8 @@ const Dashboard = () => {
                     onClick={() => setFilter(f.key)}
                     className={`px-3.5 py-1.5 rounded-full border text-[11px] font-semibold transition-all
                       ${filter === f.key
-                        ? "bg-orange-500 border-orange-500 text-white"
-                        : "bg-white border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500"}`}
+                        ? "bg-teal-600 border-teal-600 text-white"
+                        : "bg-white border-stone-200 text-stone-500 hover:border-teal-400 hover:text-teal-600"}`}
                   >
                     {f.label}
                   </button>

@@ -34,7 +34,7 @@ const inputCls = (err) =>
    transition-all font-sans placeholder:text-stone-400
    ${err
      ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-     : "border-stone-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-50"}`;
+     : "border-stone-200 focus:border-teal-400 focus:ring-2 focus:ring-teal-50"}`;
 
 const selectCls = (err) => inputCls(err) + " appearance-none cursor-pointer";
 
@@ -56,14 +56,14 @@ const STEP_LABELS = ["Type","Basics","Ingredients","Instructions","Media","Revie
 const StepBar = ({ current, total }) => (
   <div className="mb-8">
     <div className="flex items-center justify-between mb-2">
-      <span className="text-[11px] font-medium text-orange-600 uppercase tracking-widest">
+      <span className="text-[11px] font-medium text-teal-600 uppercase tracking-widest">
         Step {current} of {total}
       </span>
       <span className="text-[11px] text-stone-400">{STEP_LABELS[current - 1]}</span>
     </div>
     <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
       <div
-        className="h-full bg-orange-500 rounded-full transition-all duration-500"
+        className="h-full bg-teal-600 rounded-full transition-all duration-500"
         style={{ width: `${((current - 1) / (total - 1)) * 100}%` }}
       />
     </div>
@@ -72,7 +72,7 @@ const StepBar = ({ current, total }) => (
         <span
           key={label}
           className={`text-[10px] font-medium transition-colors ${
-            i + 1 <= current ? "text-orange-500" : "text-stone-300"
+            i + 1 <= current ? "text-teal-600" : "text-stone-300"
           }`}
         >
           {label}
@@ -105,7 +105,7 @@ const NavButtons = ({ onBack, onNext, nextLabel = "Next", nextType = "button", d
                   font-medium transition-all active:scale-[0.98]
         ${disabled
           ? "bg-stone-100 text-stone-400 cursor-not-allowed"
-          : "bg-orange-600 hover:bg-orange-700 text-white"}`}
+          : "bg-teal-600 hover:bg-teal-700 text-white"}`}
     >
       {nextLabel} <ChevronRight size={15} />
     </button>
@@ -209,7 +209,7 @@ const AddRecipe = () => {
           </p>
           <button
             onClick={() => { setStep(1); setRecipeType(null); setIsHerbal(null); setSubmitted(false); setSelectedDoc(null); setVideoFile(null); setVideoPreview(null); }}
-            className="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-[13px]
+            className="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-[13px]
                        font-medium rounded-xl transition-all"
           >
             Post Another Recipe
@@ -231,7 +231,7 @@ const AddRecipe = () => {
 
         {/* ── Page heading ── */}
         <div className="mb-6" style={{ animation:"fadeUp .35s ease both" }}>
-          <p className="text-[11px] uppercase tracking-[2px] font-medium text-orange-600 mb-1.5">
+          <p className="text-[11px] uppercase tracking-[2px] font-medium text-teal-600 mb-1.5">
             Share your knowledge
           </p>
          <h2 className="text-xl font-semibold text-gray-800 mb-6">
@@ -264,7 +264,7 @@ const AddRecipe = () => {
               {[
                 {
                   key:"text",
-                  icon: <FileText size={22} className="text-orange-600" />,
+                  icon: <FileText size={22} className="text-teal-600" />,
                   title:"Text Recipe",
                   desc:"Step-by-step written instructions with ingredients and photos.",
                 },
@@ -281,19 +281,19 @@ const AddRecipe = () => {
                   onClick={() => setRecipeType(opt.key)}
                   className={`text-left p-4 rounded-xl border-2 transition-all
                     ${recipeType === opt.key
-                      ? "border-orange-400 bg-orange-50"
+                      ? "border-teal-400 bg-teal-50"
                       : "border-stone-200 bg-white hover:border-stone-300"}`}
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center
-                      ${recipeType === opt.key ? "bg-orange-100" : "bg-stone-100"}`}>
+                      ${recipeType === opt.key ? "bg-teal-100" : "bg-stone-100"}`}>
                       {opt.icon}
                     </div>
-                    <span className={`text-[14px] font-semibold ${recipeType === opt.key ? "text-orange-700" : "text-stone-800"}`}>
+                    <span className={`text-[14px] font-semibold ${recipeType === opt.key ? "text-teal-700" : "text-stone-800"}`}>
                       {opt.title}
                     </span>
                     {recipeType === opt.key && (
-                      <div className="ml-auto w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center">
+                      <div className="ml-auto w-5 h-5 rounded-full bg-teal-600 flex items-center justify-center">
                         <Check size={11} className="text-white" />
                       </div>
                     )}
@@ -311,7 +311,7 @@ const AddRecipe = () => {
               {[
                 {
                   key: false,
-                  icon: <Flame size={20} className="text-orange-500" />,
+                  icon: <Flame size={20} className="text-teal-600" />,
                   title:"Regular Recipe",
                   desc:"Standard food recipe — any cuisine or category.",
                 },
@@ -331,20 +331,20 @@ const AddRecipe = () => {
                     ${isHerbal === opt.key
                       ? opt.key
                         ? "border-green-400 bg-green-50"
-                        : "border-orange-400 bg-orange-50"
+                        : "border-teal-400 bg-teal-50"
                       : "border-stone-200 bg-white hover:border-stone-300"}`}
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center
                       ${isHerbal === opt.key
-                        ? opt.key ? "bg-green-100" : "bg-orange-100"
+                        ? opt.key ? "bg-green-100" : "bg-teal-100"
                         : "bg-stone-100"}`}>
                       {opt.icon}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`text-[14px] font-semibold ${
                         isHerbal === opt.key
-                          ? opt.key ? "text-green-700" : "text-orange-700"
+                          ? opt.key ? "text-green-700" : "text-teal-700"
                           : "text-stone-800"}`}>
                         {opt.title}
                       </p>
@@ -356,7 +356,7 @@ const AddRecipe = () => {
                     </div>
                     {isHerbal === opt.key && (
                       <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0
-                        ${opt.key ? "bg-green-500" : "bg-orange-500"}`}>
+                        ${opt.key ? "bg-green-500" : "bg-teal-600"}`}>
                         <Check size={11} className="text-white" />
                       </div>
                     )}
@@ -557,9 +557,9 @@ const AddRecipe = () => {
             <button
               type="button"
               onClick={() => addIng({ name:"", quantity:"", unit:"" })}
-              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-orange-600
-                         bg-orange-50 border border-dashed border-orange-200 rounded-xl px-4 py-2.5
-                         hover:bg-orange-100 transition-all"
+              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-teal-600
+                         bg-teal-50 border border-dashed border-teal-200 rounded-xl px-4 py-2.5
+                         hover:bg-teal-100 transition-all"
             >
               <Plus size={13} /> Add Ingredient
             </button>
@@ -679,7 +679,7 @@ const AddRecipe = () => {
                       type="button"
                       onClick={() => videoInputRef.current?.click()}
                       className="w-full border-2 border-dashed border-stone-200 rounded-xl p-8
-                                 flex flex-col items-center gap-3 hover:border-orange-300 hover:bg-orange-50
+                                 flex flex-col items-center gap-3 hover:border-teal-300 hover:bg-teal-50
                                  transition-all cursor-pointer"
                     >
                       <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center">
@@ -710,7 +710,7 @@ const AddRecipe = () => {
                   <button
                     type="button"
                     className="w-full border-2 border-dashed border-stone-200 rounded-xl p-8
-                               flex flex-col items-center gap-3 hover:border-orange-300 hover:bg-orange-50
+                               flex flex-col items-center gap-3 hover:border-teal-300 hover:bg-teal-50
                                transition-all cursor-pointer"
                   >
                     <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center">
@@ -740,15 +740,15 @@ const AddRecipe = () => {
                       onClick={() => setVisibility(v.key)}
                       className={`text-left p-3 rounded-xl border-2 transition-all
                         ${visibility === v.key
-                          ? "border-orange-400 bg-orange-50"
+                          ? "border-teal-400 bg-teal-50"
                           : "border-stone-200 bg-white hover:border-stone-300"}`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className={`text-[13px] font-medium ${visibility === v.key ? "text-orange-700" : "text-stone-800"}`}>
+                        <span className={`text-[13px] font-medium ${visibility === v.key ? "text-teal-700" : "text-stone-800"}`}>
                           {v.label}
                         </span>
                         {visibility === v.key && (
-                          <div className="w-4 h-4 rounded-full bg-orange-500 flex items-center justify-center">
+                          <div className="w-4 h-4 rounded-full bg-teal-600 flex items-center justify-center">
                             <Check size={9} className="text-white" />
                           </div>
                         )}
@@ -806,18 +806,18 @@ const AddRecipe = () => {
                   onClick={() => setSelectedDoc(doc.id)}
                   className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all
                     ${selectedDoc === doc.id
-                      ? "border-orange-400 bg-orange-50"
+                      ? "border-teal-400 bg-teal-50"
                       : "border-stone-200 bg-white hover:border-stone-300"}`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[13px]
                                    font-semibold shrink-0 transition-all
                     ${selectedDoc === doc.id
-                      ? "bg-orange-500 text-white"
+                      ? "bg-teal-600 text-white"
                       : "bg-stone-100 text-stone-600"}`}>
                     {doc.avatar}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-[13px] font-medium ${selectedDoc === doc.id ? "text-orange-800" : "text-stone-800"}`}>
+                    <p className={`text-[13px] font-medium ${selectedDoc === doc.id ? "text-teal-800" : "text-stone-800"}`}>
                       {doc.name}
                     </p>
                     <p className="text-[11px] text-stone-400 flex items-center gap-1">
@@ -825,7 +825,7 @@ const AddRecipe = () => {
                     </p>
                   </div>
                   {selectedDoc === doc.id && (
-                    <div className="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center shrink-0">
+                    <div className="w-5 h-5 rounded-full bg-teal-600 flex items-center justify-center shrink-0">
                       <Check size={11} className="text-white" />
                     </div>
                   )}

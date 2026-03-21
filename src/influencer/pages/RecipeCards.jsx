@@ -50,7 +50,7 @@ const CategoryView = ({ cat, onSelectDish, onBack }) => {
         <p className="text-sm text-gray-400 mb-2">
           Authentic Indian {cat.heading.toLowerCase()} recipes
         </p>
-        <span className="inline-block bg-orange-50 text-orange-600 text-xs font-medium px-3 py-1 rounded-lg">
+        <span className="inline-block bg-teal-50 text-teal-600 text-xs font-medium px-3 py-1 rounded-lg">
           {dishes.length} Recipes
         </span>
       </div>

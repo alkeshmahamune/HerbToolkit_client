@@ -7,7 +7,7 @@ import Register from './pages/Register'
 import RecipeDashboard from './user/dashboard'
 // import List from './user/List'
 import InfluencerDashboard from './influencer/InfluencerDashboard'
-import DoctorDashboard from './doctor/Dashboard'
+import DoctorDashboard from './doctor/DoctorDashboard'
 
 const App = () => {
   return (

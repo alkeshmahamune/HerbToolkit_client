@@ -104,8 +104,8 @@ const InfluencerDashboard = () => {
                 className={`flex items-center ${collapsed ? "justify-center" : "justify-start"} gap-3 px-3 py-3 rounded-lg cursor-pointer transition
                 ${
                   active === index
-                    ? "bg-orange-500 text-white"
-                    : "text-gray-600 hover:bg-orange-100"
+                    ? "bg-teal-600 text-white"
+                    : "text-gray-600 hover:bg-teal-100"
                 }`}
               >
                 <Icon size={20} />
@@ -144,13 +144,13 @@ const InfluencerDashboard = () => {
             <input
               type="text"
               placeholder="Search recipes..."
-              className="w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
             />
           </div>
 
           {/* Profile */}
           <div className="flex items-center gap-3 cursor-pointer">
-            <div className="w-9 h-9 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+            <div className="w-9 h-9 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
               A
             </div>
             {/* <span className="text-sm text-gray-700">Alex</span> */}

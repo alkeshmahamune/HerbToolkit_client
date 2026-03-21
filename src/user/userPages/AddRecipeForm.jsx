@@ -57,7 +57,7 @@ const inputCls = (hasError) =>
    ${
      hasError
        ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-       : "border-stone-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-50"
+       : "border-stone-200 focus:border-teal-400 focus:ring-2 focus:ring-teal-50"
    }`;
 
 // ─── Shared sub-components ────────────────────────────────────────────────────
@@ -81,7 +81,7 @@ const StepIndicator = ({ current, completed }) => (
     {/* connecting line */}
     <div className="absolute top-4 left-0 right-0 h-px bg-stone-200 z-0" />
     <div
-      className="absolute top-4 left-0 h-px bg-orange-400 z-0 transition-all duration-500"
+      className="absolute top-4 left-0 h-px bg-teal-400 z-0 transition-all duration-500"
       style={{ width: `${(current / (STEPS_META.length - 1)) * 100}%` }}
     />
 
@@ -94,8 +94,8 @@ const StepIndicator = ({ current, completed }) => (
           <div
             className={`w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-semibold
                         border-2 transition-all duration-300
-                        ${done ? "bg-orange-500 border-orange-500 text-white" : ""}
-                        ${active ? "bg-white border-orange-500 text-orange-600 shadow-md shadow-orange-100" : ""}
+                        ${done ? "bg-teal-600 border-teal-600 text-white" : ""}
+                        ${active ? "bg-white border-teal-600 text-teal-600 shadow-md shadow-teal-100" : ""}
                         ${future ? "bg-white border-stone-200 text-stone-400" : ""}`}
           >
             {done ? <Check size={14} /> : i + 1}
@@ -103,7 +103,7 @@ const StepIndicator = ({ current, completed }) => (
           <span
             className={`text-[11px] font-medium transition-colors ${
               active
-                ? "text-orange-600"
+                ? "text-teal-600"
                 : done
                   ? "text-stone-600"
                   : "text-stone-400"
@@ -315,7 +315,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
       <div className="max-w-xl mx-auto px-4 py-10 min-h-screen bg-stone-50">
         {/* ── Header ── */}
         <div className="mb-6" style={{ animation: "fadeUp .35s ease both" }}>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-orange-500 mb-1">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-teal-600 mb-1">
             Step {currentStep + 1} of {STEPS_META.length}
           </p>
           <h1 className="font-serif text-[26px] font-semibold text-stone-900 leading-tight">
@@ -454,7 +454,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
                 className={`py-2.5 rounded-xl border text-[13px] font-medium transition-all
                   ${field.value === val
                     ? active
-                    : "border-stone-200 text-stone-500 hover:border-orange-300 hover:text-orange-600"}`}
+                    : "border-stone-200 text-stone-500 hover:border-teal-300 hover:text-teal-600"}`}
               >
                 {val}
               </button>
@@ -492,7 +492,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
     <Field label="Tags" hint="Press Enter or comma to add a tag">
       <div
         className="flex flex-wrap gap-1.5 p-2.5 rounded-xl border border-stone-200 min-h-44 cursor-text
-                   focus-within:border-orange-400 focus-within:ring-2 focus-within:ring-orange-50 transition-all"
+                   focus-within:border-teal-400 focus-within:ring-2 focus-within:ring-teal-50 transition-all"
       >
         {tags.map((tag, i) => (
           <span key={i} className="inline-flex items-center gap-1 bg-amber-50 text-amber-900 text-[12px] font-medium px-2.5 py-1 rounded-full">
@@ -622,9 +622,9 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
       <button
         type="button"
         onClick={() => appendIngredient({ name: "", amount: "", unit: "" })}
-        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-orange-600
-                   bg-orange-50 border border-dashed border-orange-200 rounded-xl px-4 py-2.5
-                   hover:bg-orange-100 transition-all mt-3"
+        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-teal-600
+                   bg-teal-50 border border-dashed border-teal-200 rounded-xl px-4 py-2.5
+                   hover:bg-teal-100 transition-all mt-3"
       >
         <Plus size={13} /> Add Ingredient
       </button>
@@ -643,7 +643,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
 
               {stepFields.map((field, index) => (
                 <div key={field.id} className="flex items-start gap-2">
-                  <div className="w-7 h-7 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-[11px] font-semibold text-orange-600 shrink-0 mt-2.5">
+                  <div className="w-7 h-7 rounded-full bg-teal-50 border border-teal-100 flex items-center justify-center text-[11px] font-semibold text-teal-600 shrink-0 mt-2.5">
                     {index + 1}
                   </div>
                   <input
@@ -678,9 +678,9 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
               <button
                 type="button"
                 onClick={() => appendStep({ value: "" })}
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-orange-600
-                           bg-orange-50 border border-dashed border-orange-200 rounded-xl px-4 py-2.5
-                           hover:bg-orange-100 transition-all self-start mt-2"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-teal-600
+                           bg-teal-50 border border-dashed border-teal-200 rounded-xl px-4 py-2.5
+                           hover:bg-teal-100 transition-all self-start mt-2"
               >
                 <Plus size={13} /> Add Step
               </button>
@@ -749,7 +749,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
                             key={c}
                             type="button"
                             onClick={() => field.onChange(c)}
-                            className={`w-8 h-8 rounded-lg border-2 shrink-0 transition-all ${field.value === c ? "border-orange-500 scale-110" : "border-transparent hover:border-stone-300"}`}
+                            className={`w-8 h-8 rounded-lg border-2 shrink-0 transition-all ${field.value === c ? "border-teal-600 scale-110" : "border-transparent hover:border-stone-300"}`}
                             style={{ background: c }}
                           />
                         ))}
@@ -757,7 +757,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
                           value={field.value}
                           onChange={(e) => field.onChange(e.target.value)}
                           maxLength={7}
-                          className="flex-1 min-w-18 px-2.5 py-1.5 border border-stone-200 rounded-lg text-[12px] font-mono text-stone-700 outline-none focus:border-orange-400 transition-all"
+                          className="flex-1 min-w-18 px-2.5 py-1.5 border border-stone-200 rounded-lg text-[12px] font-mono text-stone-700 outline-none focus:border-teal-400 transition-all"
                           placeholder="#fef3e2"
                         />
                       </div>
@@ -776,7 +776,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
                             key={c}
                             type="button"
                             onClick={() => field.onChange(c)}
-                            className={`w-8 h-8 rounded-lg border-2 shrink-0 transition-all ${field.value === c ? "border-orange-500 scale-110" : "border-transparent hover:border-stone-300"}`}
+                            className={`w-8 h-8 rounded-lg border-2 shrink-0 transition-all ${field.value === c ? "border-teal-600 scale-110" : "border-transparent hover:border-stone-300"}`}
                             style={{ background: c }}
                           />
                         ))}
@@ -784,7 +784,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
                           value={field.value}
                           onChange={(e) => field.onChange(e.target.value)}
                           maxLength={7}
-                          className="flex-1 min-w-18 px-2.5 py-1.5 border border-stone-200 rounded-lg text-[12px] font-mono text-stone-700 outline-none focus:border-orange-400 transition-all"
+                          className="flex-1 min-w-18 px-2.5 py-1.5 border border-stone-200 rounded-lg text-[12px] font-mono text-stone-700 outline-none focus:border-teal-400 transition-all"
                           placeholder="#92400e"
                         />
                       </div>
@@ -867,7 +867,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
             <button
               type="button"
               onClick={goNext}
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-orange-600 hover:bg-orange-700
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-teal-600 hover:bg-teal-700
                          active:scale-[0.98] text-white text-[13px] font-medium rounded-xl transition-all"
             >
               Next <ChevronRight size={15} />
@@ -876,7 +876,7 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
             <button
               type="button"
               onClick={handleSubmit(onSubmit)}
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-orange-600 hover:bg-orange-700
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-teal-600 hover:bg-teal-700
                          active:scale-[0.98] text-white text-[13px] font-medium rounded-xl transition-all"
             >
               <Check size={15} /> Publish Recipe
@@ -891,9 +891,9 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
               key={i}
               className={`rounded-full transition-all duration-300 ${
                 i === currentStep
-                  ? "w-5 h-2 bg-orange-500"
+                  ? "w-5 h-2 bg-teal-600"
                   : completed.includes(i)
-                    ? "w-2 h-2 bg-orange-300"
+                    ? "w-2 h-2 bg-teal-300"
                     : "w-2 h-2 bg-stone-200"
               }`}
             />

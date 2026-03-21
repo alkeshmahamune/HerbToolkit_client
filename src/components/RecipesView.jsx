@@ -100,7 +100,7 @@ const RecipesView = () => {
               ))}
             </div>
             <button
-              className="w-full py-2 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white text-sm rounded-xl transition-all duration-200 cursor-pointer"
+              className="w-full py-2 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white text-sm rounded-xl transition-all duration-200 cursor-pointer"
               onClick={() => setRecipeView(idx)}
             >
               View Recipe
@@ -145,7 +145,7 @@ const RecipesView = () => {
               ))}
             </div>
             <button
-              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded"
+              className="mt-4 px-4 py-2 bg-teal-600 text-white rounded"
               onClick={() => setRecipeView(null)}
             >
               Close

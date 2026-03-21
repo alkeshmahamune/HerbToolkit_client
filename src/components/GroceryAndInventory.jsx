@@ -159,7 +159,7 @@ const daysText = (diff) =>
 
 const inputCls =
   "w-full px-3 py-2.5 rounded-xl border border-stone-200 text-[13px] text-stone-800 bg-white outline-none " +
-  "focus:border-orange-400 focus:ring-2 focus:ring-orange-50 transition-all font-sans";
+  "focus:border-teal-400 focus:ring-2 focus:ring-teal-50 transition-all font-sans";
 
 const selectCls = inputCls + " appearance-none";
 
@@ -304,7 +304,7 @@ const ItemModal = ({ item, onSave, onClose }) => {
           <button
             onClick={handleSave}
             disabled={!form.name.trim() || !form.exp}
-            className="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 disabled:bg-stone-200
+            className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 disabled:bg-stone-200
                        disabled:cursor-not-allowed text-white text-[13px] font-medium rounded-xl transition-all"
           >
             Save Item
@@ -482,7 +482,7 @@ const InventoryTab = ({ inventory, onAdd, onEdit, onDelete }) => {
           </div>
           <button
             onClick={onAdd}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-600 hover:bg-teal-700
                        text-white text-[13px] font-medium rounded-xl transition-all active:scale-[0.98]"
           >
             <Plus size={14} /> Add Item
@@ -751,7 +751,7 @@ const GroceryTab = () => {
             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium border transition-all
               ${
                 showCustom
-                  ? "bg-orange-50 border-orange-300 text-orange-700"
+                  ? "bg-teal-50 border-teal-300 text-teal-700"
                   : "border-stone-200 text-stone-600 hover:bg-stone-50"
               }`}
           >
@@ -774,7 +774,7 @@ const GroceryTab = () => {
 
       {/* Custom item input panel */}
       {showCustom && (
-        <div className="px-5 py-4 border-b border-stone-100 bg-orange-50/50 animate-[fadeUp_.2s_ease_both]">
+        <div className="px-5 py-4 border-b border-stone-100 bg-teal-50/50 animate-[fadeUp_.2s_ease_both]">
           <p className="text-[12px] font-medium text-stone-600 mb-3">
             Add a custom grocery item
           </p>
@@ -786,7 +786,7 @@ const GroceryTab = () => {
                 value={customEmoji}
                 onChange={(e) => setCustomEmoji(e.target.value)}
                 className="w-16 h-10 border border-stone-200 rounded-xl bg-white text-center text-[16px] outline-none
-                           focus:border-orange-400 focus:ring-2 focus:ring-orange-50 cursor-pointer appearance-none px-2"
+                           focus:border-teal-400 focus:ring-2 focus:ring-teal-50 cursor-pointer appearance-none px-2"
               >
                 {EMOJI_OPTIONS.map((e) => (
                   <option key={e} value={e}>
@@ -808,7 +808,7 @@ const GroceryTab = () => {
             <button
               onClick={addCustomItem}
               disabled={!customInput.trim()}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-orange-600 hover:bg-orange-700
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-teal-600 hover:bg-teal-700
                          disabled:bg-stone-200 disabled:cursor-not-allowed text-white text-[13px]
                          font-medium rounded-xl transition-all active:scale-[0.98]"
             >
@@ -822,13 +822,13 @@ const GroceryTab = () => {
               {customItems.map((g) => (
                 <span
                   key={g.id}
-                  className="inline-flex items-center gap-1.5 bg-white border border-orange-200 text-orange-800
+                  className="inline-flex items-center gap-1.5 bg-white border border-teal-200 text-teal-800
                              text-[12px] font-medium px-2.5 py-1 rounded-full"
                 >
                   {g.emoji} {g.name}
                   <button
                     onClick={() => removeCustomItem(g.id)}
-                    className="text-orange-400 hover:text-orange-700 transition-colors leading-none"
+                    className="text-teal-400 hover:text-teal-700 transition-colors leading-none"
                   >
                     <X size={11} />
                   </button>
@@ -858,7 +858,7 @@ const GroceryTab = () => {
                 {cat}
               </p>
               {cat === "Custom" && (
-                <span className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                <span className="text-[10px] bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-medium">
                   yours
                 </span>
               )}
@@ -874,13 +874,13 @@ const GroceryTab = () => {
                       className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-xl border text-left transition-all
                         ${
                           isChecked
-                            ? "border-orange-300 bg-orange-50"
-                            : "border-stone-200 bg-white hover:border-orange-200 hover:bg-orange-50/50"
+                            ? "border-teal-300 bg-teal-50"
+                            : "border-stone-200 bg-white hover:border-teal-200 hover:bg-teal-50/50"
                         }`}
                     >
                       <div
                         className={`w-4 h-4 rounded-[5px] border-[1.5px] flex items-center justify-center shrink-0 transition-all
-                          ${isChecked ? "bg-orange-600 border-orange-600" : "border-stone-300"}`}
+                          ${isChecked ? "bg-teal-600 border-teal-600" : "border-stone-300"}`}
                       >
                         {isChecked && (
                           <Check
@@ -892,7 +892,7 @@ const GroceryTab = () => {
                       </div>
                       <span className="text-[14px]">{g.emoji}</span>
                       <span
-                        className={`text-[12px] font-medium leading-tight flex-1 ${isChecked ? "text-orange-700" : "text-stone-700"}`}
+                        className={`text-[12px] font-medium leading-tight flex-1 ${isChecked ? "text-teal-700" : "text-stone-700"}`}
                       >
                         {g.name}
                       </span>
@@ -920,7 +920,7 @@ const GroceryTab = () => {
         <span className="text-[13px] text-stone-500">
           {checked.size} item{checked.size !== 1 ? "s" : ""} selected
           {customItems.length > 0 && (
-            <span className="ml-2 text-[12px] text-orange-600">
+            <span className="ml-2 text-[12px] text-teal-600">
               · {customItems.length} custom
             </span>
           )}
@@ -975,13 +975,13 @@ const GroceryTab = () => {
                 className={`inline-flex items-center gap-1.5 text-[12px] font-medium px-3 py-1.5 rounded-full
                   ${
                     g.id.startsWith("custom-")
-                      ? "bg-orange-50 text-orange-800 border border-orange-200"
+                      ? "bg-teal-50 text-teal-800 border border-teal-200"
                       : "bg-stone-100 text-stone-700"
                   }`}
               >
                 {g.emoji} {g.name}
                 {g.id.startsWith("custom-") && (
-                  <span className="text-[10px] text-orange-500 font-normal">
+                  <span className="text-[10px] text-teal-600 font-normal">
                     custom
                   </span>
                 )}
@@ -1051,7 +1051,7 @@ const InventoryManager = () => {
               onClick={() => setTab(t.key)}
               className={`px-5 py-2 rounded-lg text-[13px] font-medium transition-all ${
                 tab === t.key
-                  ? "bg-orange-600 text-white"
+                  ? "bg-teal-600 text-white"
                   : "text-stone-500 hover:text-stone-800 hover:bg-stone-50"
               }`}
             >

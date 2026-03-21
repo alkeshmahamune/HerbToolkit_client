@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Users, Play, Heart, MessageCircle, ArrowLeft, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Users, Play, Heart, MessageCircle, ArrowLeft, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
 import { recipesUploaded } from "../recipeData";
-
+//this is the control panel which is home(dashboard) for influencer
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 const fmt = (n) => (n >= 1000 ? (n / 1000).toFixed(1) + "K" : n);
@@ -10,12 +10,12 @@ const fmt = (n) => (n >= 1000 ? (n / 1000).toFixed(1) + "K" : n);
 
 const StatCard = ({ icon: Icon, iconColor, iconBg, label, value, delay }) => (
   <div
-    className="flex-1 min-w-[130px] bg-white border border-stone-200 rounded-2xl
+    className="flex-1 min-w-32.5 bg-white border border-stone-200 rounded-2xl
                p-4 flex items-center gap-3"
     style={{ animation:`fadeUp .4s ${delay}s ease both`, opacity:0, animationFillMode:"both" }}
   >
     <div
-      className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+      className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
       style={{ background: iconBg }}
     >
       <Icon size={16} color={iconColor} />
@@ -89,11 +89,12 @@ const RecipeCard = ({ recipe, onClick, index }) => (
 
 // ─── Detail / Recipe view ─────────────────────────────────────────────────────
 
-const RecipeDetail = ({ recipe, onBack }) => {
-  const [liked,     setLiked]     = useState(false);
-  const [disliked,  setDisliked]  = useState(false);
-  const [comments,  setComments]  = useState(recipe.comments ?? []);
-  const [input,     setInput]     = useState("");
+const RecipeDetail = ({ recipe, onBack, onDelete }) => {
+  const [liked,    setLiked]    = useState(false);
+  const [disliked, setDisliked] = useState(false);
+  const [comments, setComments] = useState(recipe.comments ?? []);
+  const [input,    setInput]    = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const toggleLike = () => {
     setLiked(l => !l);
@@ -116,37 +117,74 @@ const RecipeDetail = ({ recipe, onBack }) => {
 
   return (
     <div style={{ animation:"fadeUp .35s ease both" }}>
-      {/* Back */}
-      <button
-        onClick={onBack}
-        className="inline-flex items-center gap-1.5 border border-stone-200 rounded-full
-                   px-4 py-2 text-[12px] font-semibold text-stone-500 bg-white
-                   hover:border-orange-400 hover:text-orange-500 transition-all mb-6"
-      >
-        <ArrowLeft size={14} /> Back
-      </button>
+
+      {/* ── Top bar: back + delete ── */}
+      <div className="flex items-center justify-between mb-6">
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-1.5 border border-stone-200 rounded-full
+                     px-4 py-2 text-[12px] font-semibold text-stone-500 bg-white
+                     hover:border-orange-400 hover:text-orange-500 transition-all"
+        >
+          <ArrowLeft size={14} /> Back
+        </button>
+
+        {/* Delete button */}
+        {!confirmDelete ? (
+          <button
+            onClick={() => setConfirmDelete(true)}
+            className="inline-flex items-center gap-1.5 border border-stone-200 rounded-full
+                       px-4 py-2 text-[12px] font-semibold text-stone-400 bg-white
+                       hover:border-red-300 hover:text-red-500 hover:bg-red-50 transition-all"
+          >
+            <Trash2 size={13} /> Delete
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="text-[12px] text-stone-500 font-medium">Are you sure?</span>
+            <button
+              onClick={() => onDelete(recipe.id)}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-[12px]
+                         font-bold rounded-full transition-all"
+            >
+              Yes, delete
+            </button>
+            <button
+              onClick={() => setConfirmDelete(false)}
+              className="px-4 py-2 border border-stone-200 text-stone-500 text-[12px]
+                         font-semibold rounded-full hover:bg-stone-50 transition-all"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-5 items-start">
 
-        {/* Left — media */}
+        {/* ── Left — video / image ── */}
         {recipe.type === "video" && recipe.video ? (
           <div className="w-full bg-black rounded-2xl overflow-hidden" style={{ aspectRatio:"16/9" }}>
             <video
               src={recipe.video}
               controls
               playsInline
-              autoPlay={false}
-              preload="metadata"
+              autoPlay               // ← auto-plays when detail opens
+              preload="auto"
               className="w-full h-full object-contain block"
             />
           </div>
         ) : (
           <div className="rounded-2xl overflow-hidden" style={{ aspectRatio:"16/9" }}>
-            <img src={recipe.image} alt={recipe.name} className="w-full h-full object-cover block" />
+            <img
+              src={recipe.image}
+              alt={recipe.name}
+              className="w-full h-full object-cover block"
+            />
           </div>
         )}
 
-        {/* Right — info + likes + comments */}
+        {/* ── Right — info + likes + comments ── */}
         <div className="bg-white border border-stone-200 rounded-2xl p-5 flex flex-col gap-4">
 
           {/* Title */}
@@ -180,7 +218,11 @@ const RecipeDetail = ({ recipe, onBack }) => {
                   ? "bg-orange-50 border-orange-400 text-orange-600"
                   : "bg-white border-stone-200 text-stone-500 hover:border-orange-400 hover:text-orange-500"}`}
             >
-              <Heart size={15} fill={liked ? "#e8420a" : "none"} stroke={liked ? "#e8420a" : "currentColor"} />
+              <Heart
+                size={15}
+                fill={liked ? "#e8420a" : "none"}
+                stroke={liked ? "#e8420a" : "currentColor"}
+              />
               {fmt((recipe.likes ?? 0) + (liked ? 1 : 0))}
             </button>
 
@@ -192,7 +234,11 @@ const RecipeDetail = ({ recipe, onBack }) => {
                   ? "bg-blue-50 border-blue-400 text-blue-600"
                   : "bg-white border-stone-200 text-stone-500 hover:border-blue-400 hover:text-blue-500"}`}
             >
-              <ThumbsDown size={15} fill={disliked ? "#3a3aaa" : "none"} stroke={disliked ? "#3a3aaa" : "currentColor"} />
+              <ThumbsDown
+                size={15}
+                fill={disliked ? "#3a3aaa" : "none"}
+                stroke={disliked ? "#3a3aaa" : "currentColor"}
+              />
               {fmt((recipe.dislikes ?? 0) + (disliked ? 1 : 0))}
             </button>
           </div>
@@ -205,21 +251,28 @@ const RecipeDetail = ({ recipe, onBack }) => {
               Comments ({comments.length})
             </p>
 
-            <div className="flex flex-col gap-3 max-h-48 overflow-y-auto pr-1 mb-3">
-              {comments.map((c, i) => (
-                <div key={i} className="flex gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center
-                                  text-[10px] font-bold text-stone-500 flex-shrink-0">
-                    {c.i || c.u.split(" ").map(w => w[0]).join("").slice(0, 2)}
+            {comments.length === 0 ? (
+              <p className="text-[12px] text-stone-400 italic mb-3">
+                No comments yet. Be the first!
+              </p>
+            ) : (
+              <div className="flex flex-col gap-3 max-h-48 overflow-y-auto pr-1 mb-3
+                              scrollbar-thin scrollbar-thumb-stone-200">
+                {comments.map((c, i) => (
+                  <div key={i} className="flex gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center
+                                    text-[10px] font-bold text-stone-500 flex-shrink-0">
+                      {c.i || c.u.split(" ").map(w => w[0]).join("").slice(0, 2)}
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-bold text-stone-800">{c.u}</p>
+                      <p className="text-[11px] text-stone-500 leading-relaxed">{c.t}</p>
+                      <p className="text-[10px] text-stone-300 mt-0.5">{c.d}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-stone-800">{c.u}</p>
-                    <p className="text-[11px] text-stone-500 leading-relaxed">{c.t}</p>
-                    <p className="text-[10px] text-stone-300 mt-0.5">{c.d}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             {/* Comment input */}
             <div className="flex gap-2 pt-3 border-t border-stone-100">
@@ -251,30 +304,37 @@ const RecipeDetail = ({ recipe, onBack }) => {
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 
 const Dashboard = () => {
+  const [recipes,  setRecipes]  = useState(recipesUploaded);   // ← own state copy
   const [selected, setSelected] = useState(null);
   const [filter,   setFilter]   = useState("all");
 
   const filtered = filter === "all"
-    ? recipesUploaded
-    : recipesUploaded.filter(r => r.type === filter);
+    ? recipes
+    : recipes.filter(r => r.type === filter);
 
-  const totalLikes    = recipesUploaded.reduce((s, r) => s + (r.likes ?? 0), 0);
-  const totalComments = recipesUploaded.reduce((s, r) => s + (r.comments?.length ?? 0), 0);
+  const totalLikes    = recipes.reduce((s, r) => s + (r.likes    ?? 0), 0);
+  const totalComments = recipes.reduce((s, r) => s + (r.comments?.length ?? 0), 0);
+
+  // Delete handler — removes from local state and goes back to grid
+  const handleDelete = (id) => {
+    setRecipes(prev => prev.filter(r => r.id !== id));
+    setSelected(null);
+  };
 
   return (
     <>
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:translateY(0) } }
         .text-syne { font-family: 'Syne', 'DM Sans', sans-serif; }
-        .line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
       `}</style>
 
       <div className="max-w-6xl mx-auto px-4 py-8 min-h-screen">
 
         {selected !== null ? (
           <RecipeDetail
-            recipe={recipesUploaded[selected]}
+            recipe={recipes[selected]}                 // ← use local recipes state
             onBack={() => setSelected(null)}
+            onDelete={handleDelete}                    // ← pass handler
           />
         ) : (
           <>
@@ -304,10 +364,10 @@ const Dashboard = () => {
             {/* ── Stats ── */}
             <div className="flex flex-wrap gap-2.5 mb-7">
               {[
-                { icon:Users,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Followers",   value:"16.4K", delay:.05 },
-                { icon:Play,          iconColor:"#3a8aaa", iconBg:"#eff5fd", label:"Recipes",     value:recipesUploaded.length, delay:.10 },
-                { icon:Heart,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Total Likes", value:fmt(totalLikes),    delay:.15 },
-                { icon:MessageCircle, iconColor:"#4a9a6a", iconBg:"#edfae8", label:"Comments",    value:totalComments,       delay:.20 },
+                { icon:Users,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Followers",   value:"16.4K",           delay:.05 },
+                { icon:Play,          iconColor:"#3a8aaa", iconBg:"#eff5fd", label:"Recipes",     value:recipes.length,    delay:.10 },
+                { icon:Heart,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Total Likes", value:fmt(totalLikes),   delay:.15 },
+                { icon:MessageCircle, iconColor:"#4a9a6a", iconBg:"#edfae8", label:"Comments",    value:totalComments,     delay:.20 },
               ].map(s => <StatCard key={s.label} {...s} />)}
             </div>
 
@@ -316,7 +376,9 @@ const Dashboard = () => {
               className="flex items-center justify-between mb-4 flex-wrap gap-2"
               style={{ animation:"fadeUp .4s .22s ease both", opacity:0, animationFillMode:"both" }}
             >
-              <h2 className="text-syne text-[17px] font-bold text-stone-900">Your Recipes</h2>
+              <h2 className="text-syne text-[17px] font-bold text-stone-900">
+                Your Recipes
+              </h2>
               <div className="flex gap-1.5">
                 {[
                   { key:"all",   label:"All"   },
@@ -338,16 +400,23 @@ const Dashboard = () => {
             </div>
 
             {/* ── Grid ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-              {filtered.map((recipe, i) => (
-                <RecipeCard
-                  key={recipe.id ?? i}
-                  recipe={recipe}
-                  index={i}
-                  onClick={() => setSelected(recipesUploaded.indexOf(recipe))}
-                />
-              ))}
-            </div>
+            {filtered.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-stone-400">
+                <p className="text-4xl mb-3">🍽️</p>
+                <p className="text-[14px] font-medium text-stone-600">No recipes here yet</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                {filtered.map((recipe, i) => (
+                  <RecipeCard
+                    key={recipe.id ?? i}
+                    recipe={recipe}
+                    index={i}
+                    onClick={() => setSelected(recipes.indexOf(recipe))}  // ← use local recipes
+                  />
+                ))}
+              </div>
+            )}
           </>
         )}
 

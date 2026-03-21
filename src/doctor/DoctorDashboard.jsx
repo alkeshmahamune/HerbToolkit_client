@@ -11,7 +11,8 @@ import {
   Barcode,
   Warehouse,
   Bookmark,
-  LogOut
+  LogOut,
+  Check
 } from "lucide-react";
 import HerbToolkit from "../assets/HerbToolkit.png";
 import { Khalbatta } from "../CustomIcons";
@@ -26,6 +27,7 @@ const AIRecipegenerator = lazy(() => import("./pages/AIRecipegenerator"));
 const InventoryManagerDr = lazy(() => import("./pages/InventoryManager"));
 const HerbalRecipeDr=lazy(()=>import('./pages/HerbalRecipeDr'))
 const SavedRecipeDr=lazy(()=>import('./pages/SavedRecipeDr'))
+const ApproveRecipe=lazy(()=>import('./pages/ApproveRecipe'))
 
 export default function RecipeDashboard() {
   const menus = [
@@ -36,6 +38,7 @@ export default function RecipeDashboard() {
     { name: "AI Recipe Suggestion", icon: Bot, component: AIRecipegenerator },
     { name: "Inventory Management", icon: Warehouse, component: InventoryManagerDr },
     { name: "Saved Recipies", icon: Bookmark, component: SavedRecipeDr },
+    { name: "Review Recipies", icon: Check, component: ApproveRecipe },
   ];
 
   const [collapsed, setCollapsed] = useState(false);

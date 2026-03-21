@@ -7,6 +7,7 @@ import Register from './pages/Register'
 import RecipeDashboard from './user/dashboard'
 // import List from './user/List'
 import InfluencerDashboard from './influencer/InfluencerDashboard'
+import DoctorDashboard from './doctor/Dashboard'
 
 const App = () => {
   return (
@@ -28,6 +29,10 @@ const App = () => {
         {/* influencer path start */}
         <Route path='/influencer-home' element={<InfluencerDashboard/>}/>
         {/* influencer path end */}
+
+        {/* doctor path start */}
+        <Route path='/doctor-home' element={<DoctorDashboard/>}/>
+        {/* doctor path end */}
       </Routes>
     </BrowserRouter>
 

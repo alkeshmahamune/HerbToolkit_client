@@ -95,13 +95,9 @@ const Recipes = () => {
   if (view === "video")
     return (
       <div className="max-w-3xl mx-auto px-4 py-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
+        
           <VideoView dish={selDish} onBack={goBack} />
-        </motion.div>
+       
       </div>
     );
 
@@ -109,13 +105,9 @@ const Recipes = () => {
   if (view === "category")
     return (
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
+        
         <CategoryView cat={selCat} onSelectDish={openDish} onBack={goBack} />
-        </motion.div>
+       
       </div>
     );
 
@@ -123,28 +115,20 @@ const Recipes = () => {
   if (view === "cuisine")
     return (
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
+        
         <CuisineView
           cuisine={selCuisine}
           onSelectDish={openDish}
           onBack={goBack}
         />
-          </motion.div>
+         
       </div>
     );
 
   /* ── Home ── */
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
+      
           
 
       {/* ── 1. Categories (meal type) ── */}
@@ -196,7 +180,7 @@ const Recipes = () => {
           />
         ))}
       </div>
-      </motion.div>
+     
     </div>
   );
 };

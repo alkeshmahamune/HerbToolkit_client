@@ -4,7 +4,6 @@ import heroImg from "../assets/heroImg.png";
 import usertemp from "../assets/userThumbnail.jpg";
 import iPhone from "../assets/iPhone.png";
 import { Plus, Star, ArrowUp, ChefHat, Refrigerator, Heart, Users, Share2, Sparkles, Check, Instagram, Twitter, Youtube, Facebook, Mail, Phone, MapPin } from "lucide-react";
-import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 
 /* ─── Scroll-reveal hook ─── */

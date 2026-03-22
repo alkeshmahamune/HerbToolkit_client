@@ -170,7 +170,7 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <main className="flex-1 p-8 overflow-auto">
-          <div className="bg-white rounded-xl shadow-sm p-6 min-h-[400px]">
+          <div className="bg-white rounded-xl shadow-sm p-6 min-h-100">
             <Suspense
               fallback={
                 <div className="flex items-center justify-center h-64">

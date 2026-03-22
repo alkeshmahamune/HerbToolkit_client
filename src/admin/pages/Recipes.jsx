@@ -95,9 +95,7 @@ const Recipes = () => {
   if (view === "video")
     return (
       <div className="max-w-3xl mx-auto px-4 py-6">
-        
-          <VideoView dish={selDish} onBack={goBack} />
-       
+        <VideoView dish={selDish} onBack={goBack} />
       </div>
     );
 
@@ -105,9 +103,7 @@ const Recipes = () => {
   if (view === "category")
     return (
       <div className="max-w-6xl mx-auto px-4 py-6">
-        
         <CategoryView cat={selCat} onSelectDish={openDish} onBack={goBack} />
-       
       </div>
     );
 
@@ -115,22 +111,17 @@ const Recipes = () => {
   if (view === "cuisine")
     return (
       <div className="max-w-6xl mx-auto px-4 py-6">
-        
         <CuisineView
           cuisine={selCuisine}
           onSelectDish={openDish}
           onBack={goBack}
         />
-         
       </div>
     );
 
   /* ── Home ── */
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      
-          
-
       {/* ── 1. Categories (meal type) ── */}
       <h2 className="text-xl font-semibold text-gray-800 mb-6">Categories</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10">
@@ -180,7 +171,6 @@ const Recipes = () => {
           />
         ))}
       </div>
-     
     </div>
   );
 };

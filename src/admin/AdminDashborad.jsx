@@ -8,17 +8,22 @@ import {
   HomeIcon,
   LogOut,
   Stethoscope,
-  TabletSmartphone
+  TabletSmartphone,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
 import HerbToolkit from "../assets/HerbToolkit.png";
 import { Khalbatta } from "../CustomIcons";
-// pages imports - lazy loaded
-const Activeusers=lazy(()=>import('./pages/Activeusers'))
-const ActiveDr=lazy(()=>import('./pages/ActiveDr'))
-const AdminAnalytics=lazy(()=>import("./pages/Home"))
-const Recipes=lazy(()=>import("./pages/Recipes"))
+
+// Lazy pages
+const Activeusers = lazy(() => import("./pages/Activeusers"));
+const ActiveDr = lazy(() => import("./pages/ActiveDr"));
+const AdminAnalytics = lazy(() => import("./pages/Home"));
+const Recipes = lazy(() => import("./pages/Recipes"));
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+
   const menus = [
     { name: "Home", icon: HomeIcon, component: AdminAnalytics },
     { name: "Users", icon: User2, component: Activeusers },
@@ -33,41 +38,36 @@ export default function AdminDashboard() {
   const ActiveComponent = menus[active].component;
 
   const handleLogout = () => {
-  // clear auth data
-  localStorage.removeItem("token");
-
-  // redirect to login
-  navigate("/login");
-};
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <div className="flex h-screen bg-gray-50 font-[Poppins]">
+      
       {/* Sidebar */}
       <aside
-        className={`bg-white  shadow-md flex flex-col transition-all duration-300
+        className={`bg-white shadow-md flex flex-col transition-all duration-300 ease-in-out overflow-hidden
         ${collapsed ? "w-20" : "w-64"}`}
       >
         {/* Logo */}
-        {/* Logo Section */}
-        <div className="h-20 flex items-center justify-center border-b border-gray-200">
-          <div
-            className={`flex items-center gap-3 transition-all duration-300 ${collapsed ? "justify-center" : "px-4"}`}
-          >
-            {/* Logo */}
+        <div className="h-20 flex items-center border-b border-gray-200 px-4">
+          <div className="flex items-center gap-3 w-full">
             <div className="bg-green-100 p-2 rounded-xl shadow-sm">
               <img
                 src={HerbToolkit}
-                alt="HerbToolkit Logo"
+                alt="logo"
                 className="w-8 h-8 object-contain"
               />
             </div>
 
-            {/* App Name */}
-            {!collapsed && (
-              <h1 className="text-lg font-semibold text-gray-800 tracking-wide">
-                HerbToolkit
-              </h1>
-            )}
+            {/* Animated Title */}
+            <span
+              className={`text-lg font-semibold text-gray-800 tracking-wide whitespace-nowrap transition-all duration-300
+              ${collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"}`}
+            >
+              HerbToolkit
+            </span>
           </div>
         </div>
 
@@ -76,8 +76,8 @@ export default function AdminDashboard() {
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={`w-full flex items-center transition-all duration-300 
-    ${collapsed ? "justify-center" : "justify-end pr-4"} 
-    py-3 hover:bg-gray-100`}
+            ${collapsed ? "justify-center" : "justify-end pr-4"} 
+            py-3 hover:bg-gray-100`}
           >
             {collapsed ? (
               <PanelLeft size={20} className="text-gray-600" />
@@ -87,7 +87,7 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        {/* Menu Items */}
+        {/* Menu */}
         <nav className="flex-1 px-2 space-y-2 mt-2">
           {menus.map((menu, index) => {
             const Icon = menu.icon;
@@ -96,7 +96,8 @@ export default function AdminDashboard() {
               <div
                 key={index}
                 onClick={() => setActive(index)}
-                className={`flex items-center ${collapsed ? "justify-center" : "justify-start"} gap-3 px-3 py-3 rounded-lg cursor-pointer transition
+                className={`flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition-all duration-300
+                ${collapsed ? "justify-center" : ""}
                 ${
                   active === index
                     ? "bg-teal-600 text-white"
@@ -104,29 +105,46 @@ export default function AdminDashboard() {
                 }`}
               >
                 <Icon size={20} />
-                {!collapsed && <span className="text-sm">{menu.name}</span>}
+
+                {/* Animated Text */}
+                <span
+                  className={`text-sm whitespace-nowrap transition-all duration-300
+                  ${collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"}`}
+                >
+                  {menu.name}
+                </span>
               </div>
             );
           })}
         </nav>
+
+        {/* Logout */}
         <div className="p-3 border-t border-gray-200">
-  <button
-    onClick={handleLogout}
-    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition
-    text-red-500 hover:bg-red-50 ${collapsed ? "justify-center" : ""}`}
-  >
-    <LogOut size={20} />
-    {!collapsed && <span className="text-sm font-medium">Logout</span>}
-  </button>
-</div>
+          <button
+            onClick={handleLogout}
+            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition-all duration-300
+            text-red-500 hover:bg-red-50 ${collapsed ? "justify-center" : ""}`}
+          >
+            <LogOut size={20} />
+
+            <span
+              className={`text-sm font-medium whitespace-nowrap transition-all duration-300
+              ${collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"}`}
+            >
+              Logout
+            </span>
+          </button>
+        </div>
       </aside>
 
       {/* Right Section */}
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 transition-all duration-300">
+        
         {/* Header */}
         <header className="sticky shadow-md top-0 h-16 bg-white flex items-center justify-between px-6">
-          {/* Logo */}
-          <div className="text-lg font-semibold text-gray-700">Hello User!</div>
+          <div className="text-lg font-semibold text-gray-700">
+            Hello User!
+          </div>
 
           {/* Search */}
           <div className="relative w-72">
@@ -146,14 +164,13 @@ export default function AdminDashboard() {
             <div className="w-9 h-9 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
               A
             </div>
-            {/* <span className="text-sm text-gray-700">Alex</span> */}
             <ChevronDown size={16} className="text-gray-500" />
           </div>
         </header>
 
         {/* Main Content */}
         <main className="flex-1 p-8 overflow-auto">
-          <div className="bg-white rounded-xl shadow-sm p-6 min-h-100">
+          <div className="bg-white rounded-xl shadow-sm p-6 min-h-[400px]">
             <Suspense
               fallback={
                 <div className="flex items-center justify-center h-64">

@@ -1,27 +1,30 @@
 import React, { useState, Suspense, lazy } from "react";
 import {
-  BookOpen,
-  PlusSquare,
   Search,
   ChevronDown,
   PanelLeft,
+  User2,
   PanelLeftClose,
   HomeIcon,
-  Bot,
-  Barcode,
-  Warehouse,
-  Bookmark,
-  LogOut
+  LogOut,
+  Stethoscope,
+  TabletSmartphone
 } from "lucide-react";
 import HerbToolkit from "../assets/HerbToolkit.png";
 import { Khalbatta } from "../CustomIcons";
-import AdminAnalytics from "./pages/Home";
-
 // pages imports - lazy loaded
+const Activeusers=lazy(()=>import('./pages/Activeusers'))
+const ActiveDr=lazy(()=>import('./pages/ActiveDr'))
+const AdminAnalytics=lazy(()=>import("./pages/Home"))
+const Recipes=lazy(()=>import("./pages/Recipes"))
 
 export default function AdminDashboard() {
   const menus = [
     { name: "Home", icon: HomeIcon, component: AdminAnalytics },
+    { name: "Users", icon: User2, component: Activeusers },
+    { name: "Doctors", icon: Stethoscope, component: ActiveDr },
+    { name: "Influencers", icon: TabletSmartphone, component: ActiveDr },
+    { name: "Recipes", icon: Khalbatta, component: Recipes },
   ];
 
   const [collapsed, setCollapsed] = useState(false);

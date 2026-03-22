@@ -8,6 +8,7 @@ import RecipeDashboard from './user/dashboard'
 // import List from './user/List'
 import InfluencerDashboard from './influencer/InfluencerDashboard'
 import DoctorDashboard from './doctor/DoctorDashboard'
+import AdminDashboard from './admin/AdminDashborad'
 
 const App = () => {
   return (
@@ -33,6 +34,9 @@ const App = () => {
         {/* doctor path start */}
         <Route path='/doctor-home' element={<DoctorDashboard/>}/>
         {/* doctor path end */}
+
+        {/* admin path start */}
+        <Route path='/admin' element={<AdminDashboard/>}/>
       </Routes>
     </BrowserRouter>
 

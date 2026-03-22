@@ -12,6 +12,7 @@ import {
   LogOut,
   Warehouse,
   Bookmark,
+  User,
 } from "lucide-react";
 import HerbToolkit from "../assets/HerbToolkit.png";
 import Dashboard from "./pages/ControlPanel";
@@ -22,6 +23,7 @@ import AIRecipe from "./pages/AIRecipe";
 import HomeMade from "./pages/HomeMade";
 import { Khalbatta } from "../CustomIcons";
 import InventoryManagement from "./pages/InventoryManagement";
+import InfluencerProfile from "./pages/InfluencerProfile";
 
 const InfluencerDashboard = () => {
   const menus = [
@@ -32,6 +34,7 @@ const InfluencerDashboard = () => {
     { name: "Herbal Kitchen", icon: Khalbatta, component: HomeMade },
     { name: "Inventory Management", icon: Warehouse, component: InventoryManagement },
     { name: "Saved Recipes", icon: Bookmark, component: InventoryManagement },
+    { name: "Profile", icon: User, component: InfluencerProfile },
   ];
 
   const [collapsed, setCollapsed] = useState(false);

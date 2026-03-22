@@ -12,7 +12,8 @@ import {
   Warehouse,
   Bookmark,
   LogOut,
-  Check
+  Check,
+  User
 } from "lucide-react";
 import HerbToolkit from "../assets/HerbToolkit.png";
 import { Khalbatta } from "../CustomIcons";
@@ -28,6 +29,7 @@ const InventoryManagerDr = lazy(() => import("./pages/InventoryManager"));
 const HerbalRecipeDr=lazy(()=>import('./pages/HerbalRecipeDr'))
 const SavedRecipeDr=lazy(()=>import('./pages/SavedRecipeDr'))
 const ApproveRecipe=lazy(()=>import('./pages/ApproveRecipe'))
+const DoctorProfile = lazy(()=>import("./pages/DoctorProfile"))
 
 export default function RecipeDashboard() {
   const menus = [
@@ -39,6 +41,7 @@ export default function RecipeDashboard() {
     { name: "Inventory Management", icon: Warehouse, component: InventoryManagerDr },
     { name: "Saved Recipies", icon: Bookmark, component: SavedRecipeDr },
     { name: "Review Recipies", icon: Check, component: ApproveRecipe },
+    { name: "Profile", icon: User, component: DoctorProfile },
   ];
 
   const [collapsed, setCollapsed] = useState(false);

@@ -11,7 +11,8 @@ import {
   Barcode,
   Warehouse,
   Bookmark,
-  LogOut
+  LogOut,
+  User,
 } from "lucide-react";
 import HerbToolkit from "../assets/HerbToolkit.png";
 import HerbalRecipe from "../components/HerbalRecipe";
@@ -28,7 +29,7 @@ const AddRecipeForm = lazy(() =>
 );
 const AIRecipe = lazy(() => import("./userPages/AIRecipe"));
 const Inventory = lazy(() => import("./userPages/Inventory"));
-
+const UserProfile = lazy(() => import("./userPages/UserProfile"));
 
 export default function RecipeDashboard() {
   const menus = [
@@ -39,6 +40,7 @@ export default function RecipeDashboard() {
     { name: "AI Recipe Suggestion", icon: Bot, component: AIRecipe },
     { name: "Inventory Management", icon: Warehouse, component: Inventory },
     { name: "Saved Recipies", icon: Bookmark, component: SavedRecipes },
+    { name: "Profile", icon: User, component: UserProfile },
   ];
 
   const [collapsed, setCollapsed] = useState(false);
@@ -47,12 +49,12 @@ export default function RecipeDashboard() {
   const ActiveComponent = menus[active].component;
 
   const handleLogout = () => {
-  // clear auth data
-  localStorage.removeItem("token");
+    // clear auth data
+    localStorage.removeItem("token");
 
-  // redirect to login
-  navigate("/login");
-};
+    // redirect to login
+    navigate("/login");
+  };
 
   return (
     <div className="flex h-screen bg-gray-50 font-[Poppins]">
@@ -124,15 +126,15 @@ export default function RecipeDashboard() {
           })}
         </nav>
         <div className="p-3 border-t border-gray-200">
-  <button
-    onClick={handleLogout}
-    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition
+          <button
+            onClick={handleLogout}
+            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg cursor-pointer transition
     text-red-500 hover:bg-red-50 ${collapsed ? "justify-center" : ""}`}
-  >
-    <LogOut size={20} />
-    {!collapsed && <span className="text-sm font-medium">Logout</span>}
-  </button>
-</div>
+          >
+            <LogOut size={20} />
+            {!collapsed && <span className="text-sm font-medium">Logout</span>}
+          </button>
+        </div>
       </aside>
 
       {/* Right Section */}

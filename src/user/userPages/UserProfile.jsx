@@ -92,7 +92,7 @@ export default function UserProfile() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8f9fc", fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif",}}>
       {/* top banner */}
       <div style={{
         height: "200px", background: "linear-gradient(135deg, #ef4444 0%, #b91c1c 50%, #7f1d1d 100%)",

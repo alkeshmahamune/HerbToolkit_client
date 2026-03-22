@@ -36,7 +36,7 @@ const StatCard = ({ icon: Icon, label, value, color }) => (
     <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: color + "18", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Icon size={18} color={color} />
     </div>
-    <p style={{ fontSize: typeof value === "string" && value.length > 8 ? "12px" : "22px", fontWeight: 800, color: COLORS.dark, fontFamily: "Georgia, serif", margin: 0, lineHeight: 1.3, wordBreak: "break-word" }}>{value}</p>
+    <p style={{ fontSize: typeof value === "string" && value.length > 8 ? "12px" : "22px", fontWeight: 600, color: COLORS.dark, fontFamily: "poppins", margin: 0, lineHeight: 1.3, wordBreak: "break-word" }}>{value}</p>
     <p style={{ fontSize: "12px", color: COLORS.gray, fontWeight: 600, margin: 0 }}>{label}</p>
   </div>
 );
@@ -81,7 +81,7 @@ export default function DoctorProfile() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f0f4ff", fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ minHeight: "100vh", fontFamily: " sans-serif" }}>
       {/* banner — blue gradient for doctors */}
       <div style={{ height: "200px", background: "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 60%, #60a5fa 100%)", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "220px", height: "220px", borderRadius: "50%", background: "rgba(255,255,255,0.07)" }} />

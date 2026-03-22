@@ -36,7 +36,7 @@ const StatCard = ({ icon: Icon, label, value, color, sub }) => (
     <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: color + "18", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Icon size={18} color={color} />
     </div>
-    <p style={{ fontSize: "22px", fontWeight: 800, color: COLORS.dark, fontFamily: "Georgia, serif", margin: 0 }}>{value}</p>
+    <p style={{ fontSize: "22px", fontWeight: 600, color: COLORS.dark, fontFamily: "poppins", margin: 0 }}>{value}</p>
     <p style={{ fontSize: "12px", color: COLORS.gray, fontWeight: 600, margin: 0 }}>{label}</p>
     {sub && <p style={{ fontSize: "11px", color: "#10b981", fontWeight: 700, margin: 0 }}>{sub}</p>}
   </div>
@@ -102,7 +102,7 @@ export default function InfluencerProfile() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#fdf8f0", fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif" }}>
       {/* banner */}
       <div style={{
         height: "220px", position: "relative", overflow: "hidden",
@@ -157,7 +157,7 @@ export default function InfluencerProfile() {
             <input ref={fileRef} type="file" accept="image/*" onChange={handleAvatar} style={{ display: "none" }} />
           </div>
           <div style={{ paddingBottom: "12px" }}>
-            <h1 style={{ fontSize: "26px", fontWeight: 800, color: COLORS.dark, fontFamily: "Georgia, serif", margin: 0 }}>
+            <h1 style={{ fontSize: "26px", fontWeight: 800, color: COLORS.dark, fontFamily: "poppins", margin: 0 }}>
               {form.firstName} {form.lastName}
             </h1>
             <p style={{ color: COLORS.gray, fontSize: "14px", margin: "4px 0 6px" }}>{form.niche} Creator · {form.city}</p>

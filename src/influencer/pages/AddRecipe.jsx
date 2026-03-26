@@ -235,7 +235,7 @@ const AddRecipe = () => {
             Share your knowledge
           </p>
          <h2 className="text-xl font-semibold text-gray-800 mb-6">
-        Personalized Recipes
+        Post Recipes
       </h2>
         </div>
 

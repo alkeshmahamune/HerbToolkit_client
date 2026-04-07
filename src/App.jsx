@@ -38,6 +38,7 @@ const App = () => {
         {/* admin path start */}
         <Route path='/admin' element={<AdminDashboard/>}/>
       </Routes>
+      
     </BrowserRouter>
 
   )

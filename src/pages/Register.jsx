@@ -188,7 +188,9 @@ const Register = () => {
         if (response.data.success) {
           toast.success(response.data.message);
           setTimeout(() => {
-            navigate("/login");
+            navigate("/login",{
+              state:{role:"user"}
+            });
           }, 1500);
         } else {
           toast.warn(response.data.message);
@@ -201,7 +203,9 @@ const Register = () => {
         if (response.data.success) {
           toast.success(response.data.message);
           setTimeout(() => {
-            navigate("/login");
+            navigate("/login",{
+              state:{role:"doctor"}
+            });
           }, 1500);
         } else {
           toast.warn(response.data.message);
@@ -217,7 +221,9 @@ const Register = () => {
         if (response.data.success) {
           toast.success(response.data.message);
           setTimeout(() => {
-            navigate("/login");
+            navigate("/login",{
+              state:{role:doctor}
+            });
           }, 1500);
         } else {
           toast.warn(response.data.message);

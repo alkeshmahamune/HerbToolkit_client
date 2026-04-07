@@ -73,6 +73,7 @@ export default function RecipeDashboard() {
         }
       );
       setCurrentUser(response.data?.user)
+      localStorage.setItem("User", JSON.stringify(response?.data?.user))
       console.log(response.data);
     } catch (error) {
       console.error(error);

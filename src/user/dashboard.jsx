@@ -18,6 +18,8 @@ import HerbToolkit from "../assets/HerbToolkit.png";
 import HerbalRecipe from "../components/HerbalRecipe";
 import { Khalbatta } from "../CustomIcons";
 import SavedRecipes from "../components/SavedRecipes";
+import { useEffect } from "react";
+import axios from "axios";
 
 // pages imports - lazy loaded
 const Home = lazy(() => import("./userPages/Home"));
@@ -55,6 +57,30 @@ export default function RecipeDashboard() {
     // redirect to login
     navigate("/login");
   };
+
+  // api calling
+  const [currentUser,setCurrentUser]=useState(null)
+  const userToken=localStorage.getItem("userToken")
+    useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/user/get-current-user",
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`
+          }
+        }
+      );
+      setCurrentUser(response.data?.user)
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  fetchUser();
+}, []);
 
   return (
     <div className="flex h-screen bg-gray-50 font-[Poppins]">
@@ -142,7 +168,7 @@ export default function RecipeDashboard() {
         {/* Header */}
         <header className="sticky shadow-md top-0 h-16 bg-white flex items-center justify-between px-6">
           {/* Logo */}
-          <div className="text-lg font-semibold text-gray-700">Hello User!</div>
+          <div className="text-lg font-semibold text-gray-700">Hello {currentUser?.fullName || "User"}!</div>
 
           {/* Search */}
           <div className="relative w-72">

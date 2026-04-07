@@ -24,6 +24,8 @@ import HomeMade from "./pages/HomeMade";
 import { Khalbatta } from "../CustomIcons";
 import InventoryManagement from "./pages/InventoryManagement";
 import InfluencerProfile from "./pages/InfluencerProfile";
+import { useEffect } from "react";
+import axios from "axios";
 
 const InfluencerDashboard = () => {
   const menus = [
@@ -48,6 +50,31 @@ const InfluencerDashboard = () => {
   // redirect to login
   navigate("/login");
 };
+
+  // api calling
+  const [currentInfluencer,setCurrentInfluencer]=useState(null)
+  const influencerToken=localStorage.getItem("influencerToken")
+    useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/influencer/get-current-influencer",
+        {
+          headers: {
+            Authorization: `Bearer ${influencerToken}`
+          }
+        }
+      );
+      setCurrentInfluencer(response.data?.user)
+      localStorage.setItem("influencer",JSON.stringify(response?.data?.user))
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  fetchUser();
+}, []);
   return (
     <div className="flex h-screen bg-gray-50 font-[Poppins]">
       {/* Sidebar */}
@@ -136,7 +163,7 @@ const InfluencerDashboard = () => {
         {/* Header */}
         <header className="sticky shadow-md top-0 h-16 bg-white flex items-center justify-between px-6">
           {/* Logo */}
-          <div className="text-lg font-semibold text-gray-700">Hello User!</div>
+          <div className="text-lg font-semibold text-gray-700">Hello {currentInfluencer?.fullName || "User"}!</div>
 
           {/* Search */}
           <div className="relative w-72">

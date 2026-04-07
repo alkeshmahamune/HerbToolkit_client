@@ -307,9 +307,10 @@ const Dashboard = () => {
   const [recipes,  setRecipes]  = useState(recipesUploaded);   // ← own state copy
   const [selected, setSelected] = useState(null);
   const [filter,   setFilter]   = useState("all");
-
+  const Influencer=JSON.parse(localStorage.getItem("influencer"))
+  // console.log(Influencer)
   const filtered = filter === "all"
-    ? recipes
+    ? Influencer?.uploadedRecipes
     : recipes.filter(r => r.type === filter);
 
   const totalLikes    = recipes.reduce((s, r) => s + (r.likes    ?? 0), 0);
@@ -350,9 +351,9 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <p className="text-syne text-[19px] font-bold text-stone-900 leading-tight">
-                    Ananya Kapoor
+                    {Influencer?.fullName}
                   </p>
-                  <p className="text-[12px] text-stone-400">@ananya.cooks · Recipe Creator</p>
+                  <p className="text-[12px] text-stone-400">@{Influencer?.fullName} · Recipe Creator</p>
                 </div>
               </div>
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold
@@ -364,10 +365,10 @@ const Dashboard = () => {
             {/* ── Stats ── */}
             <div className="flex flex-wrap gap-2.5 mb-7">
               {[
-                { icon:Users,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Followers",   value:"16.4K",           delay:.05 },
-                { icon:Play,          iconColor:"#3a8aaa", iconBg:"#eff5fd", label:"Recipes",     value:recipes.length,    delay:.10 },
-                { icon:Heart,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Total Likes", value:fmt(totalLikes),   delay:.15 },
-                { icon:MessageCircle, iconColor:"#4a9a6a", iconBg:"#edfae8", label:"Comments",    value:totalComments,     delay:.20 },
+                { icon:Users,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Followers",   value:`${Influencer?.followers || 0}`,           delay:.05 },
+                { icon:Play,          iconColor:"#3a8aaa", iconBg:"#eff5fd", label:"Recipes",     value:`${Influencer?.uploadedRecipes.length ||0}`,    delay:.10 },
+                { icon:Heart,         iconColor:"#e8420a", iconBg:"#fdf2ef", label:"Total Likes", value:`${Influencer?.likes || 0}`,   delay:.15 },
+                { icon:MessageCircle, iconColor:"#4a9a6a", iconBg:"#edfae8", label:"Comments",    value:`${Influencer?.comments || 0}`,     delay:.20 },
               ].map(s => <StatCard key={s.label} {...s} />)}
             </div>
 

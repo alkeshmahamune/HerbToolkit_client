@@ -50,7 +50,7 @@ const Login = () => {
   try {
     let response;
 
-    if (role === "doctor") {
+    if (role === "doctor" || location.pathname.includes("doctor")) {
       response = await axios.post("http://localhost:3000/api/doctor/login", data);
 
       if (response.data?.success) {
@@ -61,7 +61,7 @@ const Login = () => {
         toast.error(response.data.message);
       }
 
-    } else if (role === "influencer") {
+    } else if (role === "influencer" || location.pathname.includes("influencer")) {
       response = await axios.post("http://localhost:3000/api/influencer/login", data);
 
       if (response.data?.success) {

@@ -259,6 +259,7 @@ const AddRecipe = () => {
   };
 
   const onSubmit = (data) => {
+    console.log(data)
     const payload = {
       ...data,
       recipeType,

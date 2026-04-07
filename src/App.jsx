@@ -24,15 +24,20 @@ const App = () => {
 
         {/* user routes */}
         <Route path='/user-home' element={<RecipeDashboard/>} />
+        <Route path='/user-login' element={<Login/>} />
         {/* <Route path='/recipe-list' element={<List/>} /> */}
         {/* user routes end */}
 
         {/* influencer path start */}
         <Route path='/influencer-home' element={<InfluencerDashboard/>}/>
+        <Route path='/influencer-login' element={<Login/>} />
+
         {/* influencer path end */}
 
         {/* doctor path start */}
         <Route path='/doctor-home' element={<DoctorDashboard/>}/>
+        <Route path='/influencer-login' element={<Login/>} />
+
         {/* doctor path end */}
 
         {/* admin path start */}

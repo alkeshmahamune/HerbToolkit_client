@@ -55,6 +55,7 @@ const Login = () => {
 
       if (response.data?.success) {
         toast.success(response.data.message);
+        localStorage.setItem("doctorToken",response.data?.token)
         setTimeout(() => navigate("/doctor-home"), 1500);
       } else {
         toast.error(response.data.message);
@@ -65,6 +66,7 @@ const Login = () => {
 
       if (response.data?.success) {
         toast.success(response.data.message);
+        localStorage.setItem("influencerToken",response.data?.token)
         setTimeout(() => navigate("/influencer-home"), 1500);
       } else {
         toast.error(response.data.message);
@@ -72,9 +74,10 @@ const Login = () => {
 
     } else {
       response = await axios.post("http://localhost:3000/api/user/login", data);
-
+      console.log(response.data)
       if (response.data?.success) {
         toast.success(response.data.message);
+        localStorage.setItem("userToken",response.data?.token)
         setTimeout(() => navigate("/user-home"), 1500);
       } else {
         toast.error(response.data.message);

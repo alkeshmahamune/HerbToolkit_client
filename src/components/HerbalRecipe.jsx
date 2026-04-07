@@ -663,7 +663,7 @@ const RecipeModal = ({
       <div
         className="bg-white rounded-3xl w-full max-w-lg max-h-[88vh] overflow-y-auto
                    scrollbar-thin scrollbar-thumb-[#e4dfc8]"
-        style={{ animation: "pop .25s ease both" }}
+        style={{ animationName: "pop", animationDuration: "0.25s", animationTimingFunction: "ease", animationFillMode: "both" }}
       >
         {/* ── Media — video player or static image ── */}
         <div className="relative">

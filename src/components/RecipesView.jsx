@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Clock, Users, Flame, Bookmark } from "lucide-react";
-import { useState } from "react";
-import { textRecipes } from "../data/userData";
+import axios from "axios";
+import { apiUrl, authHeaders } from "../config/api.js";
 
 const RecipesView = () => {
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [savedStates, setSavedStates] = useState({});
+
   const difficultyStyle = {
     Easy: "bg-green-50 text-green-800",
     Medium: "bg-amber-50 text-amber-800",
@@ -20,11 +24,48 @@ const RecipesView = () => {
     Asian: "bg-emerald-50 text-emerald-900",
     Continental: "bg-slate-100 text-slate-700",
   };
-  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const headers = authHeaders();
+        if (!headers.Authorization) return;
+        const response = await axios.get(apiUrl("/api/recipes/personalized"), { headers });
+        if (response.data?.success) {
+          setRecipes(response.data.recipes || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch personalized recipes", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipes();
+  }, []);
+
+  const handleSave = async (recipeId) => {
+    try {
+      const headers = authHeaders();
+      const isSaved = savedStates[recipeId];
+      if (isSaved) {
+        await axios.delete(apiUrl(`/api/recipes/save/${recipeId}`), { headers });
+        setSavedStates((prev) => ({ ...prev, [recipeId]: false }));
+      } else {
+        await axios.post(apiUrl("/api/recipes/save"), { recipeId, source: "uploadedRecipe" }, { headers });
+        setSavedStates((prev) => ({ ...prev, [recipeId]: true }));
+      }
+    } catch (error) {
+      console.error("Failed to save/unsave recipe", error);
+    }
+  };
 
   // logic for full recipe view
   const [recipeView, setRecipeView] = useState(null);
-  console.log(recipeView);
+
+  if (loading) {
+    return <div className="text-center py-8">Loading personalized recipes...</div>;
+  }
+
   return (
     <div className="relative">
       <h2 className="text-xl font-semibold text-gray-800 mb-6">
@@ -33,13 +74,17 @@ const RecipesView = () => {
       <div
         className={`w-full flex flex-wrap justify-start gap-8 items-center ${recipeView !== null ? "blur-xs flex" : ""}`}
       >
-        {textRecipes.map((ele, idx) => (
+        {recipes.map((ele, idx) => (
           <div
+            key={ele.id || idx}
             className="bg-white w-87.5 rounded-2xl border border-stone-200 overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg px-5 py-5"
             style={{
-              animation: `fadeUp 0.45s 0.7s ease both`,
-              opacity: 0,
+              animationName: "fadeUp",
+              animationDuration: "0.45s",
+              animationDelay: `${0.7 + idx * 0.1}s`,
+              animationTimingFunction: "ease",
               animationFillMode: "both",
+              opacity: 0,
             }}
           >
             {/* ── Top content ── */}
@@ -48,20 +93,20 @@ const RecipesView = () => {
               <div className="flex items-center justify-between mb-3.5">
                 <span
                   className={`text-[11px] font-medium uppercase tracking-wide px-2.5 py-1 rounded-full ${
-                    cuisineBadge[ele.cuisine] ?? "bg-stone-100 text-stone-600"
+                    cuisineBadge[ele.cat] ?? "bg-stone-100 text-stone-600"
                   }`}
                 >
-                  {ele.cuisine}
+                  {ele.cat}
                 </span>
                 <button
-                  onClick={() => setSaved((s) => !s)}
+                  onClick={() => handleSave(ele.id)}
                   className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
-              ${saved ? "bg-amber-50 border-amber-300" : "border-stone-200 hover:bg-stone-50"}`}
+              ${savedStates[ele.id] ? "bg-amber-50 border-amber-300" : "border-stone-200 hover:bg-stone-50"}`}
                 >
                   <Bookmark
                     size={14}
-                    fill={saved ? "#f59e0b" : "none"}
-                    stroke={saved ? "#f59e0b" : "#a8a29e"}
+                    fill={savedStates[ele.id] ? "#f59e0b" : "none"}
+                    stroke={savedStates[ele.id] ? "#f59e0b" : "#a8a29e"}
                   />
                 </button>
               </div>
@@ -77,20 +122,12 @@ const RecipesView = () => {
                 <Clock size={13} className="text-stone-400" /> {ele.time}
               </span>
               <span className="flex items-center gap-1.5 text-[12px] text-stone-500">
-                <Users size={13} className="text-stone-400" /> {ele.serving}
-              </span>
-              <span className="flex items-center gap-1.5 text-[12px] text-stone-500">
-                <Flame size={13} className="text-stone-400" /> {ele.cal}
-              </span>
-              <span
-                className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${difficultyStyle[ele.difficulty]}`}
-              >
-                {ele.difficulty}
+                <Flame size={13} className="text-stone-400" /> {ele.benefit}
               </span>
             </div>
             {/* tags section */}
             <div className="flex gap-1.5 flex-wrap mb-4">
-              {ele.tags.map((tag) => (
+              {ele.herbs?.map((tag) => (
                 <span
                   key={tag}
                   className="text-[11px] font-medium text-stone-600 bg-stone-100 rounded-md px-2 py-1"
@@ -113,14 +150,14 @@ const RecipesView = () => {
           {/* Modal box */}
           <div className="w-200 bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-black text-2xl text-center font-bold google-sans">
-              {textRecipes[recipeView].title}
+              {recipes[recipeView].title}
             </h2>
             <hr className="my-3 text-gray-300" />
-            <p>{textRecipes[recipeView].desc}</p>
+            <p>{recipes[recipeView].desc}</p>
             <h2 className="py-5 font-semibold">
               Ingredients:
               <span className="flex gap-1.5 flex-wrap mb-1">
-                {textRecipes[recipeView].tags.map((tag, idx) => (
+                {recipes[recipeView].herbs?.map((tag, idx) => (
                   <span
                     key={idx + 102}
                     className="text-[11px] my-2 font-medium text-stone-600 bg-stone-100 rounded-md px-2 py-1"
@@ -132,7 +169,7 @@ const RecipesView = () => {
             </h2>
             <h2 className="font-semibold my-3">Steps:</h2>
             <div className="flex flex-col gap-2.5 mb-5">
-              {textRecipes[recipeView].steps.map((step, i) => (
+              {recipes[recipeView].steps?.map((step, i) => (
                 <div
                   key={i}
                   className="flex items-start gap-2.5 text-[14px] text-stone-600 leading-relaxed"

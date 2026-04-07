@@ -1,6 +1,31 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { Search, Clock, Trash2, Bot, BookOpen, X } from "lucide-react";
-import {SEED_SAVED} from '../data/userData'
+import { SEED_SAVED } from "../data/userData";
+import { apiUrl, authHeaders } from "../config/api.js";
+
+const isMongoId = (id) =>
+  typeof id === "string" && /^[a-f\d]{24}$/i.test(String(id));
+
+function mapApiSavedToCard(r) {
+  const herbs = Array.isArray(r.herbs) ? r.herbs : [];
+  const steps = Array.isArray(r.steps) ? r.steps : [];
+  return {
+    id: r.id || r._id,
+    cat: r.category || r.cat || "Herbal",
+    type: r.type || "text",
+    title: r.title,
+    desc: r.desc || "",
+    img: r.img,
+    herbs,
+    time: r.time || "—",
+    benefit: r.benefit || "—",
+    steps,
+    video: r.video || "",
+    source: "api",
+  };
+}
 
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -265,17 +290,52 @@ const SavedCard = ({ recipe, onRemove, onView, index }) => {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const SavedRecipes = () => {
-  const [saved,      setSaved]      = useState(SEED_SAVED);
-  const [activeTab,  setActiveTab]  = useState("all");
+  const [saved, setSaved] = useState(SEED_SAVED);
+  const [activeTab, setActiveTab] = useState("all");
   const [activeSort, setActiveSort] = useState("recent");
-  const [search,     setSearch]     = useState("");
-  const [modalItem,  setModalItem]  = useState(null);
+  const [search, setSearch] = useState("");
+  const [modalItem, setModalItem] = useState(null);
 
-  // Remove a recipe — also closes modal if that recipe is open
-  const removeRecipe = (id) => {
-    setSaved(prev => prev.filter(r => r.id !== id));
-    if (modalItem?.id === id) setModalItem(null);
-  };
+  useEffect(() => {
+    const headers = authHeaders();
+    if (!headers.Authorization) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await axios.get(apiUrl("/api/recipes/saved"), { headers });
+        if (!cancelled && r.data?.success && Array.isArray(r.data.recipes)) {
+          const mapped = r.data.recipes.map(mapApiSavedToCard);
+          setSaved((prev) => {
+            const seedOnly = prev.filter((x) => x.source !== "api");
+            return [...mapped, ...seedOnly];
+          });
+        }
+      } catch {
+        /* keep seed data */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const removeRecipe = useCallback(
+    async (id) => {
+      const headers = authHeaders();
+      if (isMongoId(id) && headers.Authorization) {
+        try {
+          await axios.delete(apiUrl(`/api/recipes/save/${id}`), { headers });
+          toast.success("Removed from saved");
+        } catch (e) {
+          toast.error(e.response?.data?.message || "Could not remove");
+          return;
+        }
+      }
+      setSaved((prev) => prev.filter((r) => r.id !== id));
+      if (modalItem?.id === id) setModalItem(null);
+    },
+    [modalItem?.id],
+  );
 
   // ── Filtered + sorted list ─────────────────────────────────────────────────
   const visible = useMemo(() => {

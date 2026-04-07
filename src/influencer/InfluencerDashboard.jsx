@@ -25,9 +25,12 @@ import { Khalbatta } from "../CustomIcons";
 import InventoryManagement from "./pages/InventoryManagement";
 import InfluencerProfile from "./pages/InfluencerProfile";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import SavedRecipes from "../components/SavedRecipes";
 
 const InfluencerDashboard = () => {
+  const navigate = useNavigate();
   const menus = [
     { name: "Dashboard", icon: LayoutDashboard, component: Dashboard },
     { name: "Recipes", icon: BookOpen, component: RecipesView },
@@ -35,7 +38,7 @@ const InfluencerDashboard = () => {
     { name: "AI Recipe", icon: Bot, component: AIRecipe },
     { name: "Herbal Kitchen", icon: Khalbatta, component: HomeMade },
     { name: "Inventory Management", icon: Warehouse, component: InventoryManagement },
-    { name: "Saved Recipes", icon: Bookmark, component: InventoryManagement },
+    { name: "Saved Recipes", icon: Bookmark, component: SavedRecipes },
     { name: "Profile", icon: User, component: InfluencerProfile },
   ];
 
@@ -44,12 +47,10 @@ const InfluencerDashboard = () => {
 
   const ActiveComponent = menus[active].component;
   const handleLogout = () => {
-  // clear auth data
-  localStorage.removeItem("token");
-
-  // redirect to login
-  navigate("/login");
-};
+    localStorage.removeItem("influencerToken");
+    localStorage.removeItem("influencer");
+    navigate("/login");
+  };
 
   // api calling
   const [currentInfluencer,setCurrentInfluencer]=useState(null)

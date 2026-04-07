@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { apiUrl } from "../../config/api.js";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -352,7 +353,7 @@ const AddRecipe = () => {
 
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:3000/api/influencer/post-recipe",
+        apiUrl("/api/influencer/post-recipe"),
         formData,
         {
           headers: {
@@ -360,9 +361,9 @@ const AddRecipe = () => {
           },
         }
       );
-      console.log(response.data)
       if (response.data?.success) {
         toast.success(response.data.message || "Recipe uploaded successfully");
+        window.dispatchEvent(new CustomEvent("herb-recipes-refresh"));
         setSubmitted(true);
       } else {
         toast.error(response.data?.message || "Unable to upload recipe");

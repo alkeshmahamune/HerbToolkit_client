@@ -19,6 +19,7 @@ import HerbalRecipe from "../components/HerbalRecipe";
 import { Khalbatta } from "../CustomIcons";
 import SavedRecipes from "../components/SavedRecipes";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 // pages imports - lazy loaded
@@ -34,6 +35,7 @@ const Inventory = lazy(() => import("./userPages/Inventory"));
 const UserProfile = lazy(() => import("./userPages/UserProfile"));
 
 export default function RecipeDashboard() {
+  const navigate = useNavigate();
   const menus = [
     { name: "Home", icon: HomeIcon, component: Home },
     { name: "Personalized Recipes", icon: BookOpen, component: Recipies },
@@ -51,10 +53,8 @@ export default function RecipeDashboard() {
   const ActiveComponent = menus[active].component;
 
   const handleLogout = () => {
-    // clear auth data
-    localStorage.removeItem("token");
-
-    // redirect to login
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("User");
     navigate("/login");
   };
 

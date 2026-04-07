@@ -1,11 +1,8 @@
 import React from "react";
 import { ArrowLeft } from "lucide-react";
-import { cuisineDishes } from "../data/userData";
 import { DishCard } from "./DishCard";
 
-export const CuisineView = ({ cuisine, onSelectDish, onBack }) => {
-  const dishes = cuisineDishes[cuisine.id] || [];
-
+export const CuisineView = ({ cuisine, dishes = [], onSelectDish, onBack }) => {
   return (
     <div>
       <button
@@ -25,15 +22,29 @@ export const CuisineView = ({ cuisine, onSelectDish, onBack }) => {
         </div>
       </div>
 
-      {/* Dishes grid */}
-      <div
-        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
-        style={{ animation: "fadeUp 0.5s 0.15s ease both", opacity: 0, animationFillMode: "both" }}
-      >
-        {dishes.map((d, i) => (
-          <DishCard key={i} dish={d} index={i} onView={onSelectDish} />
-        ))}
-      </div>
+      {dishes.length === 0 ? (
+        <p className="text-sm text-gray-500 py-12 text-center border border-dashed border-stone-200 rounded-2xl">
+          No recipes for this cuisine yet. Post a recipe with category &quot;{cuisine.heading}&quot; to see it here.
+        </p>
+      ) : (
+        <div
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+          style={{
+            animation: "fadeUp 0.5s 0.15s ease both",
+            opacity: 0,
+            animationFillMode: "both",
+          }}
+        >
+          {dishes.map((d, i) => (
+            <DishCard
+              key={d.recipeId || d.name + i}
+              dish={d}
+              index={i}
+              onView={onSelectDish}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

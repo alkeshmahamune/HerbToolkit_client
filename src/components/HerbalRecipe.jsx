@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 import {
   Search,
   Bookmark,
@@ -7,7 +9,13 @@ import {
   BookOpen,
   X,
   ChevronRight,
+  Heart,
+  Send,
 } from "lucide-react";
+import { apiUrl, authHeaders } from "../config/api.js";
+
+const isMongoId = (id) =>
+  typeof id === "string" && /^[a-f\d]{24}$/i.test(String(id));
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -572,11 +580,15 @@ const RecipeCard = ({ recipe, saved, onSave, onClick, index }) => {
 
         {/* Herbs */}
         <div className="flex flex-wrap gap-1.5 mb-3">
-          {recipe.herbs.slice(0, 3).map((h) => (
+          {(Array.isArray(recipe.herbs) ? recipe.herbs : [])
+            .slice(0, 3)
+            .map((h) => (
             <HerbTag key={h} name={h} />
           ))}
-          {recipe.herbs.length > 3 && (
-            <HerbTag name={`+${recipe.herbs.length - 3}`} />
+          {(Array.isArray(recipe.herbs) ? recipe.herbs : []).length > 3 && (
+            <HerbTag
+              name={`+${(Array.isArray(recipe.herbs) ? recipe.herbs : []).length - 3}`}
+            />
           )}
         </div>
 
@@ -608,10 +620,40 @@ const RecipeCard = ({ recipe, saved, onSave, onClick, index }) => {
 
 // ─── Detail Modal ─────────────────────────────────────────────────────────────
 
-const RecipeModal = ({ recipe, onClose }) => {
+const RecipeModal = ({
+  recipe,
+  onClose,
+  liked,
+  onToggleLike,
+  onSubmitComment,
+}) => {
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [posting, setPosting] = useState(false);
+
+  useEffect(() => {
+    if (!recipe || !isMongoId(recipe.id)) {
+      setComments([]);
+      return;
+    }
+    let cancelled = false;
+    axios
+      .get(apiUrl(`/api/recipes/${recipe.id}/comments`))
+      .then((r) => {
+        if (!cancelled && r.data?.success) setComments(r.data.comments || []);
+      })
+      .catch(() => {
+        if (!cancelled) setComments([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [recipe?.id]);
+
   if (!recipe) return null;
   const catLabel =
     CATEGORIES.find((c) => c.id === recipe.cat)?.label ?? recipe.cat;
+  const apiRecipe = isMongoId(recipe.id);
 
   return (
     <div
@@ -679,7 +721,7 @@ const RecipeModal = ({ recipe, onClose }) => {
 
           {/* Herbs */}
           <div className="flex flex-wrap gap-2 mb-5">
-            {recipe.herbs.map((h) => (
+            {(Array.isArray(recipe.herbs) ? recipe.herbs : []).map((h) => (
               <span
                 key={h}
                 className="text-[11px] font-medium bg-[#eef0e6] text-[#4a5535] px-3 py-1 rounded-lg"
@@ -694,7 +736,7 @@ const RecipeModal = ({ recipe, onClose }) => {
             How to make it
           </p>
           <div className="flex flex-col gap-3 mb-5">
-            {recipe.steps.map((step, i) => (
+            {(Array.isArray(recipe.steps) ? recipe.steps : []).map((step, i) => (
               <div key={i} className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-[#eef0e6] flex items-center justify-center text-[10px] font-bold text-[#4a5535] shrink-0 mt-0.5">
                   {i + 1}
@@ -717,7 +759,74 @@ const RecipeModal = ({ recipe, onClose }) => {
             <span className="text-[12px] font-medium bg-[#eef0e6] text-[#4a5535] px-3 py-1.5 rounded-full capitalize">
               {recipe.type === "video" ? "▶ Video guide" : "📖 Text guide"}
             </span>
+            {apiRecipe && onToggleLike && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleLike(recipe.id);
+                }}
+                className={`inline-flex items-center gap-1.5 text-[12px] font-medium px-3 py-1.5 rounded-full border transition-all
+                  ${liked ? "bg-rose-50 border-rose-200 text-rose-700" : "bg-white border-[#e4dfc8] text-[#4a5535]"}`}
+              >
+                <Heart size={14} className={liked ? "fill-rose-500 text-rose-500" : ""} />
+                {recipe.likes ?? 0}
+              </button>
+            )}
           </div>
+
+          {apiRecipe && (
+            <div className="mt-6 pt-4 border-t border-[#f0ece0]">
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-[#9aaa7a] mb-3">
+                Comments
+              </p>
+              <div className="flex flex-col gap-2 max-h-40 overflow-y-auto mb-3">
+                {comments.length === 0 && (
+                  <p className="text-[12px] text-[#9aaa7a]">No comments yet.</p>
+                )}
+                {comments.map((c) => (
+                  <div
+                    key={c._id}
+                    className="text-[12px] bg-[#f7f5ee] rounded-lg px-3 py-2 text-[#2c3320]"
+                  >
+                    <span className="font-semibold text-[#4a5535]">
+                      {c.authorName}
+                    </span>
+                    <p className="mt-0.5">{c.text}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Add a comment…"
+                  className="flex-1 text-[13px] border border-[#e4dfc8] rounded-xl px-3 py-2 outline-none focus:border-[#7a8c5e]"
+                />
+                <button
+                  type="button"
+                  disabled={posting || !commentText.trim()}
+                  onClick={async () => {
+                    if (!onSubmitComment || !commentText.trim()) return;
+                    setPosting(true);
+                    try {
+                      await onSubmitComment(recipe.id, commentText.trim());
+                      setCommentText("");
+                      const r = await axios.get(
+                        apiUrl(`/api/recipes/${recipe.id}/comments`)
+                      );
+                      if (r.data?.success) setComments(r.data.comments || []);
+                    } finally {
+                      setPosting(false);
+                    }
+                  }}
+                  className="shrink-0 w-10 h-10 rounded-xl bg-[#2c3320] text-white flex items-center justify-center disabled:opacity-40"
+                >
+                  <Send size={16} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -732,6 +841,40 @@ const HerbalRecipes = () => {
   const [search, setSearch] = useState("");
   const [savedIds, setSavedIds] = useState(new Set());
   const [modalItem, setModalItem] = useState(null);
+  const [remoteList, setRemoteList] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await axios.get(
+          apiUrl("/api/recipes/public?recipeCategory=herbal"),
+          { headers: authHeaders() },
+        );
+        if (!cancelled && r.data?.success) {
+          const list = r.data.recipes || [];
+          setRemoteList(list);
+          setSavedIds((prev) => {
+            const n = new Set(prev);
+            list.forEach((rec) => {
+              if (rec.saved) n.add(rec.id);
+            });
+            return n;
+          });
+        }
+      } catch {
+        if (!cancelled) setRemoteList([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const allRecipes = useMemo(
+    () => [...remoteList, ...RECIPES],
+    [remoteList],
+  );
 
   const counts = useMemo(
     () =>
@@ -739,35 +882,138 @@ const HerbalRecipes = () => {
         CATEGORIES.map((c) => [
           c.id,
           c.id === "all"
-            ? RECIPES.length
-            : RECIPES.filter((r) => r.cat === c.id).length,
+            ? allRecipes.length
+            : allRecipes.filter((r) => r.cat === c.id).length,
         ]),
       ),
-    [],
+    [allRecipes],
   );
 
   const filtered = useMemo(
     () =>
-      RECIPES.filter((r) => {
+      allRecipes.filter((r) => {
         const matchCat = activeCat === "all" || r.cat === activeCat;
         const matchType = activeType === "all" || r.type === activeType;
         const q = search.toLowerCase();
+        const herbs = Array.isArray(r.herbs) ? r.herbs : [];
         const matchQ =
           !q ||
           r.title.toLowerCase().includes(q) ||
           r.desc.toLowerCase().includes(q) ||
-          r.herbs.some((h) => h.toLowerCase().includes(q));
+          herbs.some((h) => h.toLowerCase().includes(q));
         return matchCat && matchType && matchQ;
       }),
-    [activeCat, activeType, search],
+    [allRecipes, activeCat, activeType, search],
   );
 
-  const toggleSave = (id) =>
-    setSavedIds((prev) => {
-      const n = new Set(prev);
-      n.has(id) ? n.delete(id) : n.add(id);
-      return n;
-    });
+  const toggleSave = useCallback(
+    async (id) => {
+      if (!isMongoId(id)) {
+        setSavedIds((prev) => {
+          const n = new Set(prev);
+          n.has(id) ? n.delete(id) : n.add(id);
+          return n;
+        });
+        return;
+      }
+      const headers = authHeaders();
+      if (!headers.Authorization) {
+        toast.error("Sign in to save recipes");
+        return;
+      }
+      const was = savedIds.has(id);
+      try {
+        if (was) {
+          await axios.delete(apiUrl(`/api/recipes/save/${id}`), { headers });
+          toast.success("Removed from saved");
+        } else {
+          await axios.post(
+            apiUrl("/api/recipes/save"),
+            { recipeId: id, recipeType: "uploadedRecipe" },
+            { headers },
+          );
+          toast.success("Saved");
+        }
+        setSavedIds((prev) => {
+          const n = new Set(prev);
+          was ? n.delete(id) : n.add(id);
+          return n;
+        });
+        setRemoteList((prev) =>
+          prev.map((r) =>
+            r.id === id ? { ...r, saved: !was } : r,
+          ),
+        );
+        setModalItem((m) =>
+          m && m.id === id ? { ...m, saved: !was } : m,
+        );
+      } catch (e) {
+        toast.error(e.response?.data?.message || "Could not update saved recipes");
+      }
+    },
+    [savedIds],
+  );
+
+  const toggleLike = useCallback(async (id) => {
+    if (!isMongoId(id)) return;
+    const headers = authHeaders();
+    if (!headers.Authorization) {
+      toast.error("Sign in to like recipes");
+      return;
+    }
+    try {
+      const r = await axios.post(
+        apiUrl(`/api/recipes/${id}/like`),
+        { recipeType: "uploadedRecipe" },
+        { headers },
+      );
+      if (r.data?.success) {
+        setRemoteList((prev) =>
+          prev.map((x) =>
+            x.id === id
+              ? { ...x, liked: r.data.liked, likes: r.data.likes }
+              : x,
+          ),
+        );
+        setModalItem((m) =>
+          m && m.id === id
+            ? { ...m, liked: r.data.liked, likes: r.data.likes }
+            : m,
+        );
+      }
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Like failed");
+    }
+  }, []);
+
+  const submitComment = useCallback(async (recipeId, text) => {
+    const headers = authHeaders();
+    if (!headers.Authorization) {
+      toast.error("Sign in to comment");
+      throw new Error("auth");
+    }
+    await axios.post(
+      apiUrl(`/api/recipes/${recipeId}/comments`),
+      { text, recipeType: "uploadedRecipe" },
+      { headers },
+    );
+    toast.success("Comment posted");
+    setRemoteList((prev) =>
+      prev.map((x) =>
+        x.id === recipeId
+          ? { ...x, commentsCount: (x.commentsCount ?? x.comments ?? 0) + 1 }
+          : x,
+      ),
+    );
+    setModalItem((m) =>
+      m && m.id === recipeId
+        ? {
+            ...m,
+            commentsCount: (m.commentsCount ?? m.comments ?? 0) + 1,
+          }
+        : m,
+    );
+  }, []);
 
   return (
     <>
@@ -878,7 +1124,7 @@ const HerbalRecipes = () => {
                 key={recipe.id}
                 recipe={recipe}
                 index={i}
-                saved={savedIds.has(recipe.id)}
+                saved={savedIds.has(String(recipe.id)) || !!recipe.saved}
                 onSave={toggleSave}
                 onClick={() => setModalItem(recipe)}
               />
@@ -889,7 +1135,13 @@ const HerbalRecipes = () => {
 
       {/* ── Detail Modal ── */}
       {modalItem && (
-        <RecipeModal recipe={modalItem} onClose={() => setModalItem(null)} />
+        <RecipeModal
+          recipe={modalItem}
+          onClose={() => setModalItem(null)}
+          liked={!!modalItem.liked}
+          onToggleLike={toggleLike}
+          onSubmitComment={submitComment}
+        />
       )}
     </>
   );

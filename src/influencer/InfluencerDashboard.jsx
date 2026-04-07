@@ -67,7 +67,7 @@ const InfluencerDashboard = () => {
       );
       setCurrentInfluencer(response.data?.user)
       localStorage.setItem("influencer",JSON.stringify(response?.data?.user))
-      console.log(response.data);
+      console.log(response.data.user);
     } catch (error) {
       console.error(error);
     }

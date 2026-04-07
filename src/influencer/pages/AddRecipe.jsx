@@ -16,6 +16,8 @@ import {
   Flame,
   AlertCircle,
 } from "lucide-react";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -193,6 +195,7 @@ const AddRecipe = () => {
   const [videoPreview, setVideoPreview] = useState(null);
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const videoInputRef = useRef(null);
   const photoInputRef=useRef(null)
   const [photoPreview,setPhotoPreview]=useState(null)
@@ -258,18 +261,118 @@ const AddRecipe = () => {
     setVideoPreview(URL.createObjectURL(file));
   };
 
-  const onSubmit = (data) => {
-    console.log(data)
-    const payload = {
-      ...data,
-      recipeType,
-      isHerbal,
-      visibility,
-      videoFile: videoFile?.name,
-      doctorVerification: selectedDoc,
-    };
-    console.log("Recipe submitted:", payload);
-    setSubmitted(true);
+  const onSubmit = async (data) => {
+    try {
+      const token = localStorage.getItem("influencerToken");
+      if (!token) {
+        toast.error("Influencer token not found. Please login and try again.");
+        return;
+      }
+
+      const herbsArray = data.herbs
+        ? data.herbs
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean)
+        : [];
+
+      const ingredientList = (data.ingredients || [])
+        .filter((item) => item.name?.trim())
+        .map((item) => {
+          const ingredient = {
+            name: item.name.trim(),
+          };
+
+          if (item.quantity?.trim()) {
+            ingredient.quantity = item.quantity.trim();
+          }
+          if (item.unit) {
+            ingredient.unit = item.unit;
+          }
+          if (item.productLink?.trim()) {
+            ingredient.productLink = item.productLink.trim();
+          }
+
+          return ingredient;
+        });
+
+      const stepsArray = data.steps
+        ? data.steps
+            .split("\n")
+            .map((step) => step.trim())
+            .filter(Boolean)
+        : [];
+
+      const nutrition = isHerbal
+        ? {}
+        : {
+            calories: data.calories?.trim() || "",
+            protein: data.protein?.trim() || "",
+            carbs: data.carbs?.trim() || "",
+            fat: data.fat?.trim() || "",
+          };
+
+      const usageInfo = isHerbal
+        ? {
+            dosage: data.calories?.trim() || "",
+            frequency: data.protein?.trim() || "",
+            duration: data.carbs?.trim() || "",
+            ageGroup: data.fat?.trim() || "",
+          }
+        : {};
+
+      const formData = new FormData();
+      formData.append("recipeType", recipeType);
+      formData.append("recipeCategory", isHerbal ? "herbal" : "regular");
+      formData.append("title", data.title?.trim() || "");
+      formData.append("description", data.description?.trim() || "");
+      formData.append("level", data.level || "");
+      formData.append("category", data.category || "");
+      formData.append("benefit", data.benefit?.trim() || "");
+      formData.append("herbs", JSON.stringify(herbsArray));
+      formData.append("prepTime", data.prepTime ? `${data.prepTime}` : "");
+      formData.append("cookTime", data.cookTime ? `${data.cookTime}` : "");
+      formData.append("productLink", data.productLink?.trim() || "");
+      formData.append("ingredientList", JSON.stringify(ingredientList));
+      formData.append("steps", JSON.stringify(stepsArray));
+      formData.append("tags", JSON.stringify([]));
+      formData.append("nutrition", JSON.stringify(nutrition));
+      formData.append("usageInfo", JSON.stringify(usageInfo));
+      formData.append("visibility", visibility);
+      formData.append("createdBy", "influencer");
+      if (selectedDoc) {
+        formData.append("verifiedBy", selectedDoc);
+      }
+
+      if (videoFile) {
+        formData.append("videoUrl", videoFile);
+      } else if (photoFile) {
+        formData.append("imageUrl", photoFile);
+      }
+
+      setLoading(true);
+      const response = await axios.post(
+        "http://localhost:3000/api/influencer/post-recipe",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data)
+      if (response.data?.success) {
+        toast.success(response.data.message || "Recipe uploaded successfully");
+        setSubmitted(true);
+      } else {
+        toast.error(response.data?.message || "Unable to upload recipe");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ── Shared card wrapper ────────────────────────────────────────────────────
@@ -1195,18 +1298,19 @@ const AddRecipe = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={handleSubmit(onSubmit)}
-                    disabled={!selectedDoc}
-                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[13px]
-                            font-medium transition-all active:scale-[0.98]
-                  ${
-                    selectedDoc
-                      ? "bg-green-600 hover:bg-green-700 text-white"
-                      : "bg-stone-100 text-stone-400 cursor-not-allowed"
-                  }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!loading) handleSubmit(onSubmit)(e);
+                    }}
+                    disabled={!selectedDoc || loading}
+                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[13px] font-medium transition-all active:scale-[0.98] ${
+                      selectedDoc && !loading
+                        ? "bg-green-600 hover:bg-green-700 text-white"
+                        : "bg-stone-100 text-stone-400 cursor-not-allowed"
+                    }`}
                   >
                     <Check size={15} />
-                    Submit for Verification
+                    {loading ? "Submitting..." : "Submit for Verification"}
                   </button>
                 </div>
               </Card>
@@ -1263,16 +1367,19 @@ const AddRecipe = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={handleSubmit(onSubmit)}
-                    // disabled={!selectedDoc}
-                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[13px]
-                            font-medium transition-all active:scale-[0.98]
-                    bg-green-600 hover:bg-green-700 text-white
-                    }
-                    `}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!loading) handleSubmit(onSubmit)(e);
+                    }}
+                    disabled={loading}
+                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[13px] font-medium transition-all active:scale-[0.98] ${
+                      loading
+                        ? "bg-stone-100 text-stone-400 cursor-not-allowed"
+                        : "bg-green-600 hover:bg-green-700 text-white"
+                    }`}
                   >
                     <Check size={15} />
-                    Post Recipe
+                    {loading ? "Submitting..." : "Post Recipe"}
                   </button>
                 </div>
               </Card>

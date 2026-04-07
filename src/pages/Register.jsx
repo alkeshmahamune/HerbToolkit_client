@@ -185,11 +185,27 @@ const Register = () => {
           role,
           ...data,
         });
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setTimeout(() => {
+            navigate("/login");
+          }, 1500);
+        } else {
+          toast.warn(response.data.message);
+        }
       } else if (role.toLocaleLowerCase() === "doctor") {
         response = await axios.post(
           "http://localhost:3000/api/doctor/register",
           { role, ...data },
         );
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setTimeout(() => {
+            navigate("/login");
+          }, 1500);
+        } else {
+          toast.warn(response.data.message);
+        }
       } else {
         response = await axios.post(
           "http://localhost:3000/api/influencer/register",
@@ -198,17 +214,17 @@ const Register = () => {
             ...data,
           },
         );
+        if (response.data.success) {
+          toast.success(response.data.message);
+          setTimeout(() => {
+            navigate("/login");
+          }, 1500);
+        } else {
+          toast.warn(response.data.message);
+        }
       }
     } catch (error) {
       toast.error("Something went wrong");
-    }
-    if (response.data.success) {
-      toast.success(response.data.message);
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } else {
-      toast.warn(response.data.message);
     }
     console.log({ role, ...data });
   };

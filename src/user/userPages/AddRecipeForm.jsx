@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
+import axios from "axios";
+import { apiUrl, authHeaders } from "../../config/api.js";
 import {
   Clock,
   Users,
@@ -276,24 +278,47 @@ export const AddRecipeForm = ({ onSubmit: onSubmitProp }) => {
 
   // ── Final submit ──────────────────────────────────────────────────────────
 
-  const onSubmit = (data) => {
-  const payload = {
-    ...data,
-    steps:       data.steps.map(s => s.value).filter(Boolean),
-    ingredients: data.ingredients.filter(i => i.name?.trim()),
-    rating:      data.rating ? String(data.rating) : "",
-    authorInit:  avatarInit,
+  const onSubmit = async (data) => {
+    const payload = {
+      ...data,
+      steps: data.steps.map((s) => s.value).filter(Boolean),
+      ingredients: data.ingredients.filter((i) => i.name?.trim()),
+      rating: data.rating ? String(data.rating) : "",
+      authorInit: avatarInit,
+    };
+
+    try {
+      const headers = authHeaders();
+      if (!headers.Authorization) {
+        window.alert("Please log in to publish your recipe.");
+        return;
+      }
+
+      const response = await axios.post(
+        apiUrl("/api/recipes/personalized"),
+        payload,
+        { headers }
+      );
+
+      if (!response.data?.success) {
+        throw new Error(response.data?.message || "Failed to publish recipe");
+      }
+
+      onSubmitProp?.(payload);
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        reset();
+        setCurrentStep(0);
+        setCompleted([]);
+      }, 2500);
+    } catch (error) {
+      console.error("Publish failed", error);
+      window.alert(
+        error.response?.data?.message || error.message || "Could not publish recipe"
+      );
+    }
   };
-  console.log("Recipe submitted:", payload);
-  onSubmitProp?.(payload);
-  setSubmitted(true);
-  setTimeout(() => {
-    setSubmitted(false);
-    reset();
-    setCurrentStep(0);
-    setCompleted([]);
-  }, 2500);
-};
 
   // ─────────────────────────────────────────────────────────────────────────
 

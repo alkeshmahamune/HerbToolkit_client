@@ -68,6 +68,9 @@ const RecipesView = () => {
 
   return (
     <div className="relative">
+      <style>{`
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
       <h2 className="text-xl font-semibold text-gray-800 mb-6">
         Personalized Recipes
       </h2>
@@ -84,7 +87,6 @@ const RecipesView = () => {
               animationDelay: `${0.7 + idx * 0.1}s`,
               animationTimingFunction: "ease",
               animationFillMode: "both",
-              opacity: 0,
             }}
           >
             {/* ── Top content ── */}

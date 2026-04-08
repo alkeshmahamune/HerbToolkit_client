@@ -307,14 +307,12 @@ const Dashboard = () => {
   const [recipes,  setRecipes]  = useState(recipesUploaded);   // ← own state copy
   const [selected, setSelected] = useState(null);
   const [filter,   setFilter]   = useState("all");
-  const Influencer=JSON.parse(localStorage.getItem("influencer"))
+  const influencerData = localStorage.getItem("influencer");
+  const Influencer = influencerData && influencerData !== "undefined" ? JSON.parse(influencerData) : null;
   // console.log(Influencer)
   const filtered = filter === "all"
-    ? Influencer?.uploadedRecipes
+    ? (Influencer?.uploadedRecipes || recipes)
     : recipes.filter(r => r.type === filter);
-
-  const totalLikes    = recipes.reduce((s, r) => s + (r.likes    ?? 0), 0);
-  const totalComments = recipes.reduce((s, r) => s + (r.comments?.length ?? 0), 0);
 
   // Delete handler — removes from local state and goes back to grid
   const handleDelete = (id) => {

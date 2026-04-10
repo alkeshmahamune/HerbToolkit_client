@@ -2,8 +2,18 @@ import React, { useState, useEffect } from "react";
 import { Clock, Users, Flame, Bookmark } from "lucide-react";
 import axios from "axios";
 import { apiUrl, authHeaders } from "../config/api.js";
+import { data } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const RecipesView = () => {
+  const location = useLocation()
+  let token
+  if(location.pathname.includes('user')){
+    token=localStorage.getItem("userToken")
+  }else{
+    token=localStorage.getItem("doctorToken")
+  }
+
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [savedStates, setSavedStates] = useState({});
@@ -30,10 +40,11 @@ const RecipesView = () => {
       try {
         const headers = authHeaders();
         if (!headers.Authorization) return;
-        const response = await axios.get(apiUrl("/api/recipes/personalized"), { headers });
+        const response = await axios.get(apiUrl("api/recipes/personalized"), { headers:{Authorization: `Bearer ${token}` } });
         if (response.data?.success) {
           setRecipes(response.data.recipes || []);
         }
+        console.log(response.data)
       } catch (error) {
         console.error("Failed to fetch personalized recipes", error);
       } finally {
@@ -66,7 +77,7 @@ const RecipesView = () => {
     return <div className="text-center py-8">Loading personalized recipes...</div>;
   }
 
-  return (
+  return recipes && recipes.length > 0 ? (
     <div className="relative">
       <style>{`
         @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
@@ -193,7 +204,17 @@ const RecipesView = () => {
         </div>
       )}
     </div>
-  );
+  ):(
+    <div className="w-full">
+      <style>{`
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
+      <h2 className="text-xl font-semibold text-gray-800 mb-6">
+        Personalized Recipes
+      </h2>
+      <h6 className="text-center text-red-500">Nothing Added Yet!</h6>
+    </div>
+  )
 };
 
 export default RecipesView;

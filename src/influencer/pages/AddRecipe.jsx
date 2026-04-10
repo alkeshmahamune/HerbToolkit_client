@@ -438,7 +438,7 @@ const AddRecipe = () => {
           <p className="text-[14px] text-stone-500 leading-relaxed mb-6">
             Your recipe has been submitted and sent to{" "}
             <span className="font-medium text-stone-700">
-              {doctors.find((d) => d.id === selectedDoc)?.name}
+              {doctors.find((d) => d._id === selectedDoc)?.name}
             </span>{" "}
             for verification. You'll be notified once it's approved.
           </p>
@@ -1300,9 +1300,9 @@ const AddRecipe = () => {
                 <div className="flex flex-col gap-2.5 mb-7">
                   {doctors.map((doc) => (
                     <button
-                      key={doc.id}
+                      key={doc._id}
                       type="button"
-                      onClick={() => setSelectedDoc(doc.id)}
+                      onClick={() => setSelectedDoc(doc._id)}
                       className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all
                     ${
                       selectedDoc === doc.id
@@ -1314,7 +1314,7 @@ const AddRecipe = () => {
                         className={`w-10 h-10 rounded-full flex items-center justify-center text-[13px]
                                    font-semibold shrink-0 transition-all
                     ${
-                      selectedDoc === doc.id
+                      selectedDoc === doc._id
                         ? "bg-teal-600 text-white"
                         : "bg-stone-100 text-stone-600"
                     }

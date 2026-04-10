@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Users,
   Play,
@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { recipesUploaded } from "../recipeData";
 import axios from "axios";
+import { apiUrl, authHeaders } from "../../config/api.js";
+import { VideoPlayer } from "../../components/VideoPlayer";
 //this is the control panel which is home(dashboard) for influencer
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -62,7 +64,7 @@ const RecipeCard = ({ recipe, onClick, index }) => {
     {/* Thumbnail */}
     <div className="relative h-44 bg-stone-100 overflow-hidden">
       <img
-        src={recipe.image|| "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNXbAuDX6ncsg76VTk24lVYYHIQrTzlVBHDA&s"}
+        src={recipe.img || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNXbAuDX6ncsg76VTk24lVYYHIQrTzlVBHDA&s"}
         alt={recipe.title}
         loading="lazy"
         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
@@ -98,8 +100,8 @@ const RecipeCard = ({ recipe, onClick, index }) => {
         {recipe.title}
       </h3>
       <div className="flex items-center gap-3 text-[11px] text-stone-400 font-medium mb-2.5">
-        <span>⏱ {recipe.cookTime}</span>
-        <span>💬 {recipe.comments?.length ?? 0}</span>
+        <span>⏱ {recipe.time}</span>
+        <span>💬 {recipe.commentsCount ?? 0}</span>
       </div>
       <div className="flex items-center gap-3">
         <span className="flex items-center gap-1 text-[11px] font-bold text-stone-500">
@@ -193,27 +195,15 @@ const RecipeDetail = ({ recipe, onBack, onDelete }) => {
       <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-5 items-start">
         {/* ── Left — video / image ── */}
         {recipe.type === "video" && recipe.video ? (
-          <div
-            className="w-full bg-black rounded-2xl overflow-hidden"
-            style={{ aspectRatio: "16/9" }}
-          >
-            <video
-              src={recipe.video}
-              controls
-              playsInline
-              autoPlay // ← auto-plays when detail opens
-              preload="auto"
-              className="w-full h-full object-contain block"
-            />
-          </div>
+          <VideoPlayer src={recipe.video} />
         ) : (
           <div
             className="rounded-2xl overflow-hidden"
             style={{ aspectRatio: "16/9" }}
           >
             <img
-              src={recipe.image}
-              alt={recipe.name}
+              src={recipe.img}
+              alt={recipe.title}
               className="w-full h-full object-cover block"
             />
           </div>
@@ -227,7 +217,7 @@ const RecipeDetail = ({ recipe, onBack, onDelete }) => {
               {recipe.category}
             </p>
             <h2 className="text-syne text-[20px] font-bold text-stone-900 leading-tight mb-2">
-              {recipe.name}
+              {recipe.title}
             </h2>
             <p className="text-[12px] text-stone-400 leading-relaxed">
               {recipe.desc}
@@ -364,10 +354,42 @@ const Dashboard = () => {
       : null;
   const [selected, setSelected] = useState(null);
   const [filter, setFilter] = useState("all");
-  const [recipes, setRecipes] = useState(Influencer?.uploadedRecipes); // static local recipes
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        setError(null);
+        const response = await axios.get(apiUrl("/api/recipes/my-uploads"), {
+          headers: authHeaders(),
+        });
+        if (response.data?.success) {
+          setRecipes(response.data.recipes);
+        } else {
+          setError(response.data?.message || "Failed to load recipes");
+        }
+      } catch (error) {
+        console.error("Failed to fetch recipes:", error);
+        setError(error.response?.data?.message || error.message || "Failed to load recipes");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipes();
+
+    const handleRefresh = () => {
+      fetchRecipes();
+    };
+
+    window.addEventListener("herb-recipes-refresh", handleRefresh);
+    return () => window.removeEventListener("herb-recipes-refresh", handleRefresh);
+  }, []);
+
   const filtered =
     filter === "all" ? recipes : recipes.filter((r) => r.type === filter);
-  console.log(recipes);
   // Delete handler — removes from local state and goes back to grid
   const handleDelete = (id) => {
     setRecipes((prev) => prev.filter((r) => r.id !== id));
@@ -436,7 +458,7 @@ const Dashboard = () => {
                   iconColor: "#3a8aaa",
                   iconBg: "#eff5fd",
                   label: "Recipes",
-                  value: `${Influencer?.uploadedRecipes.length || 0}`,
+                  value: `${recipes.length}`,
                   delay: 0.1,
                 },
                 {
@@ -495,7 +517,19 @@ const Dashboard = () => {
             </div>
 
             {/* ── Grid ── */}
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 text-stone-400">
+                <p className="text-[14px] font-medium text-stone-600">
+                  Loading recipes...
+                </p>
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center py-20 text-stone-400">
+                <p className="text-[14px] font-medium text-red-600">
+                  Error: {error}
+                </p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-stone-400">
                 <p className="text-4xl mb-3">🍽️</p>
                 <p className="text-[14px] font-medium text-stone-600">

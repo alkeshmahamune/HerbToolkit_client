@@ -7,8 +7,8 @@ export function apiUrl(path) {
 }
 
 export function authHeaders() {
-  const userToken = localStorage.getItem("userToken");
   const influencerToken = localStorage.getItem("influencerToken");
-  const token = userToken || influencerToken;
+  const userToken = localStorage.getItem("userToken");
+  const token = influencerToken || userToken;
   return token ? { Authorization: `Bearer ${token}` } : {};
 }

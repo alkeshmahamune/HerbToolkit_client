@@ -201,6 +201,9 @@ const AddRecipe = () => {
   const photoInputRef=useRef(null)
   const [photoPreview,setPhotoPreview]=useState(null)
   const[photoFile,setPhotoFile]=useState(null)
+  const thumbnailInputRef = useRef(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [thumbnailFile, setThumbnailFile] = useState(null);
   const {
     register,
     handleSubmit,
@@ -262,11 +265,23 @@ const AddRecipe = () => {
     setVideoPreview(URL.createObjectURL(file));
   };
 
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setThumbnailFile(file);
+    setThumbnailPreview(URL.createObjectURL(file));
+  };
+
   const onSubmit = async (data) => {
     try {
       const token = localStorage.getItem("influencerToken");
       if (!token) {
         toast.error("Influencer token not found. Please login and try again.");
+        return;
+      }
+
+      if (!thumbnailFile) {
+        toast.error("Thumbnail is required. Please upload a thumbnail image.");
         return;
       }
 
@@ -351,6 +366,10 @@ const AddRecipe = () => {
         formData.append("imageUrl", photoFile);
       }
 
+      if (thumbnailFile) {
+        formData.append("thumbnail", thumbnailFile);
+      }
+
       setLoading(true);
       const response = await axios.post(
         apiUrl("/api/influencer/post-recipe"),
@@ -416,6 +435,8 @@ const AddRecipe = () => {
               setSelectedDoc(null);
               setVideoFile(null);
               setVideoPreview(null);
+              setThumbnailFile(null);
+              setThumbnailPreview(null);
             }}
             className="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-[13px]
                        font-medium rounded-xl transition-all"
@@ -978,12 +999,66 @@ const AddRecipe = () => {
               Media & Visibility
             </h2>
             <p className="text-[13px] text-stone-400 mb-6">
-              {recipeType === "video"
-                ? "Upload your recipe video and set who can see it."
-                : "Upload an image and set who can see it."}
+              Upload a thumbnail and media for your recipe.
             </p>
 
             <div className="flex flex-col gap-5">
+              {/* Thumbnail upload - mandatory */}
+              <div>
+                <p className="text-[12px] font-medium text-stone-600 mb-2">
+                  Recipe Thumbnail <span className="text-red-400">*</span>
+                </p>
+
+                {thumbnailPreview ? (
+                  <div className="relative">
+                    <img
+                      src={thumbnailPreview}
+                      alt="thumbnail preview"
+                      className="w-full rounded-xl border border-stone-200"
+                      style={{ aspectRatio: "16/9" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setThumbnailFile(null);
+                        setThumbnailPreview(null);
+                      }}
+                      className="absolute top-2.5 right-2.5 w-7 h-7 bg-black/60 hover:bg-black/80
+                                 rounded-full flex items-center justify-center text-white transition-all"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => thumbnailInputRef.current?.click()}
+                    className="w-full border-2 border-dashed border-stone-200 rounded-xl p-8
+                               flex flex-col items-center gap-3 hover:border-teal-300 hover:bg-teal-50
+                               transition-all cursor-pointer"
+                  >
+                    <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center">
+                      <Upload size={20} className="text-stone-500" />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[13px] font-medium text-stone-700">
+                        Click to upload thumbnail
+                      </p>
+                      <p className="text-[11px] text-stone-400 mt-0.5">
+                        JPG, PNG, WebP up to 5 MB
+                      </p>
+                    </div>
+                  </button>
+                )}
+                <input
+                  ref={thumbnailInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleThumbnailChange}
+                />
+              </div>
+
               {/* Video upload */}
               {recipeType === "video" && (
                 <div>
@@ -1163,7 +1238,7 @@ const AddRecipe = () => {
             <NavButtons
               onBack={goBack}
               onNext={() => goNext()}
-              disabled={recipeType === "video" && !videoFile}
+              disabled={!thumbnailFile || (recipeType === "video" && !videoFile)}
             />
           </Card>
         )}

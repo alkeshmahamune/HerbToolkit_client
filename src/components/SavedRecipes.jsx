@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { Search, Clock, Trash2, Bot, BookOpen, X } from "lucide-react";
 import { SEED_SAVED } from "../data/userData";
 import { apiUrl, authHeaders } from "../config/api.js";
+import { useLocation } from "react-router-dom";
 
 const isMongoId = (id) =>
   typeof id === "string" && /^[a-f\d]{24}$/i.test(String(id));
@@ -296,13 +297,25 @@ const SavedRecipes = () => {
   const [search, setSearch] = useState("");
   const [modalItem, setModalItem] = useState(null);
 
+  const location=useLocation()
+  let token
+  if(location.pathname.includes("user")){
+    token=localStorage.getItem("userToken")
+  }else if(location.pathname.includes("influencer")){
+    token=localStorage.getItem("influencerToken")
+  }else{
+    token=localStorage.getItem("doctorToken")
+  }
   useEffect(() => {
     const headers = authHeaders();
     if (!headers.Authorization) return;
     let cancelled = false;
     (async () => {
       try {
-        const r = await axios.get(apiUrl("/api/recipes/saved"), { headers });
+        const r = await axios.get(apiUrl("/api/recipes/saved"), { headers:{
+          Authorization:token
+        } });
+        console.log(r)
         if (!cancelled && r.data?.success && Array.isArray(r.data.recipes)) {
           const mapped = r.data.recipes.map(mapApiSavedToCard);
           setSaved((prev) => {
@@ -324,7 +337,9 @@ const SavedRecipes = () => {
       const headers = authHeaders();
       if (isMongoId(id) && headers.Authorization) {
         try {
-          await axios.delete(apiUrl(`/api/recipes/save/${id}`), { headers });
+          await axios.delete(apiUrl(`/api/recipes/save/${id}`), { headers:{
+            Authorization:token
+          } });
           toast.success("Removed from saved");
         } catch (e) {
           toast.error(e.response?.data?.message || "Could not remove");

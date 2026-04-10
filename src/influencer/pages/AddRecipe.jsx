@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import {
   Plus,
@@ -61,22 +61,22 @@ const UNITS = [
   "to taste",
 ];
 
-const DOCTORS = [
-  {
-    id: "d1",
-    name: "Dr. Priya Sharma",
-    spec: "Ayurvedic Physician",
-    avatar: "PS",
-  },
-  { id: "d2", name: "Dr. Arjun Mehta", spec: "Naturopath", avatar: "AM" },
-  {
-    id: "d3",
-    name: "Dr. Sunita Rao",
-    spec: "Herbal Medicine Expert",
-    avatar: "SR",
-  },
-  { id: "d4", name: "Dr. Vikram Nair", spec: "Nutritionist", avatar: "VN" },
-];
+// const DOCTORS = [
+//   {
+//     id: "d1",
+//     name: "Dr. Priya Sharma",
+//     spec: "Ayurvedic Physician",
+//     avatar: "PS",
+//   },
+//   { id: "d2", name: "Dr. Arjun Mehta", spec: "Naturopath", avatar: "AM" },
+//   {
+//     id: "d3",
+//     name: "Dr. Sunita Rao",
+//     spec: "Herbal Medicine Expert",
+//     avatar: "SR",
+//   },
+//   { id: "d4", name: "Dr. Vikram Nair", spec: "Nutritionist", avatar: "VN" },
+// ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -272,6 +272,21 @@ const AddRecipe = () => {
     setThumbnailPreview(URL.createObjectURL(file));
   };
 
+  // getting the doctors list 
+  const [doctors,setDoctors]=useState(null)
+  useEffect(()=>{
+    const getDoctors=async()=>{
+      try {
+        const response= await axios.get("http://localhost:3000/api/doctor/get-doctors")
+        console.log(response.data)
+        setDoctors(response.data?.doctors)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getDoctors()
+  },[])
+
   const onSubmit = async (data) => {
     try {
       const token = localStorage.getItem("influencerToken");
@@ -371,6 +386,7 @@ const AddRecipe = () => {
       }
 
       setLoading(true);
+
       const response = await axios.post(
         apiUrl("/api/influencer/post-recipe"),
         formData,
@@ -422,7 +438,7 @@ const AddRecipe = () => {
           <p className="text-[14px] text-stone-500 leading-relaxed mb-6">
             Your recipe has been submitted and sent to{" "}
             <span className="font-medium text-stone-700">
-              {DOCTORS.find((d) => d.id === selectedDoc)?.name}
+              {doctors.find((d) => d.id === selectedDoc)?.name}
             </span>{" "}
             for verification. You'll be notified once it's approved.
           </p>
@@ -1282,7 +1298,7 @@ const AddRecipe = () => {
                 </p>
 
                 <div className="flex flex-col gap-2.5 mb-7">
-                  {DOCTORS.map((doc) => (
+                  {doctors.map((doc) => (
                     <button
                       key={doc.id}
                       type="button"
@@ -1301,18 +1317,19 @@ const AddRecipe = () => {
                       selectedDoc === doc.id
                         ? "bg-teal-600 text-white"
                         : "bg-stone-100 text-stone-600"
-                    }`}
+                    }
+                    `}
                       >
-                        {doc.avatar}
+                        DR
                       </div>
                       <div className="flex-1 min-w-0">
                         <p
                           className={`text-[13px] font-medium ${selectedDoc === doc.id ? "text-teal-800" : "text-stone-800"}`}
                         >
-                          {doc.name}
+                          {doc?.fullName}
                         </p>
                         <p className="text-[11px] text-stone-400 flex items-center gap-1">
-                          <Stethoscope size={10} /> {doc.spec}
+                          <Stethoscope size={10} /> {doc.specialization}
                         </p>
                       </div>
                       {selectedDoc === doc.id && (

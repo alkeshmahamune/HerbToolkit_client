@@ -1,10 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Bot, Send, ClipboardList, Plus, X, ChefHat } from "lucide-react";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-// message shape: { id, role: "ai"|"user", text, time, suggestions?, recipeCard? }
-// recipeCard shape: { title, desc, time, serves, difficulty }
+import { Send, ClipboardList, X, ChefHat } from "lucide-react";
+import axios from "axios";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -48,13 +44,38 @@ const TypingIndicator = () => (
 
 const RecipeCard = ({ card }) => (
   <div className="mt-2 bg-white border border-stone-200 rounded-xl p-3">
+    {card.image && (
+      <img
+        src={card.image}
+        alt={card.title}
+        className="w-full h-28 object-cover rounded-lg mb-2"
+      />
+    )}
     <p className="text-[13px] font-semibold text-stone-800 mb-1">{card.title}</p>
-    <p className="text-[12px] text-stone-500 mb-2 leading-relaxed">{card.desc}</p>
+    {card.desc && (
+      <p className="text-[12px] text-stone-500 mb-2 leading-relaxed">{card.desc}</p>
+    )}
     <div className="flex gap-3 text-[11px] text-stone-500 flex-wrap">
-      <span>⏱ {card.time}</span>
-      <span>👥 {card.serves}</span>
-      <span>📊 {card.difficulty}</span>
+      {card.time  && <span>⏱ {card.time}</span>}
+      {card.serves && <span>👥 {card.serves}</span>}
+      {card.difficulty && <span>📊 {card.difficulty}</span>}
+      {card.usedIngredients > 0 && (
+        <span className="text-green-600">✅ Uses {card.usedIngredients} of your ingredients</span>
+      )}
+      {card.missedIngredients > 0 && (
+        <span className="text-amber-600">🛒 Missing {card.missedIngredients} ingredients</span>
+      )}
     </div>
+    {card.sourceUrl && (
+  <a
+    href={card.sourceUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-block mt-2 text-[11px] text-teal-600 hover:underline"
+  >
+    View full recipe →
+  </a>
+)}
   </div>
 );
 
@@ -75,15 +96,17 @@ const SuggestionPills = ({ items, onSelect }) => (
 );
 
 const AiBubble = ({ msg, onSuggestion }) => (
-  <div
-    className="flex items-end gap-2 animate-[fadeUp_.3s_ease_both]"
-    style={{ animationFillMode: "both" }}
-  >
+  <div className="flex items-end gap-2 animate-[fadeUp_.3s_ease_both]">
     <AiAvatar />
-    <div className="flex flex-col max-w-[72%]">
+    <div className="flex flex-col max-w-[80%]">
       <div className="bg-stone-100 border border-stone-200 rounded-[18px_18px_18px_4px] px-4 py-2.5">
-        <p className="text-[13px] text-stone-800 leading-relaxed">{msg.text}</p>
-        {msg.recipeCard && <RecipeCard card={msg.recipeCard} />}
+        <p className="text-[13px] text-stone-800 leading-relaxed whitespace-pre-line">
+          {msg.text}
+        </p>
+        {/* Multiple recipe cards */}
+        {msg.recipeCards?.map((card, i) => (
+          <RecipeCard key={i} card={card} />
+        ))}
         {msg.suggestions && (
           <SuggestionPills items={msg.suggestions} onSelect={onSuggestion} />
         )}
@@ -94,10 +117,7 @@ const AiBubble = ({ msg, onSuggestion }) => (
 );
 
 const UserBubble = ({ msg }) => (
-  <div
-    className="flex items-end gap-2 justify-end animate-[fadeUp_.3s_ease_both]"
-    style={{ animationFillMode: "both" }}
-  >
+  <div className="flex items-end gap-2 justify-end animate-[fadeUp_.3s_ease_both]">
     <div className="flex flex-col items-end max-w-[72%]">
       <div className="bg-teal-600 rounded-[18px_18px_4px_18px] px-4 py-2.5">
         <p className="text-[13px] text-white leading-relaxed">{msg.text}</p>
@@ -116,14 +136,46 @@ const UserBubble = ({ msg }) => (
 const IngredientChip = ({ name, onRemove }) => (
   <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-900 text-[11px] font-medium px-2.5 py-1 rounded-full border border-amber-100">
     {name}
-    <button
-      onClick={onRemove}
-      className="text-amber-600 hover:text-amber-900 transition-colors leading-none"
-    >
+    <button onClick={onRemove} className="text-amber-600 hover:text-amber-900 transition-colors">
       <X size={10} />
     </button>
   </span>
 );
+
+// ─── API call ─────────────────────────────────────────────────────────────────
+
+// ✅ Maps Spoonacular findByIngredients response → RecipeCard shape
+const mapIngredientRecipe = (r) => ({
+  title:            r.title,
+  image:            r.image,
+  usedIngredients:  r.usedIngredientCount,
+  missedIngredients: r.missedIngredientCount,
+  sourceUrl:        `https://spoonacular.com/recipes/${r.title.replace(/\s+/g, "-").toLowerCase()}-${r.id}`,
+});
+
+// ✅ Maps Spoonacular complexSearch response → RecipeCard shape
+const mapQueryRecipe = (r) => ({
+  title:      r.title,
+  image:      r.image,
+  time:       r.readyInMinutes ? `${r.readyInMinutes} min` : null,
+  serves:     r.servings ? `${r.servings} people` : null,
+  difficulty: null,
+  sourceUrl:  r.sourceUrl,
+});
+
+const fetchRecipes = async (ingredients, query) => {
+  const params = ingredients.length > 0
+    ? { ingredients: ingredients.join(",") }
+    : { query };
+
+  const res = await axios.get("/api/recipes/suggest", { params });
+
+  if (!res.data.success) throw new Error("API error");
+
+  return ingredients.length > 0
+    ? res.data.recipes.map(mapIngredientRecipe)
+    : res.data.recipes.map(mapQueryRecipe);
+};
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
@@ -137,6 +189,7 @@ const AIRecipeComponent = () => {
       suggestions: ["Quick dinner ideas", "Vegetarian recipes", "Under 30 min"],
     },
   ]);
+
   const [input,        setInput]        = useState("");
   const [isTyping,     setIsTyping]     = useState(false);
   const [showIngPanel, setShowIngPanel] = useState(false);
@@ -147,20 +200,16 @@ const AIRecipeComponent = () => {
   const textareaRef    = useRef(null);
   const ingInputRef    = useRef(null);
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // Auto-resize textarea
   const handleTextareaInput = (e) => {
     const el = e.target;
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 120) + "px";
     setInput(el.value);
   };
-
-  // ── Ingredient handlers ──────────────────────────────────────────────────
 
   const handleIngKeyDown = (e) => {
     if ((e.key === "Enter" || e.key === ",") && ingInput.trim()) {
@@ -178,10 +227,11 @@ const AIRecipeComponent = () => {
 
   // ── Send message ──────────────────────────────────────────────────────────
 
-  const sendMessage = (text = input) => {
+  const sendMessage = async (text = input) => {
     const trimmed = text.trim();
     if (!trimmed || isTyping) return;
 
+    // 1. Add user message
     const userMsg = {
       id:          Date.now(),
       role:        "user",
@@ -189,7 +239,6 @@ const AIRecipeComponent = () => {
       time:        now(),
       ingredients: [...ingredients],
     };
-
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
@@ -197,28 +246,42 @@ const AIRecipeComponent = () => {
       textareaRef.current.value = "";
       textareaRef.current.style.height = "auto";
     }
+    console.log(userMsg)
+    // 2. Hit real API
+    try {
+      const cards = await fetchRecipes(ingredients, trimmed);
+      const hasResults = cards.length > 0;
 
-    // Simulate AI response
-    setTimeout(() => {
-      setIsTyping(false);
       const aiMsg = {
         id:   Date.now() + 1,
         role: "ai",
         time: now(),
-        text: ingredients.length > 0
-          ? `Great! Using ${ingredients.join(", ")}, I'd recommend trying a quick stir-fry or a hearty soup. Here's a recipe that works perfectly:`
-          : "Here's a recipe suggestion based on your request! Feel free to ask for variations or a full step-by-step guide.",
-        recipeCard: {
-          title:      "Chicken Shakshuka",
-          desc:       "A rich tomato-based dish with tender chicken, perfect for any meal of the day.",
-          time:       "35 min",
-          serves:     "4 people",
-          difficulty: "Easy",
-        },
-        suggestions: ["Show full steps", "Make it spicier", "Suggest another"],
+        text: hasResults
+          ? ingredients.length > 0
+            ? `Here are ${cards.length} recipes using your ingredients:`
+            : `Here are some recipes for "${trimmed}":`
+          : "Sorry, I couldn't find any recipes for that. Try different ingredients or a different query!",
+        recipeCards: hasResults ? cards : [],
+        suggestions: ["Show more ideas", "Vegetarian only", "Under 30 min"],
       };
+      console.log(hasResults)
+
       setMessages((prev) => [...prev, aiMsg]);
-    }, 1400);
+    } catch (err) {
+      // 3. Error message in chat
+      setMessages((prev) => [
+        ...prev,
+        {
+          id:   Date.now() + 1,
+          role: "ai",
+          time: now(),
+          text: "⚠️ Sorry, something went wrong fetching recipes. Please try again in a moment.",
+          suggestions: ["Try again", "Quick dinner ideas"],
+        },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -254,10 +317,10 @@ const AIRecipeComponent = () => {
             <ChefHat size={16} className="text-white" />
           </div>
           <div>
-            <h2 className="text-[16px] font-semibold text-stone-800 font-serif leading-tight">
+            <h2 className="text-[16px] font-semibold text-stone-800 leading-tight">
               AI Recipe Suggestion
             </h2>
-            <p className="text-[11px] text-stone-400">Powered by Chef AI</p>
+            <p className="text-[11px] text-stone-400">Powered by Spoonacular</p>
           </div>
           <span className="ml-auto inline-flex items-center gap-1.5 text-[11px] text-green-700 bg-green-50 border border-green-100 px-2.5 py-1 rounded-full">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
@@ -266,15 +329,22 @@ const AIRecipeComponent = () => {
         </div>
 
         {/* ── Chat shell ── */}
-        <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col"
-             style={{ height: "520px" }}>
-
+        <div
+          className="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col"
+          style={{ height: "520px" }}
+        >
           {/* ── Messages ── */}
           <div className="messages-area flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4">
             {messages.map((msg) =>
-              msg.role === "ai"
-                ? <AiBubble key={msg.id} msg={msg} onSuggestion={(s) => { setInput(s); sendMessage(s); }} />
-                : <UserBubble key={msg.id} msg={msg} />
+              msg.role === "ai" ? (
+                <AiBubble
+                  key={msg.id}
+                  msg={msg}
+                  onSuggestion={(s) => sendMessage(s)}
+                />
+              ) : (
+                <UserBubble key={msg.id} msg={msg} />
+              )
             )}
             {isTyping && <TypingIndicator />}
             <div ref={messagesEndRef} />
@@ -287,12 +357,8 @@ const AIRecipeComponent = () => {
                 <p className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide">
                   Ingredients
                 </p>
-                <span className="text-[10px] text-stone-400">
-                  Press Enter to add
-                </span>
+                <span className="text-[10px] text-stone-400">Press Enter to add</span>
               </div>
-
-              {/* Chips */}
               {ingredients.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-2">
                   {ingredients.map((ing, i) => (
@@ -304,8 +370,6 @@ const AIRecipeComponent = () => {
                   ))}
                 </div>
               )}
-
-              {/* Ingredient input */}
               <input
                 ref={ingInputRef}
                 value={ingInput}
@@ -322,12 +386,11 @@ const AIRecipeComponent = () => {
           {/* ── Input area ── */}
           <div className="px-4 pb-4 shrink-0">
             <div className="flex items-end gap-2">
-
-              {/* Ingredient toggle */}
               <button
                 onClick={() => {
                   setShowIngPanel((v) => !v);
-                  if (!showIngPanel) setTimeout(() => ingInputRef.current?.focus(), 100);
+                  if (!showIngPanel)
+                    setTimeout(() => ingInputRef.current?.focus(), 100);
                 }}
                 title="Add ingredients"
                 className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0
@@ -339,21 +402,25 @@ const AIRecipeComponent = () => {
                 <ClipboardList size={16} />
               </button>
 
-              {/* Textarea */}
               <div
                 className={`flex-1 flex items-end gap-2 border rounded-xl px-3 py-2 bg-white transition-all
-                            ${input.trim() ? "border-teal-400 ring-2 ring-teal-50" : "border-stone-200"}`}
+                            ${input.trim()
+                              ? "border-teal-400 ring-2 ring-teal-50"
+                              : "border-stone-200"}`}
               >
                 <textarea
                   ref={textareaRef}
                   rows={1}
-                  placeholder="Ask Chef AI anything…"
+                  placeholder={
+                    ingredients.length > 0
+                      ? `Ask about your ${ingredients.length} ingredient${ingredients.length > 1 ? "s" : ""}…`
+                      : "Ask Chef AI anything…"
+                  }
                   onInput={handleTextareaInput}
                   onKeyDown={handleKeyDown}
                   className="flex-1 resize-none text-[13px] text-stone-800 outline-none bg-transparent
                              leading-relaxed max-h-30 overflow-y-auto placeholder:text-stone-400"
                 />
-                {/* Send button inside box */}
                 <button
                   onClick={() => sendMessage()}
                   disabled={!input.trim() || isTyping}
@@ -370,12 +437,13 @@ const AIRecipeComponent = () => {
               </div>
             </div>
 
-            {/* Hint row */}
             <div className="flex items-center justify-between mt-2 px-1">
               <p className="text-[10px] text-stone-400">
-                Press <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Enter</kbd> to send
-                &nbsp;·&nbsp;
-                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Shift+Enter</kbd> for new line
+                Press{" "}
+                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Enter</kbd>{" "}
+                to send &nbsp;·&nbsp;{" "}
+                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Shift+Enter</kbd>{" "}
+                for new line
               </p>
               {ingredients.length > 0 && (
                 <span className="text-[10px] text-teal-600 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded-full">
@@ -384,15 +452,14 @@ const AIRecipeComponent = () => {
               )}
             </div>
           </div>
-
         </div>
 
-        {/* ── Quick suggestion pills below the box ── */}
+        {/* ── Quick suggestion pills ── */}
         <div className="flex flex-wrap gap-2 mt-3">
           {SUGGESTIONS.map((s) => (
             <button
               key={s}
-              onClick={() => { setInput(s); sendMessage(s); }}
+              onClick={() => sendMessage(s)}
               className="text-[12px] px-3 py-1.5 border border-stone-200 rounded-full text-stone-600
                          hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50 bg-white
                          transition-all duration-150"
@@ -401,7 +468,6 @@ const AIRecipeComponent = () => {
             </button>
           ))}
         </div>
-
       </div>
     </>
   );

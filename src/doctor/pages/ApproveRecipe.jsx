@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   ArrowLeft, Check, X, AlertTriangle, Clock, Leaf,
   Heart, ThumbsDown, MessageCircle, User, Search,
   ChevronDown, Eye, CheckCircle2, XCircle, Hourglass,
 } from "lucide-react";
+import axios from "axios";
 
 // ─── Seed data ────────────────────────────────────────────────────────────────
 
@@ -360,6 +361,22 @@ const ReviewDetail = ({ recipe, onBack, onDecision }) => {
 // ─── Main ApproveRecipe Component ─────────────────────────────────────────────
 
 const ApproveRecipe = () => {
+  const doctorToken = localStorage.getItem("doctorToken")
+  useEffect(()=>{
+    const getallRecipes=async()=>{
+      try {
+        const response = await axios.get("http://localhost:3000/api/doctor/get-pending-recipe",{
+          headers:{
+            Authorization:`Bearer ${doctorToken}`
+          }
+        })
+        console.log(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getallRecipes()
+  },[])
   const [recipes,  setRecipes]  = useState(PENDING_RECIPES);
   const [selected, setSelected] = useState(null);
   const [filter,   setFilter]   = useState("all");

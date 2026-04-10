@@ -36,7 +36,7 @@ const App = () => {
 
         {/* doctor path start */}
         <Route path='/doctor-home' element={<DoctorDashboard/>}/>
-        <Route path='/influencer-login' element={<Login/>} />
+        <Route path='/doctor-login' element={<Login/>} />
 
         {/* doctor path end */}
 

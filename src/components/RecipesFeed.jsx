@@ -100,7 +100,6 @@ export default function RecipesFeed({ showMyPostedSection = false }) {
     window.addEventListener(REFRESH_EVENT, onRefresh);
     return () => window.removeEventListener(REFRESH_EVENT, onRefresh);
   }, [bumpRefresh]);
-
   useEffect(() => {
     let cancelled = false;
     (async () => {

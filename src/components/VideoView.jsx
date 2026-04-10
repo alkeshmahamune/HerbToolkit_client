@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { VideoPlayer } from "./VideoPlayer";
 import { seedComments } from "../data/userData";
 import { apiUrl, authHeaders } from "../config/api.js";
+import { useLocation } from "react-router-dom";
 
 const fmt = (n) => {
   if (typeof n === "string") return n;
@@ -65,6 +66,13 @@ export const VideoView = ({ dish, onBack }) => {
   const [comments, setComments] = useState([]);
   const [cLikes, setCLikes] = useState({});
 
+  const location =useLocation()
+  let token;
+  if(location.pathname.includes("user")){
+    token=localStorage.getItem("userToken")
+  }else{
+    token=localStorage.getItem("doctorToken")
+  }
   useEffect(() => {
     setLiked(!!dish?.liked);
     setDisliked(!!dish?.disliked);
@@ -125,7 +133,9 @@ export const VideoView = ({ dish, onBack }) => {
       const r = await axios.post(
         apiUrl(`/api/recipes/${recipeId}/like`),
         { recipeType: "uploadedRecipe" },
-        { headers: authHeaders() },
+        { headers:{
+          Authorization:token
+        } },
       );
       if (r.data?.success) {
         setLiked(!!r.data.liked);
@@ -151,7 +161,9 @@ export const VideoView = ({ dish, onBack }) => {
       const r = await axios.post(
         apiUrl(`/api/recipes/${recipeId}/dislike`),
         { recipeType: "uploadedRecipe" },
-        { headers: authHeaders() },
+        { headers:{
+          Authorization:token
+        } },
       );
       if (r.data?.success) {
         setDisliked(!!r.data.disliked);
@@ -174,10 +186,13 @@ export const VideoView = ({ dish, onBack }) => {
       return;
     }
     const headers = authHeaders();
+    console.log(token)
     try {
       if (saved) {
         await axios.delete(apiUrl(`/api/recipes/save/${recipeId}`), {
-          headers,
+          headers:{
+            Authorization:token
+          },
         });
         setSaved(false);
         toast.success("Removed from saved");
@@ -185,7 +200,9 @@ export const VideoView = ({ dish, onBack }) => {
         await axios.post(
           apiUrl("/api/recipes/save"),
           { recipeId, recipeType: "uploadedRecipe" },
-          { headers },
+          { headers:{
+            Authorization:token
+          } },
         );
         setSaved(true);
         toast.success("Saved");
@@ -225,7 +242,11 @@ export const VideoView = ({ dish, onBack }) => {
         const r = await axios.post(
           apiUrl(`/api/recipes/${recipeId}/comments`),
           { text, recipeType: "uploadedRecipe" },
-          { headers: authHeaders() },
+          {
+            headers:{
+              Authorization:token
+            }
+          },
         );
         if (r.data?.success) {
           setComments((prev) => [

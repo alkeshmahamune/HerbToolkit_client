@@ -196,6 +196,7 @@ const AddRecipe = () => {
   const [videoPreview, setVideoPreview] = useState(null);
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [submittedRecipeCategory, setSubmittedRecipeCategory] = useState(null);
   const [loading, setLoading] = useState(false);
   const videoInputRef = useRef(null);
   const photoInputRef=useRef(null)
@@ -272,20 +273,20 @@ const AddRecipe = () => {
     setThumbnailPreview(URL.createObjectURL(file));
   };
 
-  // getting the doctors list 
-  const [doctors,setDoctors]=useState(null)
-  useEffect(()=>{
-    const getDoctors=async()=>{
+  // getting the doctors list
+  const [doctors, setDoctors] = useState([]);
+  useEffect(() => {
+    const getDoctors = async () => {
       try {
-        const response= await axios.get("http://localhost:3000/api/doctor/get-doctors")
-        console.log(response.data)
-        setDoctors(response.data?.doctors)
+        const response = await axios.get(apiUrl("/api/doctor/get-doctors"));
+        setDoctors(response.data?.doctors || []);
       } catch (error) {
-        console.log(error)
+        console.log(error);
+        setDoctors([]);
       }
-    }
-    getDoctors()
-  },[])
+    };
+    getDoctors();
+  }, []);
 
   const onSubmit = async (data) => {
     try {
@@ -372,7 +373,7 @@ const AddRecipe = () => {
       formData.append("visibility", visibility);
       formData.append("createdBy", "influencer");
       if (selectedDoc) {
-        formData.append("verifiedBy", selectedDoc);
+        formData.append("assignedDoctor", selectedDoc);
       }
 
       if (videoFile) {
@@ -400,6 +401,7 @@ const AddRecipe = () => {
       if (response.data?.success) {
         toast.success(response.data.message || "Recipe uploaded successfully");
         window.dispatchEvent(new CustomEvent("herb-recipes-refresh"));
+        setSubmittedRecipeCategory(isHerbal ? "herbal" : "regular");
         setSubmitted(true);
       } else {
         toast.error(response.data?.message || "Unable to upload recipe");
@@ -436,11 +438,13 @@ const AddRecipe = () => {
             Recipe Submitted!
           </h2>
           <p className="text-[14px] text-stone-500 leading-relaxed mb-6">
-            Your recipe has been submitted and sent to{" "}
-            <span className="font-medium text-stone-700">
-              {doctors.find((d) => d._id === selectedDoc)?.name}
-            </span>{" "}
-            for verification. You'll be notified once it's approved.
+            {submittedRecipeCategory === "herbal"
+              ? `Your herbal recipe has been submitted for doctor approval${
+                  selectedDoc
+                    ? ` with ${doctors.find((d) => d._id === selectedDoc)?.fullName || "the selected doctor"}`
+                    : ""
+                }. It will stay hidden from users until a doctor approves it.`
+              : "Your regular recipe is now published and visible to users immediately."}
           </p>
           <button
             onClick={() => {
@@ -448,6 +452,7 @@ const AddRecipe = () => {
               setRecipeType(null);
               setIsHerbal(null);
               setSubmitted(false);
+              setSubmittedRecipeCategory(null);
               setSelectedDoc(null);
               setVideoFile(null);
               setVideoPreview(null);
@@ -1269,8 +1274,8 @@ const AddRecipe = () => {
                   Doctor Verification
                 </h2>
                 <p className="text-[13px] text-stone-400 mb-4">
-                  All recipes must be verified by a qualified practitioner
-                  before publishing.
+                  Herbal recipes are routed to a doctor for approval before
+                  they become visible to users.
                 </p>
 
                 {/* Mandatory notice */}
@@ -1293,8 +1298,12 @@ const AddRecipe = () => {
 
                 {/* Doctor selection */}
                 <p className="text-[12px] font-medium text-stone-600 uppercase tracking-wider mb-3">
-                  Select a Verifying Doctor{" "}
-                  <span className="text-red-400">*</span>
+                  Select a Verifying Doctor
+                </p>
+
+                <p className="text-[12px] text-stone-400 mb-3">
+                  Choosing a doctor is optional. If you skip this, the backend
+                  will assign the recipe automatically.
                 </p>
 
                 <div className="flex flex-col gap-2.5 mb-7">
@@ -1305,7 +1314,7 @@ const AddRecipe = () => {
                       onClick={() => setSelectedDoc(doc._id)}
                       className={`flex items-center gap-3 p-3.5 rounded-xl border-2 text-left transition-all
                     ${
-                      selectedDoc === doc.id
+                      selectedDoc === doc._id
                         ? "border-teal-400 bg-teal-50"
                         : "border-stone-200 bg-white hover:border-stone-300"
                     }`}
@@ -1324,7 +1333,7 @@ const AddRecipe = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p
-                          className={`text-[13px] font-medium ${selectedDoc === doc.id ? "text-teal-800" : "text-stone-800"}`}
+                          className={`text-[13px] font-medium ${selectedDoc === doc._id ? "text-teal-800" : "text-stone-800"}`}
                         >
                           {doc?.fullName}
                         </p>
@@ -1332,7 +1341,7 @@ const AddRecipe = () => {
                           <Stethoscope size={10} /> {doc.specialization}
                         </p>
                       </div>
-                      {selectedDoc === doc.id && (
+                      {selectedDoc === doc._id && (
                         <div className="w-5 h-5 rounded-full bg-teal-600 flex items-center justify-center shrink-0">
                           <Check size={11} className="text-white" />
                         </div>
@@ -1396,9 +1405,9 @@ const AddRecipe = () => {
                       e.preventDefault();
                       if (!loading) handleSubmit(onSubmit)(e);
                     }}
-                    disabled={!selectedDoc || loading}
+                    disabled={loading}
                     className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[13px] font-medium transition-all active:scale-[0.98] ${
-                      selectedDoc && !loading
+                      !loading
                         ? "bg-green-600 hover:bg-green-700 text-white"
                         : "bg-stone-100 text-stone-400 cursor-not-allowed"
                     }`}

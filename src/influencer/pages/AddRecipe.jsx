@@ -361,6 +361,7 @@ const AddRecipe = () => {
           },
         }
       );
+      console.log(response.data)
       if (response.data?.success) {
         toast.success(response.data.message || "Recipe uploaded successfully");
         window.dispatchEvent(new CustomEvent("herb-recipes-refresh"));

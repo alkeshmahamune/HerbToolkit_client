@@ -12,6 +12,7 @@ import { recipesUploaded } from "../recipeData";
 import axios from "axios";
 import { apiUrl, authHeaders } from "../../config/api.js";
 import { VideoPlayer } from "../../components/VideoPlayer";
+import { toast } from "react-hot-toast";
 //this is the control panel which is home(dashboard) for influencer
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
@@ -50,73 +51,76 @@ const StatCard = ({ icon: Icon, iconColor, iconBg, label, value, delay }) => (
 
 const RecipeCard = ({ recipe, onClick, index }) => {
   return (
-  <article
-    onClick={onClick}
-    className="group bg-white border border-stone-200 rounded-2xl overflow-hidden
+    <article
+      onClick={onClick}
+      className="group bg-white border border-stone-200 rounded-2xl overflow-hidden
                cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:border-teal-400
                transition-all duration-200"
-    style={{
-      animation: `fadeUp .38s ${0.25 + index * 0.06}s ease both`,
-      opacity: 0,
-      animationFillMode: "both",
-    }}
-  >
-    {/* Thumbnail */}
-    <div className="relative h-44 bg-stone-100 overflow-hidden">
-      <img
-        src={recipe.img || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNXbAuDX6ncsg76VTk24lVYYHIQrTzlVBHDA&s"}
-        alt={recipe.title}
-        loading="lazy"
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-      />
-      {/* Badges */}
-      <div className="absolute top-2.5 left-2.5 right-2.5 flex justify-between">
-        <span className="text-[10px] font-semibold bg-white/90 text-stone-800 px-2 py-1 rounded-full">
-          {recipe.type === "video" ? "▶ Video" : "📄 Text"}
-        </span>
-        <span className="text-[10px] font-semibold bg-teal-600 text-white px-2 py-1 rounded-full">
-          {recipe.category}
-        </span>
-      </div>
-      {/* Play overlay */}
-      {recipe.type === "video" && (
-        <div
-          className="absolute inset-0 flex items-center justify-center opacity-0
-                        group-hover:opacity-100 transition-opacity bg-black/10"
-        >
-          <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-md">
-            <Play size={13} fill="#18181a" className="ml-0.5" />
-          </div>
+      style={{
+        animation: `fadeUp .38s ${0.25 + index * 0.06}s ease both`,
+        opacity: 0,
+        animationFillMode: "both",
+      }}
+    >
+      {/* Thumbnail */}
+      <div className="relative h-44 bg-stone-100 overflow-hidden">
+        <img
+          src={
+            recipe.img ||
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNXbAuDX6ncsg76VTk24lVYYHIQrTzlVBHDA&s"
+          }
+          alt={recipe.title}
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+        />
+        {/* Badges */}
+        <div className="absolute top-2.5 left-2.5 right-2.5 flex justify-between">
+          <span className="text-[10px] font-semibold bg-white/90 text-stone-800 px-2 py-1 rounded-full">
+            {recipe.type === "video" ? "▶ Video" : "📄 Text"}
+          </span>
+          <span className="text-[10px] font-semibold bg-teal-600 text-white px-2 py-1 rounded-full">
+            {recipe.category}
+          </span>
         </div>
-      )}
-    </div>
+        {/* Play overlay */}
+        {recipe.type === "video" && (
+          <div
+            className="absolute inset-0 flex items-center justify-center opacity-0
+                        group-hover:opacity-100 transition-opacity bg-black/10"
+          >
+            <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-md">
+              <Play size={13} fill="#18181a" className="ml-0.5" />
+            </div>
+          </div>
+        )}
+      </div>
 
-    {/* Body */}
-    <div className="p-3.5">
-      <h3
-        className="text-syne text-[14px] font-bold text-stone-900 mb-1.5
+      {/* Body */}
+      <div className="p-3.5">
+        <h3
+          className="text-syne text-[14px] font-bold text-stone-900 mb-1.5
                      whitespace-nowrap overflow-hidden text-ellipsis"
-      >
-        {recipe.title}
-      </h3>
-      <div className="flex items-center gap-3 text-[11px] text-stone-400 font-medium mb-2.5">
-        <span>⏱ {recipe.time}</span>
-        <span>💬 {recipe.commentsCount ?? 0}</span>
+        >
+          {recipe.title}
+        </h3>
+        <div className="flex items-center gap-3 text-[11px] text-stone-400 font-medium mb-2.5">
+          <span>⏱ {recipe.time}</span>
+          <span>💬 {recipe.commentsCount ?? 0}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1 text-[11px] font-bold text-stone-500">
+            <Heart size={11} fill="#e8420a" className="text-teal-600" />
+            {fmt(recipe.likes)}
+          </span>
+          <span className="flex items-center gap-1 text-[11px] font-bold text-stone-400">
+            <ThumbsDown size={11} />
+            {fmt(recipe.dislikes)}
+          </span>
+        </div>
       </div>
-      <div className="flex items-center gap-3">
-        <span className="flex items-center gap-1 text-[11px] font-bold text-stone-500">
-          <Heart size={11} fill="#e8420a" className="text-teal-600" />
-          {fmt(recipe.likes)}
-        </span>
-        <span className="flex items-center gap-1 text-[11px] font-bold text-stone-400">
-          <ThumbsDown size={11} />
-          {fmt(recipe.dislikes)}
-        </span>
-      </div>
-    </div>
-  </article>
-);
-}
+    </article>
+  );
+};
 
 // ─── Detail / Recipe view ─────────────────────────────────────────────────────
 
@@ -285,38 +289,36 @@ const RecipeDetail = ({ recipe, onBack, onDelete }) => {
               <p className="text-[12px] text-stone-400 italic mb-3">
                 No comments yet. Be the first!
               </p>
-            ) : (
-              // <div
-              //   className="flex flex-col gap-3 max-h-48 overflow-y-auto pr-1 mb-3
-              //                 scrollbar-thin scrollbar-thumb-stone-200"
-              // >
-              //   {recipe.comments.map((c, i) => (
-              //     <div key={i} className="flex gap-2.5">
-              //       <div
-              //         className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center
-              //                       text-[10px] font-bold text-stone-500 shrink-0"
-              //       >
-              //         {c.i ||
-              //           c.u
-              //             .split(" ")
-              //             .map((w) => w[0])
-              //             .join("")
-              //             .slice(0, 2)}
-              //       </div>
-              //       <div>
-              //         <p className="text-[11px] font-bold text-stone-800">
-              //           {c.u}
-              //         </p>
-              //         <p className="text-[11px] text-stone-500 leading-relaxed">
-              //           {c.t}
-              //         </p>
-              //         <p className="text-[10px] text-stone-300 mt-0.5">{c.d}</p>
-              //       </div>
-              //     </div>
-              //   ))}
-              // </div>
-              null
-            )}
+            ) : // <div
+            //   className="flex flex-col gap-3 max-h-48 overflow-y-auto pr-1 mb-3
+            //                 scrollbar-thin scrollbar-thumb-stone-200"
+            // >
+            //   {recipe.comments.map((c, i) => (
+            //     <div key={i} className="flex gap-2.5">
+            //       <div
+            //         className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center
+            //                       text-[10px] font-bold text-stone-500 shrink-0"
+            //       >
+            //         {c.i ||
+            //           c.u
+            //             .split(" ")
+            //             .map((w) => w[0])
+            //             .join("")
+            //             .slice(0, 2)}
+            //       </div>
+            //       <div>
+            //         <p className="text-[11px] font-bold text-stone-800">
+            //           {c.u}
+            //         </p>
+            //         <p className="text-[11px] text-stone-500 leading-relaxed">
+            //           {c.t}
+            //         </p>
+            //         <p className="text-[10px] text-stone-300 mt-0.5">{c.d}</p>
+            //       </div>
+            //     </div>
+            //   ))}
+            // </div>
+            null}
 
             {/* Comment input */}
             <div className="flex gap-2 pt-3 border-t border-stone-100">
@@ -372,7 +374,11 @@ const Dashboard = () => {
         }
       } catch (error) {
         console.error("Failed to fetch recipes:", error);
-        setError(error.response?.data?.message || error.message || "Failed to load recipes");
+        setError(
+          error.response?.data?.message ||
+            error.message ||
+            "Failed to load recipes",
+        );
       } finally {
         setLoading(false);
       }
@@ -385,16 +391,35 @@ const Dashboard = () => {
     };
 
     window.addEventListener("herb-recipes-refresh", handleRefresh);
-    return () => window.removeEventListener("herb-recipes-refresh", handleRefresh);
+    return () =>
+      window.removeEventListener("herb-recipes-refresh", handleRefresh);
   }, []);
 
   const filtered =
     filter === "all" ? recipes : recipes.filter((r) => r.type === filter);
   // Delete handler — removes from local state and goes back to grid
-  const handleDelete = (id) => {
-    setRecipes((prev) => prev.filter((r) => r.id !== id));
+const handleDelete = async (recipeId) => {
+  const token = localStorage.getItem("influencerToken");
+
+  try {
+    const response = await axios.delete(
+      "http://localhost:3000/api/recipes/delete-recipe",
+      {
+        data: { recipeId }, // ✅ body goes inside "data" for DELETE
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ correct token format
+        },
+      }
+    );
+
+    console.log(response.data);
     setSelected(null);
-  };
+    setRecipes((prev) => prev.filter(r => r._id !== recipeId));
+  } catch (error) {
+    console.log(error);
+    toast.error("Something went wrong");
+  }
+};
 
   return (
     <>

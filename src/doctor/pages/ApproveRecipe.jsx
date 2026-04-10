@@ -1,141 +1,78 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ArrowLeft, Check, X, AlertTriangle, Clock, Leaf,
-  Heart, ThumbsDown, MessageCircle, User, Search,
-  ChevronDown, Eye, CheckCircle2, XCircle, Hourglass,
+  ArrowLeft,
+  Check,
+  CheckCircle2,
+  Clock,
+  Eye,
+  Leaf,
+  Search,
+  User,
+  X,
+  XCircle,
 } from "lucide-react";
 import axios from "axios";
-
-// ─── Seed data ────────────────────────────────────────────────────────────────
-
-const PENDING_RECIPES = [
-  {
-    id:"r1", status:"pending",
-    title:"Neem & Tulsi Anti-Acne Steam",
-    submittedBy:"Ananya Kapoor", submittedRole:"Influencer",
-    submittedAt:"20 Mar 2025",
-    category:"Face & Skin", benefit:"Clears acne & unclogs pores",
-    herbs:["Neem","Tulsi","Lavender","Eucalyptus"],
-    desc:"A steam therapy using neem and tulsi leaves known for their antibacterial and antifungal properties. Suitable for oily and acne-prone skin types.",
-    warnings:"Avoid if sensitive to strong scents. Do not use on broken skin. Keep a safe distance from steam.",
-    steps:[
-      "Boil 3 cups of water in a wide-mouthed pot.",
-      "Add a large handful of fresh neem and tulsi leaves.",
-      "Add 3 drops each of lavender and eucalyptus oil.",
-      "Remove from heat. Place face 30 cm above pot.",
-      "Drape a towel over head and steam for 8–10 min.",
-      "Rinse face with cold water. Moisturise immediately.",
-    ],
-    ingredients:[
-      { name:"Neem leaves",    qty:"1 handful",  note:"Fresh preferred" },
-      { name:"Tulsi leaves",   qty:"1 handful",  note:"Fresh or dried"  },
-      { name:"Lavender oil",   qty:"3 drops",    note:"Essential grade" },
-      { name:"Eucalyptus oil", qty:"3 drops",    note:"Essential grade" },
-      { name:"Water",          qty:"3 cups",     note:"Filtered"        },
-    ],
-    dosage:"1–2 times per week",
-    suitableFor:"Adults with oily / acne-prone skin",
-    img:"https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
-    likes:0, dislikes:0,
-  },
-  {
-    id:"r2", status:"pending",
-    title:"Ashwagandha & Shatavari Women's Tonic",
-    submittedBy:"Dr. Meera Iyer", submittedRole:"Doctor",
-    submittedAt:"19 Mar 2025",
-    category:"General Wellness", benefit:"Hormonal balance & energy",
-    herbs:["Ashwagandha","Shatavari","Licorice Root","Cardamom"],
-    desc:"A traditional Ayurvedic tonic for women that supports hormonal balance, reduces fatigue and nourishes the reproductive system.",
-    warnings:"Not suitable during pregnancy. Consult before use if on hormonal medication. Start with half dose.",
-    steps:[
-      "Bring 1.5 cups of milk to a gentle simmer.",
-      "Add ¼ tsp ashwagandha and ¼ tsp shatavari powder.",
-      "Add a small piece of licorice root.",
-      "Simmer on low heat for 5 minutes.",
-      "Add 2 cardamom pods, crushed.",
-      "Strain, sweeten with jaggery and drink warm.",
-    ],
-    ingredients:[
-      { name:"Ashwagandha powder", qty:"¼ tsp",  note:"Root powder"     },
-      { name:"Shatavari powder",   qty:"¼ tsp",  note:"Root powder"     },
-      { name:"Licorice root",      qty:"1 piece", note:"Small thumb size"},
-      { name:"Cardamom pods",      qty:"2",       note:"Crushed"         },
-      { name:"Milk",               qty:"1.5 cups",note:"Full fat or oat" },
-    ],
-    dosage:"Once daily for 30 days",
-    suitableFor:"Adult women aged 20–55",
-    img:"https://images.unsplash.com/photo-1534353473418-4cfa0c23c77d?w=600&q=80",
-    likes:0, dislikes:0,
-  },
-  {
-    id:"r3", status:"approved",
-    title:"Amla & Bhringraj Hair Oil",
-    submittedBy:"Ananya Kapoor", submittedRole:"Influencer",
-    submittedAt:"14 Mar 2025",
-    category:"Hair", benefit:"Promotes hair growth",
-    herbs:["Amla","Bhringraj","Coconut Oil","Fenugreek"],
-    desc:"Potent Ayurvedic hair oil that stimulates follicles, reduces greying and deeply nourishes the scalp.",
-    warnings:"Patch test recommended. Avoid contact with eyes.",
-    steps:[
-      "Heat 200ml coconut oil in a pan on low flame.",
-      "Add 2 tbsp dried amla powder.",
-      "Add 2 tbsp bhringraj powder.",
-      "Stir in 1 tbsp fenugreek seeds.",
-      "Simmer 20 minutes until aromatic.",
-      "Cool, strain into a glass bottle.",
-    ],
-    ingredients:[
-      { name:"Coconut oil",    qty:"200 ml",  note:"Cold-pressed"   },
-      { name:"Amla powder",    qty:"2 tbsp",  note:"Dried"          },
-      { name:"Bhringraj",      qty:"2 tbsp",  note:"Dried powder"   },
-      { name:"Fenugreek seeds",qty:"1 tbsp",  note:null             },
-    ],
-    dosage:"Apply 2–3 times per week",
-    suitableFor:"All hair types",
-    img:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=600&q=80",
-    likes:498, dislikes:12,
-    reviewNote:"Well-documented remedy with strong safety profile. Approved for public posting.",
-  },
-  {
-    id:"r4", status:"rejected",
-    title:"High-Dose Brahmi Extract",
-    submittedBy:"FoodVlog India", submittedRole:"Influencer",
-    submittedAt:"12 Mar 2025",
-    category:"Sleep", benefit:"Memory & calm",
-    herbs:["Brahmi","Ashwagandha","Vacha Root"],
-    desc:"A concentrated brahmi extract for cognitive enhancement and anxiety relief.",
-    warnings:"High concentration. For adults only.",
-    steps:[
-      "Take 2 tsp concentrated brahmi extract.",
-      "Mix in warm water.",
-      "Drink twice daily.",
-    ],
-    ingredients:[
-      { name:"Brahmi extract",     qty:"2 tsp",   note:"Concentrated" },
-      { name:"Ashwagandha extract",qty:"1 tsp",   note:"Concentrated" },
-      { name:"Vacha root powder",  qty:"½ tsp",   note:"Powdered"     },
-    ],
-    dosage:"Twice daily — morning and night",
-    suitableFor:"Adults only",
-    img:"https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=600&q=80",
-    likes:0, dislikes:0,
-    reviewNote:"Dosage is dangerously high. Vacha root at this concentration is not recommended without clinical supervision. Rejected.",
-  },
-];
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+import toast from "react-hot-toast";
+import { apiUrl } from "../../config/api.js";
 
 const STATUS_META = {
-  pending:  { label:"Pending Review", cls:"bg-amber-50 text-amber-700 border-amber-200",  icon: Hourglass  },
-  approved: { label:"Approved",       cls:"bg-green-50 text-green-700 border-green-200",  icon: CheckCircle2 },
-  rejected: { label:"Rejected",       cls:"bg-red-50   text-red-700   border-red-200",    icon: XCircle    },
+  pending: {
+    label: "Pending Review",
+    cls: "bg-amber-50 text-amber-700 border-amber-200",
+    icon: Clock,
+  },
+  approved: {
+    label: "Approved",
+    cls: "bg-green-50 text-green-700 border-green-200",
+    icon: CheckCircle2,
+  },
+  rejected: {
+    label: "Rejected",
+    cls: "bg-red-50 text-red-700 border-red-200",
+    icon: XCircle,
+  },
 };
 
+const formatDate = (value) => {
+  if (!value) return "Recently submitted";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently submitted";
+  return date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const normalizeRecipe = (recipe) => ({
+  ...recipe,
+  id: recipe?._id || recipe?.id,
+  status: recipe?.verificationStatus || recipe?.status || "pending",
+  submittedBy: recipe?.uploader?.fullName || "Influencer",
+  submittedRole: "Influencer",
+  submittedAt: formatDate(recipe?.createdAt),
+  desc: recipe?.description || recipe?.desc || "",
+  img:
+    recipe?.thumbnail ||
+    recipe?.imageUrl ||
+    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
+  herbs: Array.isArray(recipe?.herbs) ? recipe.herbs : [],
+  steps: Array.isArray(recipe?.steps) ? recipe.steps : [],
+  ingredients: Array.isArray(recipe?.ingredientList) ? recipe.ingredientList : [],
+  reviewNote: recipe?.reviewNote || "",
+  category: recipe?.category || recipe?.recipeCategory || "Herbal",
+  dosage: recipe?.usageInfo?.dosage || "",
+  suitableFor: recipe?.usageInfo?.ageGroup || "",
+});
+
 const StatusBadge = ({ status }) => {
-  const m = STATUS_META[status];
+  const meta = STATUS_META[status] || STATUS_META.pending;
+  const Icon = meta.icon;
   return (
-    <span className={`inline-flex items-center gap-1 text-[10px] font-bold border px-2.5 py-1 rounded-full ${m.cls}`}>
-      <m.icon size={10} /> {m.label}
+    <span
+      className={`inline-flex items-center gap-1 text-[10px] font-bold border px-2.5 py-1 rounded-full ${meta.cls}`}
+    >
+      <Icon size={10} /> {meta.label}
     </span>
   );
 };
@@ -143,29 +80,107 @@ const StatusBadge = ({ status }) => {
 const InfoRow = ({ label, value }) =>
   value ? (
     <div className="flex justify-between py-2 border-b border-stone-100 last:border-0 gap-4">
-      <span className="text-[12px] text-stone-400 font-medium shrink-0">{label}</span>
-      <span className="text-[12px] font-semibold text-stone-800 text-right">{value}</span>
+      <span className="text-[12px] text-stone-400 font-medium shrink-0">
+        {label}
+      </span>
+      <span className="text-[12px] font-semibold text-stone-800 text-right">
+        {value}
+      </span>
     </div>
   ) : null;
 
-// ─── Recipe Detail Panel ──────────────────────────────────────────────────────
-
 const ReviewDetail = ({ recipe, onBack, onDecision }) => {
-  const [note,    setNote]    = useState(recipe.reviewNote ?? "");
+  const normalizedRecipe = {
+    ...recipe,
+    img: recipe.imageUrl || recipe.thumbnail || "/placeholder.jpg",
+    status: recipe.verificationStatus || recipe.status || "pending",
+    submittedBy: recipe.uploader?.fullName || recipe.submittedBy || "Unknown",
+    submittedAt:
+      recipe.submittedAt ||
+      (recipe.createdAt
+        ? new Date(recipe.createdAt).toLocaleDateString()
+        : "-"),
+    category: recipe.recipeCategory || recipe.category || "-",
+    desc: recipe.description || recipe.desc || "-",
+    benefit: recipe.benefit || "-",
+    herbs: recipe.herbs?.length ? recipe.herbs : [],
+    ingredients:
+      recipe.ingredientList?.map((ing) => ({
+        name: ing.name || "-",
+        qty: ing.quantity || "-",
+        note: ing.note || "",
+      })) || [],
+    dosage: recipe.usageInfo?.dosage || "-",
+    frequency: recipe.usageInfo?.frequency || "-",
+    duration: recipe.usageInfo?.duration || "-",
+    suitableFor: recipe.usageInfo?.ageGroup || "-",
+    steps: recipe.steps?.length ? recipe.steps : [],
+    doctorName: recipe.assignedDoctor?.fullName || "-",
+    doctorSpecialization: recipe.assignedDoctor?.specialization || "-",
+    level: recipe.level || "-",
+    prepTime: recipe.prepTime ? `${recipe.prepTime} min` : "-",
+    cookTime: recipe.cookTime ? `${recipe.cookTime} min` : "-",
+  };
+
+  // ✅ note is purely local UI state — never triggers API
+  const [note, setNote] = useState(recipe.reviewNote ?? "");
+
+  // ✅ decided only set after successful API response
   const [decided, setDecided] = useState(
-    recipe.status === "approved" || recipe.status === "rejected" ? recipe.status : null
+    normalizedRecipe.status === "approved" ||
+      normalizedRecipe.status === "rejected"
+      ? normalizedRecipe.status
+      : null
   );
 
-  const isPending = recipe.status === "pending";
+  const [loading, setLoading] = useState(null); // "approve" | "reject" | null
+  const [apiError, setApiError] = useState("");
 
-  const decide = (decision) => {
-    setDecided(decision);
-    onDecision(recipe.id, decision, note);
+  const isPending = normalizedRecipe.status === "pending";
+
+  // ✅ action matches backend: "approve" | "reject"
+  const decide = async (action) => {
+    if (loading) return; // prevent double click
+    setApiError("");
+    setLoading(action);
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/doctor/verify-recipe",
+        {
+          recipeId: recipe._id || recipe.id,
+          action,       // ✅ "approve" or "reject" — matches backend validation
+          note,         // ✅ captured at click time, not on keystroke
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("doctorToken")}`,
+          },
+        }
+      );
+
+      if (res.data?.success) {
+        // ✅ derive decided label from action
+        const decidedStatus = action === "approve" ? "approved" : "rejected";
+        setDecided(decidedStatus);
+        onDecision(recipe._id || recipe.id, decidedStatus, note);
+      } else {
+        setApiError(res.data?.message || "Something went wrong.");
+      }
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        err.message ||
+        "Network error. Please try again.";
+      setApiError(msg);
+      console.error(err);
+    } finally {
+      setLoading(null);
+    }
   };
 
   return (
-    <div style={{ animation:"fadeUp .35s ease both" }}>
-
+    <div style={{ animation: "fadeUp .35s ease both" }}>
       {/* Top bar */}
       <div className="flex items-center gap-3 mb-6 flex-wrap">
         <button
@@ -174,17 +189,21 @@ const ReviewDetail = ({ recipe, onBack, onDecision }) => {
                      px-4 py-2 text-[12px] font-semibold text-stone-500 bg-white
                      hover:border-stone-400 hover:text-stone-700 transition-all"
         >
-          <ArrowLeft size={14} /> Back
+          ← Back
         </button>
-        <StatusBadge status={decided ?? recipe.status} />
+
+        <StatusBadge status={decided ?? normalizedRecipe.status} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-5">
-
-        {/* ── Left — image + steps ── */}
+        {/* LEFT */}
         <div className="flex flex-col gap-4">
-          <div className="rounded-2xl overflow-hidden" style={{ aspectRatio:"16/9" }}>
-            <img src={recipe.img} alt={recipe.title} className="w-full h-full object-cover block" />
+          <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+            <img
+              src={normalizedRecipe.img}
+              alt={recipe.title}
+              className="w-full h-full object-cover block"
+            />
           </div>
 
           {/* Steps */}
@@ -193,15 +212,18 @@ const ReviewDetail = ({ recipe, onBack, onDecision }) => {
               Preparation Steps
             </p>
             <div className="flex flex-col gap-3">
-              {recipe.steps.map((s, i) => (
-                <div key={i} className="flex gap-3 items-start">
-                  <div className="w-5 h-5 rounded-full border border-stone-200 flex items-center
-                                  justify-center text-[9px] font-bold text-stone-500 shrink-0 mt-0.5">
-                    {i + 1}
+              {normalizedRecipe.steps.length > 0 ? (
+                normalizedRecipe.steps.map((s, i) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <div className="w-5 h-5 rounded-full border flex items-center justify-center text-[9px]">
+                      {i + 1}
+                    </div>
+                    <p className="text-[13px] text-stone-700">{s}</p>
                   </div>
-                  <p className="text-[13px] text-stone-700 leading-relaxed">{s}</p>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-[13px] text-stone-400 italic">No steps provided.</p>
+              )}
             </div>
           </div>
 
@@ -210,328 +232,426 @@ const ReviewDetail = ({ recipe, onBack, onDecision }) => {
             <p className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-4">
               Ingredients
             </p>
-            <div className="divide-y divide-stone-100">
-              {recipe.ingredients.map((ing, i) => (
-                <div key={i} className="flex items-center justify-between py-2.5">
-                  <div>
-                    <p className="text-[13px] font-semibold text-stone-800">{ing.name}</p>
-                    {ing.note && <p className="text-[11px] text-stone-400">{ing.note}</p>}
+            <div className="divide-y">
+              {normalizedRecipe.ingredients.length > 0 ? (
+                normalizedRecipe.ingredients.map((ing, i) => (
+                  <div key={i} className="flex justify-between py-2">
+                    <p className="text-[13px] font-semibold">{ing.name}</p>
+                    <span className="text-[12px] bg-gray-100 px-2 py-1 rounded">
+                      {ing.qty}
+                    </span>
                   </div>
-                  <span className="text-[12px] font-bold text-stone-600 bg-stone-100
-                                   px-2.5 py-1 rounded-lg">
-                    {ing.qty}
-                  </span>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-[13px] text-stone-400 italic">No ingredients listed.</p>
+              )}
             </div>
           </div>
         </div>
 
-        {/* ── Right — info + review panel ── */}
+        {/* RIGHT */}
         <div className="flex flex-col gap-4">
-
-          {/* Recipe info */}
-          <div className="bg-white border border-stone-200 rounded-2xl p-5">
-            <p className="text-[10px] uppercase tracking-widest font-bold text-teal-600 mb-2">
-              {recipe.category}
+          <div className="bg-white border rounded-2xl p-5">
+            <p className="text-[10px] text-teal-600 mb-2">
+              {normalizedRecipe.category}
             </p>
-            <h2 className="text-[20px] font-bold text-stone-900 leading-snug mb-2">
-              {recipe.title}
-            </h2>
-            <p className="text-[12px] text-stone-500 leading-relaxed mb-4">{recipe.desc}</p>
+            <h2 className="text-[20px] font-bold mb-2">{recipe.title}</h2>
+            <p className="text-[12px] mb-4">{normalizedRecipe.desc}</p>
 
-            {/* Key info grid */}
-            <div className="bg-stone-50 rounded-xl p-3.5 divide-y divide-stone-100 mb-4">
-              <InfoRow label="Submitted by"  value={`${recipe.submittedBy} (${recipe.submittedRole})`} />
-              <InfoRow label="Submitted on"  value={recipe.submittedAt} />
-              <InfoRow label="Benefit"       value={recipe.benefit} />
-              <InfoRow label="Dosage"        value={recipe.dosage} />
-              <InfoRow label="Suitable for"  value={recipe.suitableFor} />
+            <div className="bg-gray-50 p-3 rounded space-y-1 text-[13px]">
+              <p><span className="font-medium">By:</span> {normalizedRecipe.submittedBy}</p>
+              <p><span className="font-medium">Date:</span> {normalizedRecipe.submittedAt}</p>
+              <p><span className="font-medium">Benefit:</span> {normalizedRecipe.benefit}</p>
+              <p><span className="font-medium">Level:</span> {normalizedRecipe.level}</p>
+              <p><span className="font-medium">Prep Time:</span> {normalizedRecipe.prepTime}</p>
+              <p><span className="font-medium">Cook Time:</span> {normalizedRecipe.cookTime}</p>
+              <p><span className="font-medium">Dosage:</span> {normalizedRecipe.dosage}</p>
+              <p><span className="font-medium">Frequency:</span> {normalizedRecipe.frequency}</p>
+              <p><span className="font-medium">Duration:</span> {normalizedRecipe.duration}</p>
+              <p><span className="font-medium">Suitable For (Age):</span> {normalizedRecipe.suitableFor}</p>
+              <p><span className="font-medium">Assigned Doctor:</span> {normalizedRecipe.doctorName}</p>
+              <p><span className="font-medium">Specialization:</span> {normalizedRecipe.doctorSpecialization}</p>
             </div>
 
-            {/* Herbs */}
-            <p className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-2">
-              Herbs Used
-            </p>
-            <div className="flex flex-wrap gap-1.5 mb-4">
-              {recipe.herbs.map(h => (
-                <span key={h} className="text-[11px] font-semibold bg-teal-50 text-teal-800
-                                         border border-teal-100 px-2.5 py-1 rounded-md">
-                  {h}
-                </span>
-              ))}
-            </div>
-
-            {/* Warnings */}
-            {recipe.warnings && (
-              <div className="flex items-start gap-2.5 bg-amber-50 border border-amber-100
-                              rounded-xl p-3.5">
-                <AlertTriangle size={14} className="text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-[11px] font-bold text-amber-800 mb-0.5">Warnings / Contraindications</p>
-                  <p className="text-[12px] text-amber-700 leading-relaxed">{recipe.warnings}</p>
-                </div>
+            {normalizedRecipe.herbs.length > 0 && (
+              <div className="flex gap-2 mt-3 flex-wrap">
+                {normalizedRecipe.herbs.map((h) => (
+                  <span key={h} className="bg-teal-100 px-2 py-1 text-xs rounded">
+                    {h}
+                  </span>
+                ))}
               </div>
             )}
           </div>
 
-          {/* Review panel */}
-          <div className="bg-white border border-stone-200 rounded-2xl p-5">
-            <p className="text-[13px] font-bold text-stone-900 mb-3">
-              {isPending ? "Doctor Review" : "Review Decision"}
+          {/* Review Panel */}
+          <div className="bg-white border rounded-2xl p-5">
+            <p className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-3">
+              Review Note
             </p>
 
-            {/* Review note */}
-            <div className="mb-4">
-              <label className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5 block">
-                Review Note {isPending && <span className="text-red-400">*</span>}
-              </label>
-              <textarea
-                value={note}
-                onChange={e => setNote(e.target.value)}
-                disabled={!isPending}
-                rows={4}
-                placeholder="Write your clinical assessment — safety, dosage appropriateness, contraindications…"
-                className="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-[13px]
-                           text-stone-800 outline-none resize-none transition-all
-                           placeholder:text-stone-400
-                           focus:border-teal-400 focus:ring-2 focus:ring-teal-50
-                           disabled:bg-stone-50 disabled:text-stone-500 disabled:cursor-not-allowed"
-              />
-            </div>
+            {/* ✅ textarea ONLY updates local state — zero API involvement */}
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Add a review note (optional)..."
+              disabled={!isPending || !!decided}
+              className="w-full border rounded-lg p-2 mb-3 text-[13px] resize-none
+                         focus:outline-none focus:ring-1 focus:ring-teal-400
+                         disabled:bg-gray-50 disabled:text-stone-400"
+              rows={4}
+            />
 
-            {/* Decision */}
+            {/* ✅ Error message from API */}
+            {apiError && (
+              <p className="text-[12px] text-red-500 mb-3">{apiError}</p>
+            )}
+
+            {/* ✅ Buttons only show when truly pending and not yet decided */}
             {isPending && !decided && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex gap-3">
                 <button
-                  onClick={() => decide("approved")}
-                  disabled={!note.trim()}
-                  className={`flex items-center justify-center gap-2 py-3 rounded-xl text-[13px]
-                              font-bold transition-all border-2
-                    ${note.trim()
-                      ? "border-teal-500 bg-teal-600 hover:bg-teal-700 text-white"
-                      : "border-stone-100 bg-stone-50 text-stone-300 cursor-not-allowed"}`}
+                  onClick={() => decide("approve")}
+                  disabled={!!loading}
+                  className="bg-green-500 hover:bg-green-600 disabled:opacity-60
+                             text-white px-4 py-2 rounded-lg text-[13px] font-medium
+                             transition-colors flex items-center gap-2"
                 >
-                  <Check size={15} /> Approve
+                  {loading === "approve" ? "Approving…" : "Approve"}
                 </button>
+
                 <button
-                  onClick={() => decide("rejected")}
-                  disabled={!note.trim()}
-                  className={`flex items-center justify-center gap-2 py-3 rounded-xl text-[13px]
-                              font-bold transition-all border-2
-                    ${note.trim()
-                      ? "border-red-400 bg-red-50 hover:bg-red-100 text-red-600"
-                      : "border-stone-100 bg-stone-50 text-stone-300 cursor-not-allowed"}`}
+                  onClick={() => decide("reject")}
+                  disabled={!!loading}
+                  className="bg-red-500 hover:bg-red-600 disabled:opacity-60
+                             text-white px-4 py-2 rounded-lg text-[13px] font-medium
+                             transition-colors flex items-center gap-2"
                 >
-                  <X size={15} /> Reject
+                  {loading === "reject" ? "Rejecting…" : "Reject"}
                 </button>
               </div>
             )}
 
-            {/* Decided state */}
-            {(decided || !isPending) && (
-              <div className={`flex items-center gap-2.5 rounded-xl p-3.5 border
-                ${(decided ?? recipe.status) === "approved"
-                  ? "bg-teal-50 border-teal-100"
-                  : "bg-red-50 border-red-100"}`}>
-                {(decided ?? recipe.status) === "approved"
-                  ? <CheckCircle2 size={16} className="text-teal-600 shrink-0" />
-                  : <XCircle size={16} className="text-red-500 shrink-0" />}
-                <p className={`text-[12px] font-semibold ${(decided ?? recipe.status) === "approved" ? "text-teal-700" : "text-red-600"}`}>
-                  {(decided ?? recipe.status) === "approved"
-                    ? "Recipe approved and published."
-                    : "Recipe rejected and returned to submitter."}
-                </p>
-              </div>
-            )}
-
-            {isPending && !decided && !note.trim() && (
-              <p className="text-[11px] text-stone-400 mt-2 text-center">
-                Add a review note before approving or rejecting.
+            {/* ✅ Post-decision confirmation */}
+            {decided && (
+              <p className="text-[13px] text-stone-500 mt-1">
+                This recipe has been{" "}
+                <span
+                  className={
+                    decided === "approved" ? "text-green-600 font-semibold" : "text-red-500 font-semibold"
+                  }
+                >
+                  {decided}
+                </span>
+                .
               </p>
             )}
           </div>
-
         </div>
       </div>
     </div>
   );
 };
 
-// ─── Main ApproveRecipe Component ─────────────────────────────────────────────
-
 const ApproveRecipe = () => {
-  const doctorToken = localStorage.getItem("doctorToken")
-  useEffect(()=>{
-    const getallRecipes=async()=>{
-      try {
-        const response = await axios.get("http://localhost:3000/api/doctor/get-pending-recipe",{
-          headers:{
-            Authorization:`Bearer ${doctorToken}`
-          }
-        })
-        console.log(response.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    getallRecipes()
-  },[])
-  const [recipes,  setRecipes]  = useState(PENDING_RECIPES);
+  const doctorToken = localStorage.getItem("doctorToken");
+  const [recipes, setRecipes] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [filter,   setFilter]   = useState("all");
-  const [search,   setSearch]   = useState("");
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
-  const onDecision = (id, decision, note) => {
-    setRecipes(prev =>
-      prev.map(r => r.id === id ? { ...r, status:decision, reviewNote:note } : r)
-    );
-  };
+  const fetchRecipes = useCallback(async () => {
+    if (!doctorToken) {
+      setLoading(false);
+      setError("Doctor login is required.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const statuses = ["pending", "approved", "rejected"];
+      const responses = await Promise.all(
+        statuses.map((status) =>
+          axios.get(apiUrl(`/api/doctor/get-pending-recipe?status=${status}`), {
+            headers: { Authorization: `Bearer ${doctorToken}` },
+          }),
+        ),
+      );
+
+      const merged = responses
+        .flatMap((response) => response.data?.recipes || [])
+        .map(normalizeRecipe);
+
+      const deduped = Array.from(
+        new Map(merged.map((recipe) => [recipe.id, recipe])).values(),
+      );
+
+      setRecipes(deduped);
+    } catch (err) {
+      console.log(err);
+      setError(err.response?.data?.message || "Failed to load doctor queue.");
+      setRecipes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [doctorToken]);
+
+  useEffect(() => {
+    fetchRecipes();
+  }, [fetchRecipes]);
+
+  const onDecision = useCallback(
+    async (recipeId, decision, note) => {
+      try {
+        setSaving(true);
+        const response = await axios.post(
+          apiUrl("/api/doctor/verify-recipe"),
+          {
+            recipeId,
+            action: decision,
+            note,
+          },
+          {
+            headers: { Authorization: `Bearer ${doctorToken}` },
+          },
+        );
+
+        const updated = normalizeRecipe(response.data?.recipe || {});
+        setRecipes((prev) =>
+          prev.map((recipe) => (recipe.id === recipeId ? updated : recipe)),
+        );
+        toast.success(
+          decision === "approve"
+            ? "Recipe approved successfully"
+            : "Recipe rejected successfully",
+        );
+      } catch (err) {
+        console.log(err);
+        toast.error(err.response?.data?.message || "Could not save review");
+      } finally {
+        setSaving(false);
+      }
+    },
+    [doctorToken],
+  );
 
   const visible = useMemo(() => {
     let list = [...recipes];
-    if (filter !== "all") list = list.filter(r => r.status === filter);
-    const q = search.toLowerCase();
-    if (q) list = list.filter(r =>
-      r.title.toLowerCase().includes(q) ||
-      r.submittedBy.toLowerCase().includes(q) ||
-      r.category.toLowerCase().includes(q)
+    if (filter !== "all") {
+      list = list.filter((recipe) => recipe.status === filter);
+    }
+
+    const query = search.trim().toLowerCase();
+    if (!query) return list;
+
+    return list.filter((recipe) =>
+      [recipe.title, recipe.submittedBy, recipe.category, recipe.desc]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(query)),
     );
-    return list;
   }, [recipes, filter, search]);
 
-  const counts = {
-    pending:  recipes.filter(r => r.status === "pending").length,
-    approved: recipes.filter(r => r.status === "approved").length,
-    rejected: recipes.filter(r => r.status === "rejected").length,
-  };
+  const counts = useMemo(
+    () => ({
+      pending: recipes.filter((recipe) => recipe.status === "pending").length,
+      approved: recipes.filter((recipe) => recipe.status === "approved").length,
+      rejected: recipes.filter((recipe) => recipe.status === "rejected").length,
+    }),
+    [recipes],
+  );
 
-  const selectedRecipe = selected ? recipes.find(r => r.id === selected) : null;
+  const selectedRecipe = selected
+    ? recipes.find((recipe) => recipe.id === selected)
+    : null;
 
   return (
     <>
       <style>{`@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}`}</style>
 
-      <div className="max-w-6xl mx-auto px-4 py-8  min-h-screen">
-
+      <div className="max-w-6xl mx-auto px-4 py-8 min-h-screen">
         {selectedRecipe ? (
           <ReviewDetail
             recipe={selectedRecipe}
             onBack={() => setSelected(null)}
             onDecision={onDecision}
+            saving={saving}
           />
         ) : (
           <>
-            {/* Header */}
             <div
               className="pb-6 mb-7 border-b border-stone-200"
-              style={{ animation:"fadeUp .4s ease both" }}
+              style={{ animation: "fadeUp .4s ease both" }}
             >
               <p className="text-[11px] uppercase tracking-[2px] font-semibold text-teal-600 mb-1.5">
                 Doctor Portal
               </p>
-              <h1 className="text-[26px] font-bold text-stone-900 mb-4">Herbal Recipe Review</h1>
+              <h1 className="text-[26px] font-bold text-stone-900 mb-4">
+                Herbal Recipe Review
+              </h1>
 
-              {/* Stat chips */}
               <div className="flex flex-wrap gap-2">
                 {[
-                  { label:"Pending",  count:counts.pending,  cls:"bg-amber-50 text-amber-700 border-amber-200" },
-                  { label:"Approved", count:counts.approved, cls:"bg-teal-50  text-teal-700  border-teal-200"  },
-                  { label:"Rejected", count:counts.rejected, cls:"bg-red-50   text-red-700   border-red-200"   },
-                  { label:"Total",    count:recipes.length,  cls:"bg-stone-100 text-stone-600 border-stone-200"  },
-                ].map(s => (
-                  <span key={s.label}
-                    className={`inline-flex items-center gap-1.5 border text-[11px]
-                                font-semibold px-3 py-1.5 rounded-full ${s.cls}`}>
-                    {s.label} <span className="font-bold">{s.count}</span>
+                  {
+                    label: "Pending",
+                    count: counts.pending,
+                    cls: "bg-amber-50 text-amber-700 border-amber-200",
+                  },
+                  {
+                    label: "Approved",
+                    count: counts.approved,
+                    cls: "bg-teal-50 text-teal-700 border-teal-200",
+                  },
+                  {
+                    label: "Rejected",
+                    count: counts.rejected,
+                    cls: "bg-red-50 text-red-700 border-red-200",
+                  },
+                  {
+                    label: "Total",
+                    count: recipes.length,
+                    cls: "bg-stone-100 text-stone-600 border-stone-200",
+                  },
+                ].map((stat) => (
+                  <span
+                    key={stat.label}
+                    className={`inline-flex items-center gap-1.5 border text-[11px] font-semibold px-3 py-1.5 rounded-full ${stat.cls}`}
+                  >
+                    {stat.label} <span className="font-bold">{stat.count}</span>
                   </span>
                 ))}
               </div>
             </div>
 
-            {/* Filters + search */}
             <div
               className="flex flex-wrap gap-3 items-center mb-5"
-              style={{ animation:"fadeUp .4s .05s ease both", opacity:0, animationFillMode:"both" }}
+              style={{
+                animation: "fadeUp .4s .05s ease both",
+                opacity: 0,
+                animationFillMode: "both",
+              }}
             >
               <div className="inline-flex gap-1 bg-stone-100 border border-stone-200 rounded-xl p-1">
                 {[
-                  { key:"all",      label:"All"      },
-                  { key:"pending",  label:"Pending"  },
-                  { key:"approved", label:"Approved" },
-                  { key:"rejected", label:"Rejected" },
-                ].map(t => (
-                  <button key={t.key} onClick={() => setFilter(t.key)}
-                    className={`px-3.5 py-1.5 rounded-lg text-[12px] font-semibold transition-all whitespace-nowrap
-                      ${filter === t.key
+                  { key: "all", label: "All" },
+                  { key: "pending", label: "Pending" },
+                  { key: "approved", label: "Approved" },
+                  { key: "rejected", label: "Rejected" },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setFilter(tab.key)}
+                    className={`px-3.5 py-1.5 rounded-lg text-[12px] font-semibold transition-all whitespace-nowrap ${
+                      filter === tab.key
                         ? "bg-white text-stone-900 shadow-sm"
-                        : "text-stone-500 hover:text-stone-800"}`}
+                        : "text-stone-500 hover:text-stone-800"
+                    }`}
                   >
-                    {t.label}
+                    {tab.label}
                   </button>
                 ))}
               </div>
 
               <div className="flex-1 min-w-45 relative">
-                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+                <Search
+                  size={13}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none"
+                />
                 <input
                   value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder="Search recipes or submitters…"
-                  className="w-full pl-8 pr-4 py-2.5 border border-stone-200 rounded-xl text-[13px]
-                             bg-white text-stone-800 outline-none focus:border-teal-400 transition-all
-                             placeholder:text-stone-400"
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search recipes or submitters..."
+                  className="w-full pl-8 pr-4 py-2.5 border border-stone-200 rounded-xl text-[13px] bg-white text-stone-800 outline-none focus:border-teal-400 transition-all placeholder:text-stone-400"
                 />
               </div>
 
-              <span className="text-[12px] text-stone-400">{visible.length} recipes</span>
+              <button
+                type="button"
+                onClick={fetchRecipes}
+                className="px-4 py-2.5 rounded-xl border border-stone-200 bg-white text-[12px] font-semibold text-stone-600 hover:border-teal-300 hover:text-teal-700 transition-all"
+              >
+                Refresh
+              </button>
+
+              <span className="text-[12px] text-stone-400">
+                {visible.length} recipes
+              </span>
             </div>
 
-            {/* Recipe list */}
-            {visible.length === 0 ? (
+            {error && (
+              <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-900">
+                {error}
+              </div>
+            )}
+
+            {loading ? (
+              <div className="grid gap-3">
+                {[0, 1, 2].map((key) => (
+                  <div
+                    key={key}
+                    className="h-24 rounded-2xl bg-stone-100 animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : visible.length === 0 ? (
               <div className="flex flex-col items-center py-20 text-stone-400">
-                <p className="text-4xl mb-3">🌿</p>
-                <p className="text-[14px] font-semibold text-stone-600">No recipes found</p>
+                <p className="text-[14px] font-semibold text-stone-600">
+                  No recipes found
+                </p>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                {visible.map((r, i) => (
+                {visible.map((recipe, index) => (
                   <div
-                    key={r.id}
-                    onClick={() => setSelected(r.id)}
-                    className="group bg-white border border-stone-200 rounded-2xl p-4 cursor-pointer
-                               hover:border-teal-300 hover:shadow-sm transition-all duration-200 flex gap-4"
-                    style={{ animation:`fadeUp .35s ${.1 + i * .04}s ease both`, opacity:0, animationFillMode:"both" }}
+                    key={recipe.id}
+                    onClick={() => setSelected(recipe.id)}
+                    className="group bg-white border border-stone-200 rounded-2xl p-4 cursor-pointer hover:border-teal-300 hover:shadow-sm transition-all duration-200 flex gap-4"
+                    style={{
+                      animation: `fadeUp .35s ${0.1 + index * 0.04}s ease both`,
+                      opacity: 0,
+                      animationFillMode: "both",
+                    }}
                   >
-                    {/* Thumbnail */}
                     <div className="w-20 h-16 rounded-xl overflow-hidden bg-stone-100 shrink-0">
-                      <img src={r.img} alt={r.title} className="w-full h-full object-cover block" />
+                      <img
+                        src={recipe.img}
+                        alt={recipe.title}
+                        className="w-full h-full object-cover block"
+                      />
                     </div>
 
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3 mb-1.5">
                         <h3 className="text-[14px] font-bold text-stone-900 leading-snug truncate">
-                          {r.title}
+                          {recipe.title}
                         </h3>
-                        <StatusBadge status={r.status} />
+                        <StatusBadge status={recipe.status} />
                       </div>
-                      <p className="text-[12px] text-stone-400 mb-2 truncate">{r.desc}</p>
+                      <p className="text-[12px] text-stone-400 mb-2 truncate">
+                        {recipe.desc || "No description"}
+                      </p>
                       <div className="flex flex-wrap gap-3 text-[11px] text-stone-400">
                         <span className="flex items-center gap-1">
-                          <User size={10} /> {r.submittedBy} · {r.submittedRole}
+                          <User size={10} /> {recipe.submittedBy}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Clock size={10} /> {r.submittedAt}
+                          <Clock size={10} /> {recipe.submittedAt}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Leaf size={10} /> {r.category}
+                          <Leaf size={10} /> {recipe.category}
                         </span>
                       </div>
                     </div>
 
                     <div className="shrink-0 flex items-center">
-                      <Eye size={16} className="text-stone-300 group-hover:text-teal-500 transition-colors" />
+                      <Eye
+                        size={16}
+                        className="text-stone-300 group-hover:text-teal-500 transition-colors"
+                      />
                     </div>
                   </div>
                 ))}

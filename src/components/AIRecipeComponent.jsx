@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Send, ClipboardList, X, ChefHat } from "lucide-react";
 import axios from "axios";
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const now = () =>
@@ -56,7 +55,7 @@ const RecipeCard = ({ card }) => (
       <p className="text-[12px] text-stone-500 mb-2 leading-relaxed">{card.desc}</p>
     )}
     <div className="flex gap-3 text-[11px] text-stone-500 flex-wrap">
-      {card.time  && <span>⏱ {card.time}</span>}
+      {card.time && <span>⏱ {card.time}</span>}
       {card.serves && <span>👥 {card.serves}</span>}
       {card.difficulty && <span>📊 {card.difficulty}</span>}
       {card.usedIngredients > 0 && (
@@ -67,15 +66,15 @@ const RecipeCard = ({ card }) => (
       )}
     </div>
     {card.sourceUrl && (
-  <a
-    href={card.sourceUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-block mt-2 text-[11px] text-teal-600 hover:underline"
-  >
-    View full recipe →
-  </a>
-)}
+      <a
+        href={card.sourceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-block mt-2 text-[11px] text-teal-600 hover:underline"
+      >
+        View full recipe →
+      </a>
+    )}
   </div>
 );
 
@@ -103,7 +102,6 @@ const AiBubble = ({ msg, onSuggestion }) => (
         <p className="text-[13px] text-stone-800 leading-relaxed whitespace-pre-line">
           {msg.text}
         </p>
-        {/* Multiple recipe cards */}
         {msg.recipeCards?.map((card, i) => (
           <RecipeCard key={i} card={card} />
         ))}
@@ -136,45 +134,73 @@ const UserBubble = ({ msg }) => (
 const IngredientChip = ({ name, onRemove }) => (
   <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-900 text-[11px] font-medium px-2.5 py-1 rounded-full border border-amber-100">
     {name}
-    <button onClick={onRemove} className="text-amber-600 hover:text-amber-900 transition-colors">
+    <button
+      onClick={onRemove}
+      className="text-amber-600 hover:text-amber-900 transition-colors"
+    >
       <X size={10} />
     </button>
   </span>
 );
 
-// ─── API call ─────────────────────────────────────────────────────────────────
+// ─── Mappers ──────────────────────────────────────────────────────────────────
 
-// ✅ Maps Spoonacular findByIngredients response → RecipeCard shape
 const mapIngredientRecipe = (r) => ({
-  title:            r.title,
-  image:            r.image,
-  usedIngredients:  r.usedIngredientCount,
-  missedIngredients: r.missedIngredientCount,
-  sourceUrl:        `https://spoonacular.com/recipes/${r.title.replace(/\s+/g, "-").toLowerCase()}-${r.id}`,
+  title: r.title,
+  image: r.image,
+  usedIngredients: r.usedIngredientCount || 0,
+  missedIngredients: r.missedIngredientCount || 0,
+  sourceUrl: r.sourceUrl || `https://spoonacular.com/recipes/${r.id}`,
+  // you can also add id: r.id if needed
 });
 
-// ✅ Maps Spoonacular complexSearch response → RecipeCard shape
 const mapQueryRecipe = (r) => ({
-  title:      r.title,
-  image:      r.image,
-  time:       r.readyInMinutes ? `${r.readyInMinutes} min` : null,
-  serves:     r.servings ? `${r.servings} people` : null,
+  title: r.title,
+  image: r.image,
+  time: r.readyInMinutes ? `${r.readyInMinutes} min` : null,
+  serves: r.servings ? `${r.servings} people` : null,
   difficulty: null,
-  sourceUrl:  r.sourceUrl,
+  sourceUrl: r.sourceUrl || null,
 });
 
-const fetchRecipes = async (ingredients, query) => {
-  const params = ingredients.length > 0
-    ? { ingredients: ingredients.join(",") }
-    : { query };
+// ─── API call ─────────────────────────────────────────────────────────────────
+const fetchRecipes = async (ingredientsSnapshot, query) => {
+  const API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY
+  console.log(API_KEY)
+  if (!API_KEY) {
+    throw new Error("Missing Spoonacular API key");
+  }
 
-  const res = await axios.get("/api/recipes/suggest", { params });
+  let url;
+  const params = { apiKey: API_KEY };
 
-  if (!res.data.success) throw new Error("API error");
+  if (ingredientsSnapshot.length > 0) {
+    // Search by ingredients (what's in my fridge)
+    url = `https://api.spoonacular.com/recipes/findByIngredients`;
+    params.ingredients = ingredientsSnapshot.join(',');   // comma-separated
+    params.number = 6;   // limit results
+    // optional: params.ignorePantry = true;
+  } else {
+    // Normal text search
+    url = `https://api.spoonacular.com/recipes/complexSearch`;
+    params.query = query;
+    params.number = 6;
+    params.addRecipeInformation = true; // gets more details
+  }
 
-  return ingredients.length > 0
-    ? res.data.recipes.map(mapIngredientRecipe)
-    : res.data.recipes.map(mapQueryRecipe);
+  console.log("[fetchRecipes] GET", url, params);
+
+  const res = await axios.get(url, { params });
+
+  if (res.data.results) {
+    // complexSearch returns { results: [...] }
+    return res.data.results.map(mapQueryRecipe);
+  } else {
+    // findByIngredients returns array directly
+    return ingredientsSnapshot.length > 0
+      ? res.data.map(mapIngredientRecipe)
+      : [];
+  }
 };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -184,21 +210,29 @@ const AIRecipeComponent = () => {
     {
       id: 1,
       role: "ai",
-      text: "Hello! I'm Chef AI — your personal recipe assistant. Tell me what you'd like to cook, or share ingredients you have on hand.",
+      text: "Hello! I'm Chef AI — your personal recipe assistant.\n\nTo search by ingredients, click the 📋 icon and add them there, then press Send.\nOr just type a dish name like \"pasta carbonara\" to search directly.",
       time: now(),
       suggestions: ["Quick dinner ideas", "Vegetarian recipes", "Under 30 min"],
     },
   ]);
 
-  const [input,        setInput]        = useState("");
-  const [isTyping,     setIsTyping]     = useState(false);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [showIngPanel, setShowIngPanel] = useState(false);
-  const [ingredients,  setIngredients]  = useState([]);
-  const [ingInput,     setIngInput]     = useState("");
+  const [ingredients, setIngredients] = useState([]);
+  const [ingInput, setIngInput] = useState("");
 
   const messagesEndRef = useRef(null);
-  const textareaRef    = useRef(null);
-  const ingInputRef    = useRef(null);
+  const textareaRef = useRef(null);
+  const ingInputRef = useRef(null);
+
+  // FIX 3: Keep a ref that always holds the latest ingredients so
+  //         sendMessage (called from suggestion pills / external) never
+  //         closes over a stale empty array.
+  const ingredientsRef = useRef(ingredients);
+  useEffect(() => {
+    ingredientsRef.current = ingredients;
+  }, [ingredients]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -231,13 +265,27 @@ const AIRecipeComponent = () => {
     const trimmed = text.trim();
     if (!trimmed || isTyping) return;
 
+    // FIX 3 (continued): snapshot ingredients from the ref at call-time,
+    // not from the stale closure captured when the component rendered.
+    const ingredientsSnapshot = [...ingredientsRef.current];
+
+    // FIX 4: Auto-detect if the user typed a comma-separated ingredient list
+    // in the chat box instead of using the panel (e.g. "onion, tomato").
+    const looksLikeIngredients =
+      ingredientsSnapshot.length === 0 &&
+      /^[a-zA-Z\s]+(,\s*[a-zA-Z\s]+)+$/.test(trimmed);
+
+    const effectiveIngredients = looksLikeIngredients
+      ? trimmed.split(",").map((s) => s.trim()).filter(Boolean)
+      : ingredientsSnapshot;
+
     // 1. Add user message
     const userMsg = {
-      id:          Date.now(),
-      role:        "user",
-      text:        trimmed,
-      time:        now(),
-      ingredients: [...ingredients],
+      id: Date.now(),
+      role: "user",
+      text: trimmed,
+      time: now(),
+      ingredients: effectiveIngredients,
     };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
@@ -246,37 +294,39 @@ const AIRecipeComponent = () => {
       textareaRef.current.value = "";
       textareaRef.current.style.height = "auto";
     }
-    console.log(userMsg)
+
+    console.log("[sendMessage] userMsg:", userMsg);
+    console.log("[sendMessage] effectiveIngredients:", effectiveIngredients);
+
     // 2. Hit real API
     try {
-      const cards = await fetchRecipes(ingredients, trimmed);
+      const cards = await fetchRecipes(effectiveIngredients, trimmed);
       const hasResults = cards.length > 0;
 
       const aiMsg = {
-        id:   Date.now() + 1,
+        id: Date.now() + 1,
         role: "ai",
         time: now(),
         text: hasResults
-          ? ingredients.length > 0
+          ? effectiveIngredients.length > 0
             ? `Here are ${cards.length} recipes using your ingredients:`
             : `Here are some recipes for "${trimmed}":`
           : "Sorry, I couldn't find any recipes for that. Try different ingredients or a different query!",
         recipeCards: hasResults ? cards : [],
         suggestions: ["Show more ideas", "Vegetarian only", "Under 30 min"],
       };
-      console.log(hasResults)
 
       setMessages((prev) => [...prev, aiMsg]);
     } catch (err) {
-      // 3. Error message in chat
+      console.error("[sendMessage] error:", err);
       setMessages((prev) => [
         ...prev,
         {
-          id:   Date.now() + 1,
+          id: Date.now() + 1,
           role: "ai",
           time: now(),
-          text: "⚠️ Sorry, something went wrong fetching recipes. Please try again in a moment.",
-          suggestions: ["Try again", "Quick dinner ideas"],
+          text: `⚠️ Sorry, something went wrong: ${err.message}. Please try again.`,
+          suggestions: ["Quick dinner ideas", "Vegetarian recipes"],
         },
       ]);
     } finally {
@@ -357,7 +407,9 @@ const AIRecipeComponent = () => {
                 <p className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide">
                   Ingredients
                 </p>
-                <span className="text-[10px] text-stone-400">Press Enter to add</span>
+                <span className="text-[10px] text-stone-400">
+                  Press Enter or comma to add
+                </span>
               </div>
               {ingredients.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-2">
@@ -413,8 +465,8 @@ const AIRecipeComponent = () => {
                   rows={1}
                   placeholder={
                     ingredients.length > 0
-                      ? `Ask about your ${ingredients.length} ingredient${ingredients.length > 1 ? "s" : ""}…`
-                      : "Ask Chef AI anything…"
+                      ? `Search with your ${ingredients.length} ingredient${ingredients.length > 1 ? "s" : ""} — press Send!`
+                      : "Type a dish, or add ingredients with 📋 above…"
                   }
                   onInput={handleTextareaInput}
                   onKeyDown={handleKeyDown}
@@ -423,15 +475,23 @@ const AIRecipeComponent = () => {
                 />
                 <button
                   onClick={() => sendMessage()}
-                  disabled={!input.trim() || isTyping}
+                  disabled={
+                    // FIX 5: allow sending when ingredients are added even
+                    // if the text box is empty — send a default prompt instead.
+                    (ingredients.length === 0 && !input.trim()) || isTyping
+                  }
                   className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all
-                              ${input.trim() && !isTyping
+                              ${(input.trim() || ingredients.length > 0) && !isTyping
                                 ? "bg-teal-600 hover:bg-teal-700 active:scale-95"
                                 : "bg-stone-100 cursor-not-allowed"}`}
                 >
                   <Send
                     size={13}
-                    className={input.trim() && !isTyping ? "text-white" : "text-stone-400"}
+                    className={
+                      (input.trim() || ingredients.length > 0) && !isTyping
+                        ? "text-white"
+                        : "text-stone-400"
+                    }
                   />
                 </button>
               </div>
@@ -440,9 +500,13 @@ const AIRecipeComponent = () => {
             <div className="flex items-center justify-between mt-2 px-1">
               <p className="text-[10px] text-stone-400">
                 Press{" "}
-                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Enter</kbd>{" "}
+                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">
+                  Enter
+                </kbd>{" "}
                 to send &nbsp;·&nbsp;{" "}
-                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Shift+Enter</kbd>{" "}
+                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">
+                  Shift+Enter
+                </kbd>{" "}
                 for new line
               </p>
               {ingredients.length > 0 && (

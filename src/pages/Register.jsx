@@ -177,63 +177,76 @@ const Register = () => {
 
   /* ── final submit ── */
   const onSubmit = async (data) => {
-    console.log(data);
-    let response;
-    try {
-      if (role.toLocaleLowerCase() === "user") {
-        response = await axios.post("http://localhost:3000/api/user/register", {
-          role,
-          ...data,
-        });
-        if (response.data.success) {
-          toast.success(response.data.message);
-          setTimeout(() => {
-            navigate("/login",{
-              state:{role:"user"}
-            });
-          }, 1500);
-        } else {
-          toast.warn(response.data.message);
-        }
-      } else if (role.toLocaleLowerCase() === "doctor") {
-        response = await axios.post(
-          "http://localhost:3000/api/doctor/register",
-          { role, ...data },
-        );
-        if (response.data.success) {
-          toast.success(response.data.message);
-          setTimeout(() => {
-            navigate("/login",{
-              state:{role:"doctor"}
-            });
-          }, 1500);
-        } else {
-          toast.warn(response.data.message);
-        }
-      } else {
-        response = await axios.post(
-          "http://localhost:3000/api/influencer/register",
-          {
-            role,
-            ...data,
-          },
-        );
-        if (response.data.success) {
-          toast.success(response.data.message);
-          setTimeout(() => {
-            navigate("/login",{
-              state:{role:doctor}
-            });
-          }, 1500);
-        } else {
-          toast.warn(response.data.message);
-        }
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
+  try {
+    // ✅ Build FormData instead of sending plain JSON
+    const formData = new FormData();
+
+    // Append all text fields
+    formData.append("role", role);
+    formData.append("fullName", data.fullName);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("password", data.password);
+    formData.append("dob", data.dob);
+    formData.append("gender", data.gender);
+
+    // Role-specific fields
+    if (role === "User") {
+      formData.append("weight", data.weight);
+      formData.append("height", data.height);
+      formData.append("dietPref", data.dietPref);
+      formData.append("healthGoal", data.healthGoal);
     }
-    console.log({ role, ...data });
-  };
+    if (role === "Influencer") {
+      formData.append("niche", data.niche);
+      formData.append("collab", data.collab);
+      formData.append("instagram", data.instagram || "");
+      formData.append("youtube", data.youtube || "");
+      formData.append("followers", data.followers || "");
+    }
+    if (role === "Doctor") {
+      formData.append("designation", data.designation);
+      formData.append("specialization", data.specialization);
+      formData.append("experience", data.experience);
+      formData.append("fees", data.fees);
+      formData.append("regNo", data.regNo);
+      formData.append("hospital", data.hospital || "");
+    }
+
+    // ✅ Append actual File object (not data.avatar which is a FileList wrapper)
+    if (data.avatar && data.avatar[0]) {
+      formData.append("avatar", data.avatar[0]);
+    }
+
+    // Doctor certificate
+    if (role === "Doctor" && data.certificate && data.certificate[0]) {
+      formData.append("certificate", data.certificate[0]);
+    }
+
+    const endpointMap = {
+      User: "http://localhost:3000/api/user/register",
+      Doctor: "http://localhost:3000/api/doctor/register",
+      Influencer: "http://localhost:3000/api/influencer/register",
+    };
+
+    const response = await axios.post(endpointMap[role], formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    if (response.data.success) {
+      toast.success(response.data.message);
+      setTimeout(() => {
+        navigate("/login", {
+          state: { role: role.toLowerCase() },
+        });
+      }, 1500);
+    } else {
+      toast.warn(response.data.message);
+    }
+  } catch (error) {
+    toast.error("Something went wrong");
+  }
+};
 
   const roles = [
     {

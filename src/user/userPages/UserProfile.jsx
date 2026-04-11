@@ -65,20 +65,23 @@ const StatCard = ({ icon: Icon, label, value, color }) => (
 );
 
 export default function UserProfile() {
+  const currentUser=JSON.parse(localStorage.getItem('User'))
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [saved, setSaved] = useState(false);
   const fileRef = useRef();
-
+  const rawDate=currentUser?.dob
+  const date=new Date(rawDate)
+  const Normalized =date.toISOString().split("T")[0]
   const [form, setForm] = useState({
-    firstName: "Priya", lastName: "Kulkarni", email: "priya.kulkarni@gmail.com",
-    phone: "+91 98765 43210", dob: "1998-04-15", gender: "Female",
+    firstName: `${currentUser?.fullName}`, email: `${currentUser?.email}`,
+    phone: `${currentUser?.phone}`, dob: `${Normalized}`, gender: `${currentUser?.gender}`,
     city: "Pune", state: "Maharashtra", pincode: "411001",
-    weight: "58", height: "162", bloodGroup: "O+",
-    dietType: "Vegetarian", allergies: "Nuts, Dairy", healthGoal: "Weight Loss",
+    weight: `${currentUser?.weight}`, height: `${currentUser?.weight}`, bloodGroup: "O+",
+    dietType: `${currentUser?.dietPref}`, allergies: "Nuts, Dairy", healthGoal: `${currentUser?.healthGoal==="wloss"?"Weight Loss":"Weight Gain"}`,
     activityLevel: "Moderately Active", bio: "Food lover & home cook exploring healthy recipes.",
   });
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState(currentUser?.avatar || null);
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
   const handleSave = () => { setEditing(false); setSaved(true); setTimeout(() => setSaved(false), 2500); };
@@ -159,8 +162,8 @@ export default function UserProfile() {
 
         {/* stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "32px" }}>
-          <StatCard icon={BookOpen} label="Recipes Saved" value="42" color={COLORS.red} />
-          <StatCard icon={Utensils} label="Diet Type" value={form.dietType} color={COLORS.blue} />
+          <StatCard icon={BookOpen} label="Recipes Saved" value={`${currentUser?.savedRecipes.length}`} color={COLORS.red} />
+          <StatCard icon={Utensils} label="Diet Type" value={form.dietType.toLocaleLowerCase()} color={COLORS.blue} />
           <StatCard icon={TrendingUp} label="Health Goal" value={form.healthGoal} color="#f59e0b" />
           <StatCard icon={Heart} label="Activity Level" value={form.activityLevel} color="#10b981" />
         </div>
@@ -188,13 +191,13 @@ export default function UserProfile() {
                 <User size={16} color={COLORS.red} /> Personal Information
               </h2>
               <InputField label="First Name" icon={User} name="firstName" value={form.firstName} editable={editing} onChange={handleChange} />
-              <InputField label="Last Name" icon={User} name="lastName" value={form.lastName} editable={editing} onChange={handleChange} />
+              {/* <InputField label="Last Name" icon={User} name="lastName" value={form.lastName} editable={editing} onChange={handleChange} /> */}
               <InputField label="Email Address" icon={Mail} name="email" value={form.email} editable={editing} onChange={handleChange} />
               <InputField label="Phone" icon={Phone} name="phone" value={form.phone} editable={editing} onChange={handleChange} />
               <InputField label="Date of Birth" icon={Calendar} name="dob" type="date" value={form.dob} editable={editing} onChange={handleChange} />
               <InputField label="Gender" icon={User} name="gender" value={form.gender} editable={editing} onChange={handleChange} options={["Female", "Male", "Non-binary", "Prefer not to say"]} />
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            {/* <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
               <div style={{ background: "#fff", borderRadius: "16px", border: `1px solid ${COLORS.border}`, padding: "28px", display: "flex", flexDirection: "column", gap: "20px" }}>
                 <h2 style={{ fontSize: "15px", fontWeight: 800, color: COLORS.dark, margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
                   <MapPin size={16} color={COLORS.red} /> Location
@@ -218,7 +221,7 @@ export default function UserProfile() {
                   }}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -237,7 +240,7 @@ export default function UserProfile() {
                 <Utensils size={16} color={COLORS.red} /> Diet & Wellness
               </h2>
               <InputField label="Diet Type" icon={Utensils} name="dietType" value={form.dietType} editable={editing} onChange={handleChange} options={["Vegetarian", "Vegan", "Non-Vegetarian", "Keto", "Paleo", "Gluten-Free"]} />
-              <InputField label="Allergies" icon={AlertCircle} name="allergies" value={form.allergies} editable={editing} onChange={handleChange} />
+              {/* <InputField label="Allergies" icon={AlertCircle} name="allergies" value={form.allergies} editable={editing} onChange={handleChange} /> */}
               <InputField label="Health Goal" icon={TrendingUp} name="healthGoal" value={form.healthGoal} editable={editing} onChange={handleChange} options={["Weight Loss", "Muscle Gain", "Maintain Weight", "Improve Immunity", "Better Digestion"]} />
               <InputField label="Activity Level" icon={TrendingUp} name="activityLevel" value={form.activityLevel} editable={editing} onChange={handleChange} options={["Sedentary", "Lightly Active", "Moderately Active", "Very Active", "Extra Active"]} />
             </div>

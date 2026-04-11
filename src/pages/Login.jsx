@@ -1,18 +1,14 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  AtSign,
-  Lock,
-  Stethoscope,
-  Eye,
-  EyeOff,
-  ChevronRight,
+  AtSign, Lock, Stethoscope, Eye, EyeOff, ChevronRight, User, Users,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import iPhone from "../assets/jpgIphone.png";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+
 const inputCls =
   "w-full px-3 py-2.5 text-sm text-gray-800 bg-transparent outline-none placeholder-gray-400 rounded-r-xl";
 
@@ -20,10 +16,9 @@ const Field = ({ icon: Icon, error, children }) => (
   <div className="flex flex-col gap-1">
     <div
       className={`flex items-center rounded-xl border bg-white transition-all duration-200
-        ${
-          error
-            ? "border-red-400 ring-1 ring-red-300"
-            : "border-gray-200 focus-within:border-teal-400 focus-within:ring-1 focus-within:ring-teal-200"
+        ${error
+          ? "border-red-400 ring-1 ring-red-300"
+          : "border-gray-200 focus-within:border-teal-400 focus-within:ring-1 focus-within:ring-teal-200"
         }`}
     >
       <span className="flex items-center justify-center w-11 h-11 shrink-0 text-gray-400 border-r border-gray-200">
@@ -35,79 +30,79 @@ const Field = ({ icon: Icon, error, children }) => (
   </div>
 );
 
+const ROLES = [
+  {
+    id: "user",
+    label: "User",
+    description: "Track nutrition & health",
+    icon: User,
+  },
+  {
+    id: "doctor",
+    label: "Doctor",
+    description: "Consult & manage patients",
+    icon: Stethoscope,
+  },
+  {
+    id: "influencer",
+    label: "Influencer",
+    description: "Share health content",
+    icon: Users,
+  },
+];
+
 const Login = () => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
-  const role =location.state?.role
+
+  // Pre-select role if passed via navigate state
+  const [selectedRole, setSelectedRole] = useState(location.state?.role || null);
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({ mode: "onTouched" });
 
- const onSubmit = async (data) => {
-  try {
-    let response;
+  const API_MAP = {
+    user:       { url: "http://localhost:3000/api/user/login",       tokenKey: "userToken",       redirect: "/user-home"       },
+    doctor:     { url: "http://localhost:3000/api/doctor/login",     tokenKey: "doctorToken",     redirect: "/doctor-home"     },
+    influencer: { url: "http://localhost:3000/api/influencer/login", tokenKey: "influencerToken", redirect: "/influencer-home" },
+  };
 
-    if (role === "doctor" || location.pathname.includes("doctor")) {
-      response = await axios.post("http://localhost:3000/api/doctor/login", data);
-
-      if (response.data?.success) {
-        toast.success(response.data.message);
-        localStorage.setItem("doctorToken",response.data?.token)
-        setTimeout(() => navigate("/doctor-home"), 1500);
-      } else {
-        toast.error(response.data.message);
-      }
-
-    } else if (role === "influencer" || location.pathname.includes("influencer")) {
-      response = await axios.post("http://localhost:3000/api/influencer/login", data);
-
-      if (response.data?.success) {
-        toast.success(response.data.message);
-        localStorage.setItem("influencerToken",response.data?.token)
-        setTimeout(() => navigate("/influencer-home"), 1500);
-      } else {
-        toast.error(response.data.message);
-      }
-
-    } else {
-      response = await axios.post("http://localhost:3000/api/user/login", data);
-      console.log(response.data)
-      if (response.data?.success) {
-        toast.success(response.data.message);
-        localStorage.setItem("userToken",response.data?.token)
-        setTimeout(() => navigate("/user-home"), 1500);
-      } else {
-        toast.error(response.data.message);
-      }
+  const onSubmit = async (data) => {
+    if (!selectedRole) {
+      toast.error("Please select a role first");
+      return;
     }
 
-    console.log(response, role);
+    try {
+      const { url, tokenKey, redirect } = API_MAP[selectedRole];
+      const response = await axios.post(url, data);
 
-  } catch (error) {
-    console.error(error);
-    toast.error(error.response?.data?.message || "Login failed");
-  }
-};
+      if (response.data?.success) {
+        toast.success(response.data.message);
+        localStorage.setItem(tokenKey, response.data?.token);
+        setTimeout(() => navigate(redirect), 1500);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Login failed");
+    }
+  };
 
   return (
     <div className="w-full h-svh flex">
       {/* ── LEFT PANEL ── */}
       <div className="hidden md:flex w-[55%] bg-linear-to-br from-teal-600 to-teal-400 flex-col items-center justify-center relative overflow-hidden p-12">
-        {/* background circles */}
         <div className="absolute w-96 h-96 rounded-full bg-white/5 -top-20 -left-20" />
         <div className="absolute w-72 h-72 rounded-full bg-white/5 bottom-10 right-0" />
         <div className="absolute w-48 h-48 rounded-full bg-white/5 top-1/2 left-1/4" />
-
-        {/* phone mockup */}
         <div className="relative z-10 flex flex-col items-center gap-8">
-          <img
-            src={iPhone}
-            alt="App Preview"
-            className="w-44 drop-shadow-2xl"
-          />
+          <img src={iPhone} alt="App Preview" className="w-44 drop-shadow-2xl" />
           <div className="text-center">
             <h2 className="text-white text-2xl font-bold tracking-tight">
               Your Health, Simplified
@@ -117,21 +112,15 @@ const Login = () => {
               influencers — all in one place.
             </p>
           </div>
-
-          {/* trust badges */}
           <div className="flex gap-6 mt-2">
-            {[
-              ["10K+", "Doctors"],
-              ["500K+", "Users"],
-              ["4.9★", "Rating"],
-            ].map(([val, label]) => (
-              <div key={label} className="text-center">
-                <p className="text-white font-bold text-lg leading-none">
-                  {val}
-                </p>
-                <p className="text-white/60 text-xs mt-0.5">{label}</p>
-              </div>
-            ))}
+            {[["10K+", "Doctors"], ["500K+", "Users"], ["4.9★", "Rating"]].map(
+              ([val, label]) => (
+                <div key={label} className="text-center">
+                  <p className="text-white font-bold text-lg leading-none">{val}</p>
+                  <p className="text-white/60 text-xs mt-0.5">{label}</p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>
@@ -149,17 +138,44 @@ const Login = () => {
             </span>
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">
-            Welcome back
-          </h1>
-          <p className="text-sm text-gray-500 mb-8">
-            Sign in to your account to continue
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Welcome back</h1>
+          <p className="text-sm text-gray-500 mb-6">Sign in to your account to continue</p>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
+          {/* ── ROLE SELECTOR ── */}
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            Login as
+          </p>
+          <div className="grid grid-cols-3 gap-2 mb-6">
+            {ROLES.map(({ id, label, description, icon: Icon }) => {
+              const isSelected = selectedRole === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setSelectedRole(id)}
+                  className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-center transition-all duration-200
+                    ${isSelected
+                      ? "border-teal-400 bg-teal-50 ring-1 ring-teal-200"
+                      : "border-gray-200 bg-white hover:border-teal-300 hover:bg-teal-50/50"
+                    }`}
+                >
+                  <span
+                    className={`w-9 h-9 rounded-full flex items-center justify-center
+                      ${isSelected ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-500"}`}
+                  >
+                    <Icon size={16} />
+                  </span>
+                  <span className={`text-xs font-semibold ${isSelected ? "text-teal-600" : "text-gray-700"}`}>
+                    {label}
+                  </span>
+                  <span className="text-[10px] text-gray-400 leading-tight">{description}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* ── LOGIN FORM ── */}
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Field icon={AtSign} error={errors.identifier}>
               <input
                 {...register("identifier", {
@@ -190,7 +206,6 @@ const Login = () => {
               </button>
             </Field>
 
-            {/* remember + forgot */}
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 text-gray-600 cursor-pointer select-none">
                 <input
@@ -207,7 +222,7 @@ const Login = () => {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !selectedRole}
               className="w-full mt-2 bg-teal-500 hover:bg-teal-600 active:scale-[0.98] disabled:opacity-60
                 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-all"
             >

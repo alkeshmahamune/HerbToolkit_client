@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Search, Clock, Trash2, Bot, BookOpen, X } from "lucide-react";
-import { SEED_SAVED } from "../data/userData";
+// import { SEED_SAVED } from "../data/userData";
 import { apiUrl, authHeaders } from "../config/api.js";
 import { useLocation } from "react-router-dom";
 
@@ -291,7 +291,7 @@ const SavedCard = ({ recipe, onRemove, onView, index }) => {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 const SavedRecipes = () => {
-  const [saved, setSaved] = useState(SEED_SAVED);
+  const [saved, setSaved] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
   const [activeSort, setActiveSort] = useState("recent");
   const [search, setSearch] = useState("");

@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Send, ClipboardList, X, ChefHat } from "lucide-react";
 import axios from "axios";
+
+// sponcooler api key 
+const apiKey=import.meta.env.VITE_SPOONACULAR_API_KEY 
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const now = () =>
@@ -67,7 +71,7 @@ const RecipeCard = ({ card }) => (
     </div>
     {card.sourceUrl && (
       <a
-        href={card.sourceUrl}
+        href={card?.sourceUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-block mt-2 text-[11px] text-teal-600 hover:underline"
@@ -150,7 +154,8 @@ const mapIngredientRecipe = (r) => ({
   image: r.image,
   usedIngredients: r.usedIngredientCount || 0,
   missedIngredients: r.missedIngredientCount || 0,
-  sourceUrl: r.sourceUrl || `https://spoonacular.com/recipes/${r.id}`,
+  // sourceUrl: r.sourceUrl || `https://spoonacular.com/recipes/${r.id}`,
+  sourceUrl: r.sourceUrl || `https://api.spoonacular.com/recipes/${r.id}/information?apiKey=${apiKey}`,
   // you can also add id: r.id if needed
 });
 

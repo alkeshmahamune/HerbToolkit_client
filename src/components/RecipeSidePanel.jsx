@@ -97,7 +97,7 @@ export const RecipeSidePanel = ({
   const [saved, setSaved]             = useState(recipe?.saved    || false);
   const [likesCount, setLikesCount]   = useState(recipe?.likes    || 0);
   const [dislikesCount, setDislikesCount] = useState(recipe?.dislikes || 0);
-
+    console.log(recipe)
   const location = useLocation();
   const token = location.pathname.includes("user")
     ? localStorage.getItem("userToken")
@@ -109,6 +109,17 @@ export const RecipeSidePanel = ({
   /* ── detect recipe kind ─────────────────────────────────────── */
   const isHerbal  = recipe?.recipeCategory === "herbal";
   const isRegular = recipe?.recipeCategory === "regular";
+
+  /* ── check for usage info and nutrition ─────────────────────── */
+  const hasUsageInfo = isHerbal &&
+    recipe.usageInfo &&
+    typeof recipe.usageInfo === "object" &&
+    Object.values(recipe.usageInfo).some((v) => v);
+
+  const hasNutrition = isRegular &&
+    recipe.nutrition &&
+    typeof recipe.nutrition === "object" &&
+    Object.values(recipe.nutrition).some((v) => v);
 
   /* ── fetch comments ─────────────────────────────────────────── */
   useEffect(() => {
@@ -223,15 +234,7 @@ export const RecipeSidePanel = ({
 
   if (!recipe) return null;
 
-  /* ── derived values ─────────────────────────────────────────── */
-  const hasUsageInfo = isHerbal &&
-    recipe.usageInfo &&
-    Object.values(recipe.usageInfo).some((v) => v);
-
-  const hasNutrition = isRegular &&
-    recipe.nutrition &&
-    Object.values(recipe.nutrition).some((v) => v);
-
+  /* ── recipe type colors ────────────────────────────────────── */
   const levelColor =
     recipe.level === "Easy"   ? "text-emerald-700 bg-emerald-50 border-emerald-200" :
     recipe.level === "Medium" ? "text-amber-700   bg-amber-50   border-amber-200"   :
@@ -365,14 +368,14 @@ export const RecipeSidePanel = ({
 
           {/* benefit */}
           {recipe.benefit && (
-            <div className="rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-100 px-4 py-3">
+            <div className="rounded-xl bg-linear-to-br from-teal-50 to-emerald-50 border border-teal-100 px-4 py-3">
               <p className="text-xs font-semibold uppercase tracking-wide text-teal-600 mb-1">✨ Benefit</p>
               <p className="text-sm text-gray-700 leading-relaxed">{recipe.benefit}</p>
             </div>
           )}
 
           {/* ingredients */}
-          {recipe.ingredientList?.length > 0 && (
+          {recipe.ingredientList && Array.isArray(recipe.ingredientList) && recipe.ingredientList.length > 0 && (
             <div>
               <SectionHeading emoji="🥘" label="Ingredients" />
               <div className="space-y-1.5">
@@ -381,7 +384,7 @@ export const RecipeSidePanel = ({
                     key={idx}
                     className="flex items-center justify-between px-3 py-2.5 bg-stone-50 rounded-lg text-sm"
                   >
-                    <span className="text-gray-700">{ing.name}</span>
+                    <span className="text-gray-700">{ing.name || "Ingredient"}</span>
                     {ing.quantity && (
                       <span className="text-gray-500 font-medium tabular-nums">
                         {ing.quantity}{ing.unit ? ` ${ing.unit}` : ""}
@@ -393,8 +396,12 @@ export const RecipeSidePanel = ({
             </div>
           )}
 
+          {!recipe.ingredientList && (
+            <div className="text-xs text-gray-400 italic">No ingredients listed</div>
+          )}
+
           {/* steps */}
-          {recipe.steps?.length > 0 && (
+          {recipe.steps && Array.isArray(recipe.steps) && recipe.steps.length > 0 && (
             <div>
               <SectionHeading emoji="👣" label="Steps" />
               <div className="space-y-2">
@@ -419,7 +426,7 @@ export const RecipeSidePanel = ({
           )}
 
           {/* herbs */}
-          {recipe.herbs?.length > 0 && (
+          {recipe.herbs && Array.isArray(recipe.herbs) && recipe.herbs.length > 0 && (
             <div>
               <SectionHeading emoji="🌿" label="Herbs & Key Ingredients" />
               <div className="flex flex-wrap gap-2">
@@ -486,7 +493,7 @@ export const RecipeSidePanel = ({
           )}
 
           {/* tags */}
-          {recipe.tags?.length > 0 && (
+          {recipe.tags && Array.isArray(recipe.tags) && recipe.tags.length > 0 && (
             <div>
               <SectionHeading emoji="🏷️" label="Tags" />
               <div className="flex flex-wrap gap-2">

@@ -7,9 +7,16 @@ export function apiRecipeToDish(rec) {
     typeof uploader === "object" && uploader.fullName
       ? uploader.fullName
       : "Creator";
+  
+  // Ensure arrays have defaults
+  const ingredientList = Array.isArray(rec.ingredientList) ? rec.ingredientList : [];
+  const steps = Array.isArray(rec.steps) ? rec.steps : [];
+  const herbs = Array.isArray(rec.herbs) ? rec.herbs : [];
+  const tags = Array.isArray(rec.tags) ? rec.tags : [];
+  
   return {
     // Basic info
-    name: rec.title,
+    name: rec.title || "Untitled Recipe",
     cat: rec.category || rec.recipeCategory || "Recipe",
     img: rec.thumbnail || rec.imageUrl || rec.img,
     channel,
@@ -27,22 +34,22 @@ export function apiRecipeToDish(rec) {
     recipeId: rec.id || rec._id,
     recipeType: rec.recipeType,
     recipeCategory: rec.recipeCategory,
-    description: rec.description,
+    description: rec.description || "",
     level: rec.level,
-    benefit: rec.benefit,
-    prepTime: rec.prepTime,
-    cookTime: rec.cookTime,
-    productLink: rec.productLink,
+    benefit: rec.benefit || "",
+    prepTime: rec.prepTime || "",
+    cookTime: rec.cookTime || "",
+    productLink: rec.productLink || "",
     
     // Lists
-    ingredientList: rec.ingredientList || [],
-    steps: rec.steps || [],
-    herbs: rec.herbs || [],
-    tags: rec.tags || [],
+    ingredientList: ingredientList,
+    steps: steps,
+    herbs: herbs,
+    tags: tags,
     
     // Nutrition & Usage
-    nutrition: rec.nutrition,
-    usageInfo: rec.usageInfo,
+    nutrition: rec.nutrition || {},
+    usageInfo: rec.usageInfo || {},
     ratings: rec.ratings || 0,
     
     // Media
@@ -54,7 +61,7 @@ export function apiRecipeToDish(rec) {
     // Verification
     verificationStatus: rec.verificationStatus,
     verifiedAt: rec.verifiedAt,
-    reviewNote: rec.reviewNote,
+    reviewNote: rec.reviewNote || "",
     
     _api: true,
   };

@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Send, ClipboardList, X, ChefHat, Bookmark, BookmarkCheck, ChevronDown } from "lucide-react";
+import {
+  Send,
+  ClipboardList,
+  X,
+  ChefHat,
+  Bookmark,
+  BookmarkCheck,
+  ChevronDown,
+} from "lucide-react";
 import axios from "axios";
 import { RecipeDetailModal } from "./RecipeDetailModel";
 const apiKey = import.meta.env.VITE_SPOONACULAR_API_KEY;
@@ -78,7 +86,7 @@ const TypingIndicator = () => (
 
 // ─── NEW: Saved Recipes Panel ─────────────────────────────────────────────────
 
-const SavedRecipesPanel = ({ savedRecipes, onRemove,onViewDetail  }) => {
+const SavedRecipesPanel = ({ savedRecipes, onRemove, onViewDetail }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -90,7 +98,9 @@ const SavedRecipesPanel = ({ savedRecipes, onRemove,onViewDetail  }) => {
       >
         <div className="flex items-center gap-2">
           <BookmarkCheck size={15} className="text-teal-600" />
-          <span className="text-[13px] font-semibold text-stone-700">Saved recipes</span>
+          <span className="text-[13px] font-semibold text-stone-700">
+            Saved recipes
+          </span>
           {savedRecipes.length > 0 && (
             <span className="text-[11px] bg-teal-50 text-teal-700 border border-teal-100 rounded-full px-2 py-0.5">
               {savedRecipes.length}
@@ -116,7 +126,10 @@ const SavedRecipesPanel = ({ savedRecipes, onRemove,onViewDetail  }) => {
         ) : (
           <ul className="divide-y divide-stone-100 overflow-y-auto max-h-90">
             {savedRecipes.map((r, i) => (
-              <li key={i} className="flex items-center gap-3 px-4 py-2.5 hover:bg-stone-50 transition-colors">
+              <li
+                key={i}
+                className="flex items-center gap-3 px-4 py-2.5 hover:bg-stone-50 transition-colors"
+              >
                 {/* Thumbnail */}
                 {r.image ? (
                   <img
@@ -132,7 +145,9 @@ const SavedRecipesPanel = ({ savedRecipes, onRemove,onViewDetail  }) => {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[12px] font-semibold text-stone-800 truncate">{r.title}</p>
+                  <p className="text-[12px] font-semibold text-stone-800 truncate">
+                    {r.title}
+                  </p>
                   <div className="flex gap-2 text-[10px] text-stone-400 mt-0.5">
                     {r.time && <span>⏱ {r.time}</span>}
                     {r.serves && <span>👥 {r.serves}</span>}
@@ -146,7 +161,7 @@ const SavedRecipesPanel = ({ savedRecipes, onRemove,onViewDetail  }) => {
                       href={r.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={()=>onViewDetail(r)}
+                      onClick={() => onViewDetail(r)}
                       className="text-[11px] text-teal-600 hover:underline whitespace-nowrap"
                     >
                       View →
@@ -171,7 +186,7 @@ const SavedRecipesPanel = ({ savedRecipes, onRemove,onViewDetail  }) => {
 
 // ─── Updated RecipeCard ───────────────────────────────────────────────────────
 
-const RecipeCard = ({ card, onSave, isSaved,onViewDetail  }) => (
+const RecipeCard = ({ card, onSave, isSaved, onViewDetail }) => (
   <div className="mt-2 bg-white border border-stone-200 rounded-xl p-3">
     {card.image && (
       <img
@@ -180,37 +195,43 @@ const RecipeCard = ({ card, onSave, isSaved,onViewDetail  }) => (
         className="w-full h-28 object-cover rounded-lg mb-2"
       />
     )}
-    <p className="text-[13px] font-semibold text-stone-800 mb-1">{card.title}</p>
+    <p className="text-[13px] font-semibold text-stone-800 mb-1">
+      {card.title}
+    </p>
     {card.desc && (
-      <p className="text-[12px] text-stone-500 mb-2 leading-relaxed">{card.desc}</p>
+      <p className="text-[12px] text-stone-500 mb-2 leading-relaxed">
+        {card.desc}
+      </p>
     )}
     <div className="flex gap-3 text-[11px] text-stone-500 flex-wrap">
       {card.time && <span>⏱ {card.time}</span>}
       {card.serves && <span>👥 {card.serves}</span>}
       {card.difficulty && <span>📊 {card.difficulty}</span>}
       {card.usedIngredients > 0 && (
-        <span className="text-green-600">✅ Uses {card.usedIngredients} of your ingredients</span>
+        <span className="text-green-600">
+          ✅ Uses {card.usedIngredients} of your ingredients
+        </span>
       )}
       {card.missedIngredients > 0 && (
-        <span className="text-amber-600">🛒 Missing {card.missedIngredients} ingredients</span>
+        <span className="text-amber-600">
+          🛒 Missing {card.missedIngredients} ingredients
+        </span>
       )}
     </div>
     {card.sourceUrl && (
       <div className="w-full flex justify-between items-center mt-2">
         <button
-  onClick={() => onViewDetail(card)}
-  className="text-[11px] text-teal-600 hover:underline bg-none border-none cursor-pointer p-0"
->
-  View full recipe →
-</button>
+          onClick={() => onViewDetail(card)}
+          className="text-[11px] text-teal-600 hover:underline bg-none border-none cursor-pointer p-0"
+        >
+          View full recipe →
+        </button>
         {/* ── Bookmark button ── */}
         <button
           onClick={() => onSave(card)}
           title={isSaved ? "Saved!" : "Save recipe"}
           className={`p-1 rounded-lg transition-all ${
-            isSaved
-              ? "text-teal-600"
-              : "text-stone-300 hover:text-teal-500"
+            isSaved ? "text-teal-600" : "text-stone-300 hover:text-teal-500"
           }`}
         >
           {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
@@ -237,7 +258,13 @@ const SuggestionPills = ({ items, onSelect }) => (
 );
 
 // 1. Add onViewDetail to AiBubble's props
-const AiBubble = ({ msg, onSuggestion, onSave, onViewDetail, savedRecipes }) => (
+const AiBubble = ({
+  msg,
+  onSuggestion,
+  onSave,
+  onViewDetail,
+  savedRecipes,
+}) => (
   <div className="flex items-end gap-2 animate-[fadeUp_.3s_ease_both]">
     <AiAvatar />
     <div className="flex flex-col max-w-[80%]">
@@ -250,7 +277,7 @@ const AiBubble = ({ msg, onSuggestion, onSave, onViewDetail, savedRecipes }) => 
             key={i}
             card={card}
             onSave={onSave}
-            onViewDetail={onViewDetail}   // ← now defined
+            onViewDetail={onViewDetail} // ← now defined
             isSaved={savedRecipes.some((r) => r.sourceUrl === card.sourceUrl)}
           />
         ))}
@@ -299,7 +326,9 @@ const mapIngredientRecipe = (r) => ({
   image: r.image,
   usedIngredients: r.usedIngredientCount || 0,
   missedIngredients: r.missedIngredientCount || 0,
-  sourceUrl: r.sourceUrl || `https://api.spoonacular.com/recipes/${r.id}/information?apiKey=${apiKey}`,
+  sourceUrl:
+    r.sourceUrl ||
+    `https://api.spoonacular.com/recipes/${r.id}/information?apiKey=${apiKey}`,
 });
 
 const mapQueryRecipe = (r) => ({
@@ -336,7 +365,9 @@ const fetchRecipes = async (ingredientsSnapshot, query) => {
   if (res.data.results) {
     return res.data.results.map(mapQueryRecipe);
   } else {
-    return ingredientsSnapshot.length > 0 ? res.data.map(mapIngredientRecipe) : [];
+    return ingredientsSnapshot.length > 0
+      ? res.data.map(mapIngredientRecipe)
+      : [];
   }
 };
 
@@ -348,7 +379,7 @@ const AIRecipeComponent = () => {
     {
       id: 1,
       role: "ai",
-      text: "Hello! I'm Chef AI — your personal recipe assistant.\n\nTo search by ingredients, click the 📋 icon and add them there, then press Send.\nOr just type a dish name like \"pasta carbonara\" to search directly.",
+      text: 'Hello! I\'m Chef AI — your personal recipe assistant.\n\nTo search by ingredients, click the 📋 icon and add them there, then press Send.\nOr just type a dish name like "pasta carbonara" to search directly.',
       time: now(),
       suggestions: ["Quick dinner ideas", "Vegetarian recipes", "Under 30 min"],
     },
@@ -373,7 +404,13 @@ const AIRecipeComponent = () => {
       const alreadySaved = prev.some((r) => r.sourceUrl === card.sourceUrl);
       if (alreadySaved) return prev; // already saved, no-op
       const updated = [
-        { title: card.title, image: card.image, time: card.time, serves: card.serves, sourceUrl: card.sourceUrl },
+        {
+          title: card.title,
+          image: card.image,
+          time: card.time,
+          serves: card.serves,
+          sourceUrl: card.sourceUrl,
+        },
         ...prev,
       ];
       storageSet(updated); // persist asynchronously
@@ -395,8 +432,12 @@ const AIRecipeComponent = () => {
   const ingInputRef = useRef(null);
   const ingredientsRef = useRef(ingredients);
 
-  useEffect(() => { ingredientsRef.current = ingredients; }, [ingredients]);
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, isTyping]);
+  useEffect(() => {
+    ingredientsRef.current = ingredients;
+  }, [ingredients]);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
 
   const handleTextareaInput = (e) => {
     const el = e.target;
@@ -409,12 +450,14 @@ const AIRecipeComponent = () => {
     if ((e.key === "Enter" || e.key === ",") && ingInput.trim()) {
       e.preventDefault();
       const val = ingInput.trim().replace(/,$/, "");
-      if (val && !ingredients.includes(val)) setIngredients((prev) => [...prev, val]);
+      if (val && !ingredients.includes(val))
+        setIngredients((prev) => [...prev, val]);
       setIngInput("");
     }
   };
 
-  const removeIngredient = (idx) => setIngredients((prev) => prev.filter((_, i) => i !== idx));
+  const removeIngredient = (idx) =>
+    setIngredients((prev) => prev.filter((_, i) => i !== idx));
 
   const sendMessage = async (text = input) => {
     const trimmed = text.trim();
@@ -425,14 +468,26 @@ const AIRecipeComponent = () => {
       ingredientsSnapshot.length === 0 &&
       /^[a-zA-Z\s]+(,\s*[a-zA-Z\s]+)+$/.test(trimmed);
     const effectiveIngredients = looksLikeIngredients
-      ? trimmed.split(",").map((s) => s.trim()).filter(Boolean)
+      ? trimmed
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : ingredientsSnapshot;
 
-    const userMsg = { id: Date.now(), role: "user", text: trimmed, time: now(), ingredients: effectiveIngredients };
+    const userMsg = {
+      id: Date.now(),
+      role: "user",
+      text: trimmed,
+      time: now(),
+      ingredients: effectiveIngredients,
+    };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setIsTyping(true);
-    if (textareaRef.current) { textareaRef.current.value = ""; textareaRef.current.style.height = "auto"; }
+    if (textareaRef.current) {
+      textareaRef.current.value = "";
+      textareaRef.current.style.height = "auto";
+    }
 
     try {
       const cards = await fetchRecipes(effectiveIngredients, trimmed);
@@ -453,7 +508,13 @@ const AIRecipeComponent = () => {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { id: Date.now() + 1, role: "ai", time: now(), text: `⚠️ Sorry, something went wrong: ${err.message}. Please try again.`, suggestions: ["Quick dinner ideas", "Vegetarian recipes"] },
+        {
+          id: Date.now() + 1,
+          role: "ai",
+          time: now(),
+          text: `⚠️ Sorry, something went wrong: ${err.message}. Please try again.`,
+          suggestions: ["Quick dinner ideas", "Vegetarian recipes"],
+        },
       ]);
     } finally {
       setIsTyping(false);
@@ -461,7 +522,10 @@ const AIRecipeComponent = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
   };
 
   return (
@@ -480,7 +544,9 @@ const AIRecipeComponent = () => {
             <ChefHat size={16} className="text-white" />
           </div>
           <div>
-            <h2 className="text-[16px] font-semibold text-stone-800 leading-tight">AI Recipe Suggestion</h2>
+            <h2 className="text-[16px] font-semibold text-stone-800 leading-tight">
+              AI Recipe Suggestion
+            </h2>
             <p className="text-[11px] text-stone-400">Powered by Spoonacular</p>
           </div>
           <span className="ml-auto inline-flex items-center gap-1.5 text-[11px] text-green-700 bg-green-50 border border-green-100 px-2.5 py-1 rounded-full">
@@ -489,22 +555,25 @@ const AIRecipeComponent = () => {
           </span>
         </div>
 
-        <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col" style={{ height: "520px" }}>
+        <div
+          className="bg-white border border-stone-200 rounded-2xl overflow-hidden flex flex-col"
+          style={{ height: "520px" }}
+        >
           <div className="messages-area flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4">
-{messages.map((msg) =>
-  msg.role === "ai" ? (
-    <AiBubble
-      key={msg.id}
-      msg={msg}
-      onSuggestion={(s) => sendMessage(s)}
-      onSave={handleSaveRecipe}
-      onViewDetail={setDetailCard}   // ← add this line
-      savedRecipes={savedRecipes}
-    />
-  ) : (
-    <UserBubble key={msg.id} msg={msg} />
-  )
-)}
+            {messages.map((msg) =>
+              msg.role === "ai" ? (
+                <AiBubble
+                  key={msg.id}
+                  msg={msg}
+                  onSuggestion={(s) => sendMessage(s)}
+                  onSave={handleSaveRecipe}
+                  onViewDetail={setDetailCard} // ← add this line
+                  savedRecipes={savedRecipes}
+                />
+              ) : (
+                <UserBubble key={msg.id} msg={msg} />
+              ),
+            )}
             {isTyping && <TypingIndicator />}
             <div ref={messagesEndRef} />
           </div>
@@ -512,13 +581,21 @@ const AIRecipeComponent = () => {
           {showIngPanel && (
             <div className="mx-4 mb-3 p-3 bg-stone-50 border border-stone-200 rounded-xl animate-[fadeUp_.2s_ease_both]">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide">Ingredients</p>
-                <span className="text-[10px] text-stone-400">Press Enter or comma to add</span>
+                <p className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide">
+                  Ingredients
+                </p>
+                <span className="text-[10px] text-stone-400">
+                  Press Enter or comma to add
+                </span>
               </div>
               {ingredients.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-2">
                   {ingredients.map((ing, i) => (
-                    <IngredientChip key={i} name={ing} onRemove={() => removeIngredient(i)} />
+                    <IngredientChip
+                      key={i}
+                      name={ing}
+                      onRemove={() => removeIngredient(i)}
+                    />
                   ))}
                 </div>
               )}
@@ -536,36 +613,64 @@ const AIRecipeComponent = () => {
           <div className="px-4 pb-4 shrink-0">
             <div className="flex items-end gap-2">
               <button
-                onClick={() => { setShowIngPanel((v) => !v); if (!showIngPanel) setTimeout(() => ingInputRef.current?.focus(), 100); }}
+                onClick={() => {
+                  setShowIngPanel((v) => !v);
+                  if (!showIngPanel)
+                    setTimeout(() => ingInputRef.current?.focus(), 100);
+                }}
                 className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 transition-all duration-150 ${showIngPanel ? "bg-teal-50 border-teal-300 text-teal-600" : "border-stone-200 text-stone-500 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50"}`}
               >
                 <ClipboardList size={16} />
               </button>
-              <div className={`flex-1 flex items-end gap-2 border rounded-xl px-3 py-2 bg-white transition-all ${input.trim() ? "border-teal-400 ring-2 ring-teal-50" : "border-stone-200"}`}>
+              <div
+                className={`flex-1 flex items-end gap-2 border rounded-xl px-3 py-2 bg-white transition-all ${input.trim() ? "border-teal-400 ring-2 ring-teal-50" : "border-stone-200"}`}
+              >
                 <textarea
                   ref={textareaRef}
                   rows={1}
-                  placeholder={ingredients.length > 0 ? `Search with your ${ingredients.length} ingredient${ingredients.length > 1 ? "s" : ""} — press Send!` : "Type a dish, or add ingredients with 📋 above…"}
+                  placeholder={
+                    ingredients.length > 0
+                      ? `Search with your ${ingredients.length} ingredient${ingredients.length > 1 ? "s" : ""} — press Send!`
+                      : "Type a dish, or add ingredients with 📋 above…"
+                  }
                   onInput={handleTextareaInput}
                   onKeyDown={handleKeyDown}
                   className="flex-1 resize-none text-[13px] text-stone-800 outline-none bg-transparent leading-relaxed max-h-30 overflow-y-auto placeholder:text-stone-400"
                 />
                 <button
                   onClick={() => sendMessage()}
-                  disabled={(ingredients.length === 0 && !input.trim()) || isTyping}
+                  disabled={
+                    (ingredients.length === 0 && !input.trim()) || isTyping
+                  }
                   className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all ${(input.trim() || ingredients.length > 0) && !isTyping ? "bg-teal-600 hover:bg-teal-700 active:scale-95" : "bg-stone-100 cursor-not-allowed"}`}
                 >
-                  <Send size={13} className={(input.trim() || ingredients.length > 0) && !isTyping ? "text-white" : "text-stone-400"} />
+                  <Send
+                    size={13}
+                    className={
+                      (input.trim() || ingredients.length > 0) && !isTyping
+                        ? "text-white"
+                        : "text-stone-400"
+                    }
+                  />
                 </button>
               </div>
             </div>
             <div className="flex items-center justify-between mt-2 px-1">
               <p className="text-[10px] text-stone-400">
-                Press <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Enter</kbd> to send &nbsp;·&nbsp; <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">Shift+Enter</kbd> for new line
+                Press{" "}
+                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">
+                  Enter
+                </kbd>{" "}
+                to send &nbsp;·&nbsp;{" "}
+                <kbd className="font-mono bg-stone-100 px-1 rounded text-[10px]">
+                  Shift+Enter
+                </kbd>{" "}
+                for new line
               </p>
               {ingredients.length > 0 && (
                 <span className="text-[10px] text-teal-600 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded-full">
-                  {ingredients.length} ingredient{ingredients.length > 1 ? "s" : ""} added
+                  {ingredients.length} ingredient
+                  {ingredients.length > 1 ? "s" : ""} added
                 </span>
               )}
             </div>
@@ -573,20 +678,29 @@ const AIRecipeComponent = () => {
         </div>
 
         {/* ── NEW: Saved Recipes collapsible panel ── */}
-        <SavedRecipesPanel savedRecipes={savedRecipes} onRemove={handleRemoveSaved} />
+        <SavedRecipesPanel
+          savedRecipes={savedRecipes}
+          onRemove={handleRemoveSaved}
+        />
 
         <div className="flex flex-wrap gap-2 mt-3">
           {SUGGESTIONS.map((s) => (
-            <button key={s} onClick={() => sendMessage(s)} className="text-[12px] px-3 py-1.5 border border-stone-200 rounded-full text-stone-600 hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50 bg-white transition-all duration-150">
+            <button
+              key={s}
+              onClick={() => sendMessage(s)}
+              className="text-[12px] px-3 py-1.5 border border-stone-200 rounded-full text-stone-600 hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50 bg-white transition-all duration-150"
+            >
               {s}
             </button>
           ))}
         </div>
       </div>
       {detailCard && (
-        <RecipeDetailModal card={detailCard} onClose={() => setDetailCard(null)} />
+        <RecipeDetailModal
+          card={detailCard}
+          onClose={() => setDetailCard(null)}
+        />
       )}
-
     </>
   );
 };

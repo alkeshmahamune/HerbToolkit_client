@@ -5,10 +5,12 @@ import {
   ThumbsDown,
   Share2,
   Bookmark,
+  BookOpen,
 } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { VideoPlayer } from "./VideoPlayer";
+import { RecipeSidePanel } from "./RecipeSidePanel";
 import { seedComments } from "../data/userData";
 import { apiUrl, authHeaders } from "../config/api.js";
 import { useLocation } from "react-router-dom";
@@ -65,6 +67,9 @@ export const VideoView = ({ dish, onBack }) => {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
   const [cLikes, setCLikes] = useState({});
+  
+  // const isTextRecipe = !dish?.video && dish?.recipeType === "text" && isApiRecipe;
+  const isTextRecipe = isApiRecipe && !dish?.video && !dish?.videoUrl;
 
   const location =useLocation()
   let token;
@@ -73,6 +78,7 @@ export const VideoView = ({ dish, onBack }) => {
   }else{
     token=localStorage.getItem("doctorToken")
   }
+
   useEffect(() => {
     setLiked(!!dish?.liked);
     setDisliked(!!dish?.disliked);
@@ -284,6 +290,51 @@ export const VideoView = ({ dish, onBack }) => {
   };
 
   const toggleCLike = (i) => setCLikes((prev) => ({ ...prev, [i]: !prev[i] }));
+
+  // If it's a text recipe from API, show with side panel always open
+  if (isTextRecipe) {
+    return (
+      <>
+        <div className="w-full animate-[fadeUp_0.4s_ease_both]">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-1.5 text-sm text-gray-500 border border-gray-200 rounded-full px-3 py-1.5 mb-5 hover:bg-stone-100 transition"
+          >
+            <ArrowLeft size={14} /> Back
+          </button>
+
+          {/* Show thumbnail/image */}
+          <div className="w-full bg-stone-100 rounded-2xl overflow-hidden aspect-video mb-6">
+            <img
+              src={dish.img}
+              alt={dish.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          <h2 className="text-2xl font-serif font-bold text-gray-900 mb-2">
+            {dish.name}
+          </h2>
+          <p className="text-gray-600 mb-4">See full recipe details in the panel →</p>
+        </div>
+
+        {/* Always show side panel for text recipes */}
+        <RecipeSidePanel
+          recipe={dish}
+          onClose={onBack}
+          onLikeChange={(updates) => {
+            setLiked(updates.liked);
+            setDisliked(updates.disliked);
+            setLikesCount(updates.likes);
+            setDislikesCount(updates.dislikes);
+          }}
+          onSaveChange={(newSaved) => {
+            setSaved(newSaved);
+          }}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="w-full animate-[fadeUp_0.4s_ease_both]">

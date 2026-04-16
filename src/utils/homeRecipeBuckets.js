@@ -8,19 +8,54 @@ export function apiRecipeToDish(rec) {
       ? uploader.fullName
       : "Creator";
   return {
+    // Basic info
     name: rec.title,
     cat: rec.category || rec.recipeCategory || "Recipe",
-    img: rec.img,
+    img: rec.thumbnail || rec.imageUrl || rec.img,
     channel,
     subs: "",
     views: "",
+    
+    // Engagement
     likes: rec.likes ?? 0,
     dislikes: rec.dislikes ?? 0,
-    video: rec.video || "",
-    recipeId: rec.id,
     liked: !!rec.liked,
     disliked: !!rec.disliked,
     saved: !!rec.saved,
+    
+    // Recipe details
+    recipeId: rec.id || rec._id,
+    recipeType: rec.recipeType,
+    recipeCategory: rec.recipeCategory,
+    description: rec.description,
+    level: rec.level,
+    benefit: rec.benefit,
+    prepTime: rec.prepTime,
+    cookTime: rec.cookTime,
+    productLink: rec.productLink,
+    
+    // Lists
+    ingredientList: rec.ingredientList || [],
+    steps: rec.steps || [],
+    herbs: rec.herbs || [],
+    tags: rec.tags || [],
+    
+    // Nutrition & Usage
+    nutrition: rec.nutrition,
+    usageInfo: rec.usageInfo,
+    ratings: rec.ratings || 0,
+    
+    // Media
+    video: rec.videoUrl || rec.video || "",
+    videoUrl: rec.videoUrl || rec.video || "",
+    thumbnail: rec.thumbnail,
+    imageUrl: rec.imageUrl,
+    
+    // Verification
+    verificationStatus: rec.verificationStatus,
+    verifiedAt: rec.verifiedAt,
+    reviewNote: rec.reviewNote,
+    
     _api: true,
   };
 }

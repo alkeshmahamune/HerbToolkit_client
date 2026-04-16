@@ -524,7 +524,6 @@ const RecipeCard = ({ recipe, saved, onSave, onClick, index }) => {
       style={{
         animation: `fadeUp 0.4s ${index * 0.06}s ease both`,
         opacity: 0,
-        animationFillMode: "both",
       }}
     >
       {/* Image */}
@@ -583,8 +582,8 @@ const RecipeCard = ({ recipe, saved, onSave, onClick, index }) => {
           {(Array.isArray(recipe.herbs) ? recipe.herbs : [])
             .slice(0, 3)
             .map((h) => (
-            <HerbTag key={h} name={h} />
-          ))}
+              <HerbTag key={h} name={h} />
+            ))}
           {(Array.isArray(recipe.herbs) ? recipe.herbs : []).length > 3 && (
             <HerbTag
               name={`+${(Array.isArray(recipe.herbs) ? recipe.herbs : []).length - 3}`}
@@ -842,7 +841,7 @@ const HerbalRecipes = () => {
   const [savedIds, setSavedIds] = useState(new Set());
   const [modalItem, setModalItem] = useState(null);
   const [remoteList, setRemoteList] = useState([]);
-
+  const [publicRecipes,setPublicRecipes]=useState([])
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -871,8 +870,30 @@ const HerbalRecipes = () => {
     };
   }, []);
 
+  const fetchAllRecipes = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/api/recipes/public");
+    console.log(response.data);
+
+    const herbalRecipes = response.data?.recipes.filter(
+      (element) =>
+        element?.recipeCategory?.toLowerCase() === "herbal"
+    );
+
+    setPublicRecipes(herbalRecipes);
+
+    console.log(herbalRecipes);
+  } catch (error) {
+    console.log(error);
+    return toast.error("Something went wrong while loading recipes");
+  }
+};
+  useEffect(()=>{
+    fetchAllRecipes()
+  },[])
+
   const allRecipes = useMemo(
-    () => [...remoteList, ...RECIPES],
+    () => [...remoteList, ...publicRecipes],
     [remoteList],
   );
 

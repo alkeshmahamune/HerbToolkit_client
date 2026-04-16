@@ -60,25 +60,34 @@ const SocialHandle = ({ icon: Icon, platform, handle, color, followers, editable
 );
 
 export default function InfluencerProfile() {
+  const currentInfluencer=JSON.parse(localStorage.getItem("influencer"))
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [saved, setSaved] = useState(false);
   const fileRef = useRef();
   const bannerRef = useRef();
+  const formatDate = (date) => {
+  if (!date) return "";
 
+  return new Date(date).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}; 
   const [form, setForm] = useState({
-    firstName: "Meghna", lastName: "Verma",
-    email: "meghna@foodiegram.in", phone: "+91 99887 76654",
-    dob: "1996-07-11", gender: "Female",
+    firstName: `${currentInfluencer?.fullName}`,
+    email: `${currentInfluencer?.email}`, phone:`${currentInfluencer?.phone}`,
+    dob: `${formatDate(currentInfluencer?.dob)}`, gender: `${currentInfluencer?.gender}`,
     city: "Bengaluru", state: "Karnataka", pincode: "560001",
-    niche: "Food & Nutrition", contentType: "Reels, Blogs, Recipes",
+    niche: `${currentInfluencer?.niche}`, contentType: "Reels, Blogs, Recipes",
     collab: "Brand partnerships, Sponsored content, Recipe development",
     rate: "15000", languages: "English, Hindi, Kannada",
     website: "www.meghnaverma.in",
-    igHandle: "@meghnacooks", ytHandle: "@MeghnaKitchen", twHandle: "@meghnacooks_",
+    igHandle: `${currentInfluencer?.instagram}`, ytHandle: `${currentInfluencer?.instagram}`, twHandle: "@meghnacooks_",
     bio: "Food creator & certified nutrition enthusiast. Sharing wholesome, flavour-packed recipes that make healthy eating exciting!",
   });
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState(currentInfluencer?.avatar);
   const [banner, setBanner] = useState(null);
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
@@ -178,10 +187,10 @@ export default function InfluencerProfile() {
 
         {/* stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "28px" }}>
-          <StatCard icon={User} label="Total Followers" value="248K" color={COLORS.orange} sub="↑ +2.3K this week" />
+          <StatCard icon={User} label="Total Followers" value={`${currentInfluencer?.followers}`} color={COLORS.orange} sub="↑ +2.3K this week" />
           <StatCard icon={Eye} label="Monthly Views" value="1.4M" color={COLORS.red} sub="↑ +12% MoM" />
           <StatCard icon={DollarSign} label="Base Rate / Post" value={`₹${form.rate}`} color="#ec4899" />
-          <StatCard icon={Video} label="Posts Published" value="312" color={COLORS.blue} />
+          <StatCard icon={Video} label="Posts Published" value={`${currentInfluencer?.uploadedRecipes?.length}`} color={COLORS.blue} />
         </div>
 
         {/* tabs */}
@@ -208,7 +217,7 @@ export default function InfluencerProfile() {
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
               <div style={{ background: "#fff", borderRadius: "16px", border: `1px solid ${COLORS.border}`, padding: "28px", display: "flex", flexDirection: "column", gap: "20px" }}>
                 <h2 style={{ fontSize: "15px", fontWeight: 800, color: COLORS.dark, margin: 0, display: "flex", alignItems: "center", gap: "8px" }}><Globe size={16} color={COLORS.orange} /> Creator Details</h2>
-                <InputField label="Niche" icon={Hash} name="niche" value={form.niche} editable={editing} onChange={handleChange} options={["Food & Nutrition", "Fitness", "Lifestyle", "Travel", "Beauty", "Tech"]} />
+                <InputField label="Niche" icon={Hash} name="niche" value={currentInfluencer?.niche} editable={editing} onChange={handleChange} options={["Food & Nutrition", "Fitness", "Lifestyle", "Travel", "Beauty", "Tech"]} />
                 <InputField label="Content Formats" icon={Video} name="contentType" value={form.contentType} editable={editing} onChange={handleChange} />
                 <InputField label="Languages" icon={Globe} name="languages" value={form.languages} editable={editing} onChange={handleChange} />
                 <InputField label="Website / Portfolio" icon={Link} name="website" value={form.website} editable={editing} onChange={handleChange} />
@@ -226,7 +235,7 @@ export default function InfluencerProfile() {
           <div style={{ background: "#fff", borderRadius: "16px", border: `1px solid ${COLORS.border}`, padding: "28px", marginBottom: "40px" }}>
             <h2 style={{ fontSize: "15px", fontWeight: 800, color: COLORS.dark, margin: "0 0 24px", display: "flex", alignItems: "center", gap: "8px" }}><Share2 size={16} color={COLORS.orange} /> Social Media Handles</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <SocialHandle icon={Instagram} platform="Instagram" name="igHandle" handle={form.igHandle} color="#e1306c" followers="185K" editable={editing} onChange={handleChange} />
+              <SocialHandle icon={Instagram} platform="Instagram" name="igHandle" handle={form.igHandle} color="#e1306c" followers={`${currentInfluencer?.followers}`} editable={editing} onChange={handleChange} />
               <SocialHandle icon={Youtube} platform="YouTube" name="ytHandle" handle={form.ytHandle} color="#ff0000" followers="42K" editable={editing} onChange={handleChange} />
               <SocialHandle icon={Twitter} platform="Twitter / X" name="twHandle" handle={form.twHandle} color="#1da1f2" followers="21K" editable={editing} onChange={handleChange} />
             </div>

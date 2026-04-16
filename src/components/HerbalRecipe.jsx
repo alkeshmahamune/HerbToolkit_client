@@ -882,7 +882,6 @@ const HerbalRecipes = () => {
 
     setPublicRecipes(herbalRecipes);
 
-    console.log(herbalRecipes);
   } catch (error) {
     console.log(error);
     return toast.error("Something went wrong while loading recipes");

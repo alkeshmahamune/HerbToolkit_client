@@ -106,7 +106,7 @@ const SavedRecipesPanel = ({ savedRecipes, onRemove,onViewDetail  }) => {
       {/* Collapsible body */}
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          open ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+          open ? "max-h-100 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         {savedRecipes.length === 0 ? (
@@ -114,7 +114,7 @@ const SavedRecipesPanel = ({ savedRecipes, onRemove,onViewDetail  }) => {
             No saved recipes yet — bookmark one above!
           </p>
         ) : (
-          <ul className="divide-y divide-stone-100 overflow-y-auto max-h-[360px]">
+          <ul className="divide-y divide-stone-100 overflow-y-auto max-h-90">
             {savedRecipes.map((r, i) => (
               <li key={i} className="flex items-center gap-3 px-4 py-2.5 hover:bg-stone-50 transition-colors">
                 {/* Thumbnail */}

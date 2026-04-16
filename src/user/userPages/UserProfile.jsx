@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   User, Mail, Phone, MapPin, Calendar, Heart, Weight,
   Ruler, Utensils, AlertCircle, Edit3, Save, X, Camera,
@@ -93,6 +93,11 @@ export default function UserProfile() {
     { id: "activity", label: "Activity", icon: TrendingUp },
     { id: "settings", label: "Settings", icon: Shield },
   ];
+
+  const [user,SetUser]=useState({})
+  useEffect(()=>{
+    const SetUser=JSON.parse(localStorage.getItem("User"))
+  },[])
 
   return (
     <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif",}}>
@@ -253,8 +258,8 @@ export default function UserProfile() {
               <TrendingUp size={16} color={COLORS.red} /> Recent Activity
             </h2>
             {[
-              { action: "Saved recipe", item: "Masala Dosa", time: "2 hours ago", color: COLORS.red },
-              { action: "Completed meal plan", item: "Monday Plan", time: "1 day ago", color: COLORS.blue },
+              { action: "Saved recipe", item: `${user?.savedRecipes?.length===0? "Nothing Saved":user?.savedRecipes?.length}`, time: "2 hours ago", color: COLORS.red },
+              // { action: "Completed meal plan", item: "Monday Plan", time: "1 day ago", color: COLORS.blue },
               { action: "Tracked nutrition", item: "2,100 kcal logged", time: "2 days ago", color: "#10b981" },
               { action: "Joined challenge", item: "7-Day Healthy Eating", time: "3 days ago", color: "#f59e0b" },
             ].map((a, i) => (

@@ -157,15 +157,13 @@ const SavedRecipesPanel = ({ savedRecipes, onRemove, onViewDetail }) => {
                 {/* Actions */}
                 <div className="flex items-center gap-2 shrink-0">
                   {r.sourceUrl && (
-                    <a
-                      href={r.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      type="button"
                       onClick={() => onViewDetail(r)}
-                      className="text-[11px] text-teal-600 hover:underline whitespace-nowrap"
+                      className="text-[11px] text-teal-600 hover:underline whitespace-nowrap bg-transparent border-0 p-0 cursor-pointer"
                     >
                       View →
-                    </a>
+                    </button>
                   )}
                   <button
                     onClick={() => onRemove(i)}
@@ -381,7 +379,7 @@ const AIRecipeComponent = () => {
       role: "ai",
       text: 'Hello! I\'m Chef AI — your personal recipe assistant.\n\nTo search by ingredients, click the 📋 icon and add them there, then press Send.\nOr just type a dish name like "pasta carbonara" to search directly.',
       time: now(),
-      suggestions: ["Quick dinner ideas", "Vegetarian recipes", "Under 30 min"],
+      suggestions: ["Quick dinner ideas", "Vegetarian recipes", "Non-Vegetarian recipes"],
     },
   ]);
 
@@ -681,6 +679,7 @@ const AIRecipeComponent = () => {
         <SavedRecipesPanel
           savedRecipes={savedRecipes}
           onRemove={handleRemoveSaved}
+          onViewDetail={setDetailCard}
         />
 
         <div className="flex flex-wrap gap-2 mt-3">

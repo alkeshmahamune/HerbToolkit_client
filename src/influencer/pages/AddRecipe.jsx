@@ -199,9 +199,6 @@ const AddRecipe = () => {
   const [submittedRecipeCategory, setSubmittedRecipeCategory] = useState(null);
   const [loading, setLoading] = useState(false);
   const videoInputRef = useRef(null);
-  const photoInputRef=useRef(null)
-  const [photoPreview,setPhotoPreview]=useState(null)
-  const[photoFile,setPhotoFile]=useState(null)
   const thumbnailInputRef = useRef(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
@@ -378,8 +375,6 @@ const AddRecipe = () => {
 
       if (videoFile) {
         formData.append("videoUrl", videoFile);
-      } else if (photoFile) {
-        formData.append("imageUrl", photoFile);
       }
 
       if (thumbnailFile) {
@@ -1135,76 +1130,6 @@ const AddRecipe = () => {
                     className="hidden"
                     onChange={handleVideoChange}
                   />
-                </div>
-              )}
-
-              {/* Image upload for text recipes */}
-              {recipeType === "text" && (
-                <div>
-                  <p className="text-[12px] font-medium text-stone-600 mb-2">
-                    Recipe Image (Optional)
-                  </p>
-
-                {/* photo preview */}
-                {
-                  photoPreview?(
-                    <div className="relative">
-                      <img src={photoPreview} alt="photo preview" 
-                      className="w-full rounded-xl border border-stone-200"
-                      />
-                      <button type="button" onClick={()=>{
-                        setPhotoFile(null)
-                        setPhotoPreview(null)
-                      }}
-                      className="absolute top-2.5 right-2.5 w-7 h-7 bg-black/60 hover:bg-black/80
-                                   rounded-full flex items-center justify-center text-white transition-all"
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                      </div>
-                  ):(
-                    <>
-                  {/* Hidden file input */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id="recipeImage"
-                    ref={photoInputRef}
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      console.log(file); // handle upload here
-                      setPhotoFile(file)
-                      setPhotoPreview(URL.createObjectURL(file))
-                    }}
-                  />
-
-                  {/* Styled button (same UI) */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      document.getElementById("recipeImage").click()
-                    }
-                    className="w-full border-2 border-dashed border-stone-200 rounded-xl p-8
-                 flex flex-col items-center gap-3 hover:border-teal-300 hover:bg-teal-50
-                 transition-all cursor-pointer"
-                  >
-                    <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center">
-                      <Upload size={20} className="text-stone-500" />
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[13px] font-medium text-stone-700">
-                        Click to upload image
-                      </p>
-                      <p className="text-[11px] text-stone-400 mt-0.5">
-                        JPG, PNG, WebP up to 10 MB
-                      </p>
-                    </div>
-                  </button>
-                  </>
-                  )
-                }
-
                 </div>
               )}
 

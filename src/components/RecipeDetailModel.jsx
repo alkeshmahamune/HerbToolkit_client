@@ -216,9 +216,9 @@ export const RecipeDetailModal = ({ card, onClose }) => {
 
             {/* Hero image with overlay close button */}
             <div className="relative">
-              {(detail?.image || card.image) && (
+              {(detail?.image || card.thumbnail || card.imageUrl || card.image) && (
                 <img
-                  src={detail?.image || card.image}
+                  src={detail?.image || card.thumbnail || card.imageUrl || card.image}
                   alt={detail?.title || card.title}
                   className="w-full object-cover"
                   style={{ height: 200 }}

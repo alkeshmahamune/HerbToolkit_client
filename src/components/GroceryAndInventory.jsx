@@ -959,7 +959,7 @@ const InventoryManager = () => {
     const fetchInventory = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:3000/api/inventory/", {
+        const res = await axios.get("mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/inventory/", {
           headers: {
             Authorization: token,
           },
@@ -981,7 +981,7 @@ const InventoryManager = () => {
       if (modal === "add") {
         // POST
         const res = await axios.post(
-          "http://localhost:3000/api/inventory/add",
+          "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/inventory/add",
           form,
           { headers: { Authorization: token } },
         );

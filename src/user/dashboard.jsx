@@ -65,7 +65,7 @@ export default function RecipeDashboard() {
   const fetchUser = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/user/get-current-user",
+        "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/user/get-current-user",
         {
           headers: {
             Authorization: `Bearer ${userToken}`

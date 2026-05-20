@@ -224,9 +224,9 @@ const Register = () => {
     }
 
     const endpointMap = {
-      User: "http://localhost:3000/api/user/register",
-      Doctor: "http://localhost:3000/api/doctor/register",
-      Influencer: "http://localhost:3000/api/influencer/register",
+      User: "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/user/register",
+      Doctor: "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/doctor/register",
+      Influencer: "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/influencer/register",
     };
 
     const response = await axios.post(endpointMap[role], formData, {

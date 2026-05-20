@@ -146,7 +146,7 @@ const ReviewDetail = ({ recipe, onBack, onDecision }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/doctor/verify-recipe",
+        "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/doctor/verify-recipe",
         {
           recipeId: recipe._id || recipe.id,
           action,       // ✅ "approve" or "reject" — matches backend validation

@@ -872,7 +872,7 @@ const HerbalRecipes = () => {
 
   const fetchAllRecipes = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/api/recipes/public");
+    const response = await axios.get("mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/recipes/public");
     console.log(response.data);
 
     const herbalRecipes = response.data?.recipes.filter(

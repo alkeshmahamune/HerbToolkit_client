@@ -66,9 +66,9 @@ const Login = () => {
   } = useForm({ mode: "onTouched" });
 
   const API_MAP = {
-    user:       { url: "http://localhost:3000/api/user/login",       tokenKey: "userToken",       redirect: "/user-home"       },
-    doctor:     { url: "http://localhost:3000/api/doctor/login",     tokenKey: "doctorToken",     redirect: "/doctor-home"     },
-    influencer: { url: "http://localhost:3000/api/influencer/login", tokenKey: "influencerToken", redirect: "/influencer-home" },
+    user:       { url: "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/user/login",       tokenKey: "userToken",       redirect: "/user-home"       },
+    doctor:     { url: "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/doctor/login",     tokenKey: "doctorToken",     redirect: "/doctor-home"     },
+    influencer: { url: "mongodb+srv://alkeshmahamune12_db_user:tjn24OLaUtx8MsTN@cluster0.sm10gkk.mongodb.net/?appName=Cluster0/api/influencer/login", tokenKey: "influencerToken", redirect: "/influencer-home" },
   };
 
   const onSubmit = async (data) => {

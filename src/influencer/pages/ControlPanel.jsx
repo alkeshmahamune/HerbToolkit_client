@@ -11,7 +11,7 @@ import {
 import { recipesUploaded } from "../recipeData";
 import axios from "axios";
 import { apiUrl, authHeaders } from "../../config/api.js";
-import { VideoPlayer } from "../../components/VideoPlayer";
+import { VideoPlayer } from "../../components/VideoPlayer.jsx";
 import { toast } from "react-hot-toast";
 //this is the control panel which is home(dashboard) for influencer
 // ─── helpers ──────────────────────────────────────────────────────────────────
